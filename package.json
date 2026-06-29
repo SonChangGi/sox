@@ -1,0 +1,15 @@
+{
+  "name": "sox-research-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static SOX index research dashboard with generated finance data.",
+  "scripts": {
+    "refresh": "python3 scripts/fetch_sox_data.py --offline-ok",
+    "verify": "node scripts/verify.mjs",
+    "test:smoke": "node scripts/static-smoke.mjs",
+    "test": "npm run refresh && node --check assets/app.js && npm run verify && npm run test:smoke"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
