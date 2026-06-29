@@ -103,11 +103,24 @@
           <label for="sort-select">정렬</label>
           <select id="sort-select">
             <option value="rank">종합 랭크</option>
+            <option value="ticker">티커</option>
+            <option value="name">회사명</option>
             <option value="proxyWeight">프록시 비중</option>
+            <option value="price">현재가</option>
+            <option value="marketCap">시가총액</option>
             <option value="priceMomentum">가격 모멘텀</option>
             <option value="earningsMomentum">실적 모멘텀</option>
             <option value="return3m">3M 수익률</option>
+            <option value="return12m">12M 수익률</option>
             <option value="quarterlyRevenueYoY">매출 YoY</option>
+            <option value="quarterlyEpsYoY">EPS YoY</option>
+            <option value="trailingPe">P/E</option>
+            <option value="label">Signal</option>
+          </select>
+          <label for="sort-direction">방향</label>
+          <select id="sort-direction" aria-label="정렬 방향">
+            <option value="asc">오름차순</option>
+            <option value="desc">내림차순</option>
           </select>
         </div>
       </div>
@@ -116,8 +129,20 @@
           <caption>SOX 구성종목 프록시 비중, 가격 모멘텀, 실적 모멘텀, 재무 지표</caption>
           <thead>
             <tr>
-              <th>Rank</th><th>Ticker</th><th>Name</th><th>Proxy Wt</th><th>Price</th><th>Market Cap</th>
-              <th>3M</th><th>12M</th><th>Rev YoY</th><th>EPS YoY</th><th>P/E</th><th>Price Mom</th><th>Earn Mom</th><th>Signal</th>
+              <th aria-sort="ascending"><button type="button" data-sort-key="rank">Rank <span class="sort-indicator" aria-hidden="true">↑</span></button></th>
+              <th><button type="button" data-sort-key="ticker">Ticker <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="name">Name <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="proxyWeight">Proxy Wt <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="price">Price <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="marketCap">Market Cap <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="return3m">3M <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="return12m">12M <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="quarterlyRevenueYoY">Rev YoY <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="quarterlyEpsYoY">EPS YoY <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="trailingPe">P/E <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="priceMomentum">Price Mom <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="earningsMomentum">Earn Mom <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th><button type="button" data-sort-key="label">Signal <span class="sort-indicator" aria-hidden="true"></span></button></th>
             </tr>
           </thead>
           <tbody id="constituent-body"><tr><td colspan="14">데이터를 불러오는 중...</td></tr></tbody>

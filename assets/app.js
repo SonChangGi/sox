@@ -2,7 +2,7 @@
   'use strict';
 
   const DATA_URL = 'data/sox-analysis.json';
-  const state = { analysis: null, rows: [], filteredRows: [] };
+  const state = { analysis: null, rows: [], filteredRows: [], sortKey: 'rank', sortDirection: 'asc' };
 
   const els = {
     sourceStatus: document.querySelector('#source-status'),
@@ -14,6 +14,8 @@
     leaderGrid: document.querySelector('#leader-grid'),
     searchInput: document.querySelector('#search-input'),
     sortSelect: document.querySelector('#sort-select'),
+    sortDirection: document.querySelector('#sort-direction'),
+    table: document.querySelector('#constituent-table'),
     tableBody: document.querySelector('#constituent-body'),
     sourceList: document.querySelector('#source-list'),
     weightCaveat: document.querySelector('#weight-caveat'),
@@ -38,7 +40,29 @@
 
   function bindControls() {
     els.searchInput?.addEventListener('input', updateTable);
-    els.sortSelect?.addEventListener('change', updateTable);
+    els.sortSelect?.addEventListener('change', () => {
+      state.sortKey = els.sortSelect.value;
+      state.sortDirection = defaultDirectionFor(state.sortKey);
+      syncSortControls();
+      updateTable();
+    });
+    els.sortDirection?.addEventListener('change', () => {
+      state.sortDirection = els.sortDirection.value === 'desc' ? 'desc' : 'asc';
+      updateTable();
+    });
+    els.table?.querySelectorAll('[data-sort-key]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const key = button.getAttribute('data-sort-key') || 'rank';
+        if (state.sortKey === key) {
+          state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = key;
+          state.sortDirection = defaultDirectionFor(key);
+        }
+        syncSortControls();
+        updateTable();
+      });
+    });
   }
 
   function renderAll() {
@@ -167,29 +191,90 @@
 
   function updateTable() {
     const query = (els.searchInput?.value || '').trim().toLowerCase();
-    const sortKey = els.sortSelect?.value || 'rank';
+    const sortKey = state.sortKey || els.sortSelect?.value || 'rank';
+    const sortDirection = state.sortDirection || els.sortDirection?.value || defaultDirectionFor(sortKey);
     let rows = state.rows.filter((row) => {
       if (!query) return true;
-      const haystack = [row.ticker, row.name, row.indexName, row.scores?.label].join(' ').toLowerCase();
+      const haystack = rowSearchText(row);
       return haystack.includes(query);
     });
-    rows = rows.sort((a, b) => compareRows(a, b, sortKey));
+    rows = rows.sort((a, b) => compareRows(a, b, sortKey, sortDirection));
     state.filteredRows = rows;
+    updateSortIndicators();
     renderTable(rows);
   }
 
-  function compareRows(a, b, key) {
-    if (key === 'rank') return (a.rank || 999) - (b.rank || 999);
+  function compareRows(a, b, key, direction = 'desc') {
+    const modifier = direction === 'asc' ? 1 : -1;
     const av = valueForSort(a, key);
     const bv = valueForSort(b, key);
-    return (bv ?? -Infinity) - (av ?? -Infinity);
+    const aMissing = av === null || av === undefined || av === '';
+    const bMissing = bv === null || bv === undefined || bv === '';
+    if (aMissing && bMissing) return 0;
+    if (aMissing) return 1;
+    if (bMissing) return -1;
+    if (typeof av === 'string' || typeof bv === 'string') {
+      return String(av).localeCompare(String(bv), 'en', { numeric: true, sensitivity: 'base' }) * modifier;
+    }
+    return ((av > bv) - (av < bv)) * modifier;
   }
 
   function valueForSort(row, key) {
-    if (key in row) return row[key];
-    if (row.scores && key in row.scores) return row.scores[key];
-    if (row.metrics && key in row.metrics) return row.metrics[key];
+    if (key === 'ticker') return row.ticker || '';
+    if (key === 'name') return row.name || '';
+    if (key === 'label') return row.scores?.label || '';
+    if (key in row) return normalizeSortValue(row[key]);
+    if (row.scores && key in row.scores) return normalizeSortValue(row.scores[key]);
+    if (row.metrics && key in row.metrics) return normalizeSortValue(row.metrics[key]);
     return null;
+  }
+
+  function rowSearchText(row) {
+    const metrics = row.metrics || {};
+    const scores = row.scores || {};
+    return [
+      row.rank,
+      row.ticker,
+      row.name,
+      row.indexName,
+      row.proxyWeight,
+      row.price,
+      row.marketCap,
+      metrics.return3m,
+      metrics.return12m,
+      metrics.quarterlyRevenueYoY,
+      metrics.quarterlyEpsYoY,
+      metrics.trailingPe,
+      scores.priceMomentum,
+      scores.earningsMomentum,
+      scores.label,
+    ].join(' ').toLowerCase();
+  }
+
+  function normalizeSortValue(value) {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+    if (typeof value === 'string') return value;
+    return value ?? null;
+  }
+
+  function defaultDirectionFor(key) {
+    return ['rank', 'ticker', 'name', 'label'].includes(key) ? 'asc' : 'desc';
+  }
+
+  function syncSortControls() {
+    if (els.sortSelect) els.sortSelect.value = state.sortKey;
+    if (els.sortDirection) els.sortDirection.value = state.sortDirection;
+  }
+
+  function updateSortIndicators() {
+    if (!els.table) return;
+    els.table.querySelectorAll('thead th').forEach((th) => {
+      const button = th.querySelector('[data-sort-key]');
+      const indicator = th.querySelector('.sort-indicator');
+      const active = button?.getAttribute('data-sort-key') === state.sortKey;
+      th.setAttribute('aria-sort', active ? (state.sortDirection === 'asc' ? 'ascending' : 'descending') : 'none');
+      if (indicator) indicator.textContent = active ? (state.sortDirection === 'asc' ? '↑' : '↓') : '';
+    });
   }
 
   function renderTable(rows) {

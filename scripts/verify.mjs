@@ -49,9 +49,16 @@ check(html.includes('https://sonchanggi.github.io/quant-dashboard/'), 'index has
 check(html.includes('투자 조언이 아닙니다'), 'research-only disclaimer is visible');
 check(html.includes('프록시 비중'), 'proxy-weight Korean copy is visible');
 check(html.includes('data/sox-analysis.json'), 'index documents generated JSON path');
+check(html.includes('id="sort-direction"'), 'table exposes ascending/descending direction control');
+check(html.includes('data-sort-key="proxyWeight"') && html.includes('data-sort-key="earningsMomentum"'), 'table headers expose per-column sort buttons');
+check(html.includes('aria-sort="ascending"'), 'initial table sort state is accessible');
 check(!app.includes('query1.finance.yahoo.com') && !app.includes('nasdaqomx.com/Index/WeightingData'), 'browser app has no live finance endpoint');
 check(app.includes("const DATA_URL = 'data/sox-analysis.json'"), 'browser app reads generated JSON');
+check(app.includes('sortDirection') && app.includes('updateSortIndicators'), 'browser app manages two-way sort direction state');
+check(app.includes('rowSearchText'), 'browser app searches across table columns');
 check(css.includes('color-scheme: dark'), 'CSS declares dark color scheme');
+check(/\.bar-fill\s*\{[^}]*display:\s*block/s.test(css), 'bar fill spans render with block width so charts are visible');
+check(css.includes('.sort-indicator'), 'table sort indicator CSS exists');
 
 const failed = checks.filter((item) => !item.ok);
 if (failed.length) {
