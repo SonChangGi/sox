@@ -2,7 +2,18 @@
   'use strict';
 
   const DATA_URL = 'data/sox-analysis.json';
-  const state = { analysis: null, rows: [], filteredRows: [], sortKey: 'rank', sortDirection: 'asc' };
+  const HISTORY_URL = 'data/sox-history.json';
+  const state = {
+    analysis: null,
+    latestAnalysis: null,
+    history: null,
+    snapshots: [],
+    selectedDate: '',
+    rows: [],
+    filteredRows: [],
+    sortKey: 'rank',
+    sortDirection: 'asc',
+  };
 
   const els = {
     sourceStatus: document.querySelector('#source-status'),
@@ -15,6 +26,8 @@
     searchInput: document.querySelector('#search-input'),
     sortSelect: document.querySelector('#sort-select'),
     sortDirection: document.querySelector('#sort-direction'),
+    snapshotDate: document.querySelector('#snapshot-date-select'),
+    snapshotSummary: document.querySelector('#snapshot-summary'),
     table: document.querySelector('#constituent-table'),
     tableBody: document.querySelector('#constituent-body'),
     sourceList: document.querySelector('#source-list'),
@@ -26,15 +39,33 @@
   async function init() {
     bindControls();
     try {
-      const response = await fetch(DATA_URL, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const analysis = await response.json();
-      state.analysis = analysis;
-      state.rows = Array.isArray(analysis.constituents) ? analysis.constituents : [];
-      state.filteredRows = [...state.rows];
-      renderAll();
+      const [analysis, history] = await Promise.all([
+        fetchJson(DATA_URL),
+        fetchOptionalJson(HISTORY_URL),
+      ]);
+      state.latestAnalysis = analysis;
+      state.history = history;
+      state.snapshots = normalizeSnapshots(analysis, history);
+      const requestedDate = new URLSearchParams(window.location.search).get('date');
+      const selected = state.snapshots.find((snapshot) => snapshot.dataAsOf === requestedDate) || state.snapshots[0] || analysis;
+      applySnapshot(selected?.dataAsOf || analysis.dataAsOf, { updateUrl: false });
     } catch (error) {
       renderError(error);
+    }
+  }
+
+  async function fetchJson(url) {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${url} HTTP ${response.status}`);
+    return response.json();
+  }
+
+  async function fetchOptionalJson(url) {
+    try {
+      return await fetchJson(url);
+    } catch (error) {
+      console.warn(`optional history load failed: ${error.message}`);
+      return null;
     }
   }
 
@@ -63,15 +94,62 @@
         updateTable();
       });
     });
+    els.snapshotDate?.addEventListener('change', () => {
+      applySnapshot(els.snapshotDate.value, { updateUrl: true });
+    });
   }
 
   function renderAll() {
+    renderSnapshotControls();
     renderStatus();
     renderMetrics();
     renderCharts();
     renderLeaders();
     renderMethodology();
     updateTable();
+  }
+
+  function normalizeSnapshots(latest, history) {
+    const byDate = new Map();
+    const historySnapshots = Array.isArray(history?.snapshots) ? history.snapshots : [];
+    for (const snapshot of historySnapshots) {
+      if (snapshot && snapshot.dataAsOf) byDate.set(String(snapshot.dataAsOf), snapshot);
+    }
+    if (latest?.dataAsOf) byDate.set(String(latest.dataAsOf), { ...latest, isLatestSnapshot: true });
+    return [...byDate.values()]
+      .filter((snapshot) => snapshot && snapshot.dataAsOf)
+      .sort((a, b) => String(b.dataAsOf).localeCompare(String(a.dataAsOf)));
+  }
+
+  function applySnapshot(date, options = {}) {
+    const snapshot = state.snapshots.find((item) => item.dataAsOf === date) || state.latestAnalysis;
+    if (!snapshot) return;
+    state.analysis = snapshot;
+    state.selectedDate = snapshot.dataAsOf || '';
+    state.rows = Array.isArray(snapshot.constituents) ? snapshot.constituents : [];
+    state.filteredRows = [...state.rows];
+    if (options.updateUrl && state.selectedDate) {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('date', state.selectedDate);
+      window.history.replaceState({}, '', nextUrl);
+    }
+    renderAll();
+  }
+
+  function renderSnapshotControls() {
+    if (!els.snapshotDate) return;
+    const snapshots = state.snapshots || [];
+    els.snapshotDate.disabled = snapshots.length <= 1;
+    els.snapshotDate.innerHTML = snapshots.map((snapshot) => {
+      const latestLabel = snapshot.dataAsOf === state.latestAnalysis?.dataAsOf ? ' · latest' : '';
+      return `<option value="${escapeAttr(snapshot.dataAsOf)}">${escapeHtml(formatDate(snapshot.dataAsOf))}${latestLabel}</option>`;
+    }).join('');
+    if (state.selectedDate) els.snapshotDate.value = state.selectedDate;
+    if (els.snapshotSummary) {
+      const count = snapshots.length;
+      const latest = state.latestAnalysis?.dataAsOf ? `최신 ${formatDate(state.latestAnalysis.dataAsOf)}` : '최신 기준일 확인 중';
+      els.snapshotSummary.textContent = `${count}개 저장 snapshot · 선택 ${formatDate(state.selectedDate)} · ${latest}`;
+    }
   }
 
   function renderStatus() {
@@ -82,6 +160,8 @@
       chip(status.level === 'ok' ? 'ok' : 'warning', status.level || 'unknown'),
       chip('neutral', `생성 ${formatDateTime(analysis.generatedAt)}`),
       chip('neutral', `기준 ${formatDate(analysis.dataAsOf)}`),
+      chip('neutral', `선택 ${formatDate(state.selectedDate || analysis.dataAsOf)}`),
+      chip('neutral', `저장 ${state.snapshots.length || 1} dates`),
       chip('neutral', analysis.index?.weightMethodLabel || 'proxy weight'),
       chip(coverage.fundamentals?.ratio > 0.7 ? 'ok' : 'warning', `재무 커버리지 ${formatPercent(coverage.fundamentals?.ratio)}`),
     ];
@@ -103,6 +183,7 @@
       metricCard('Data coverage', `${analysis.coverage?.price?.count || 0}/${analysis.index?.constituentCount || 0}`, `Price · fundamentals ${formatPercent(analysis.coverage?.fundamentals?.ratio)}`),
       metricCard('Price leader', topPrice?.ticker || '-', `${formatScore(topPrice?.priceMomentum)} · 3M ${formatPercent(topPrice?.return3m)}`),
       metricCard('Earnings leader', topEarnings?.ticker || '-', `${formatScore(topEarnings?.earningsMomentum)} · Rev YoY ${formatPercent(topEarnings?.quarterlyRevenueYoY)}`),
+      metricCard('Stored dates', state.snapshots.length || 1, `선택 ${formatDate(state.selectedDate || analysis.dataAsOf)} · history JSON`),
       metricCard('Weight method', analysis.index?.weightMethod === 'official' ? 'Official' : 'Proxy', analysis.index?.weightMethodLabel || 'market-cap proxy'),
       metricCard('Status', analysis.status?.level || 'unknown', analysis.status?.message || ''),
     ];
@@ -308,7 +389,8 @@
   function renderError(error) {
     const message = `generated JSON을 불러오지 못했습니다: ${error.message}`;
     if (els.sourceStatus) els.sourceStatus.innerHTML = chip('error', message);
-    if (els.metricGrid) els.metricGrid.innerHTML = `<article class="metric-card"><p class="eyebrow">Error</p><div class="detail">${escapeHtml(message)}<br/>로컬에서 <code>python3 scripts/fetch_sox_data.py --offline-ok</code>를 실행해 주세요.</div></article>`;
+    if (els.snapshotSummary) els.snapshotSummary.textContent = 'snapshot history 로드 실패';
+    if (els.metricGrid) els.metricGrid.innerHTML = `<article class="metric-card"><p class="eyebrow">Error</p><div class="detail">${escapeHtml(message)}<br/>로컬에서 <code>python3 scripts/fetch_sox_data.py --offline-ok</code>를 실행해 data/sox-analysis.json, data/sox-history.json, data/summary.json을 갱신해 주세요.</div></article>`;
     if (els.tableBody) els.tableBody.innerHTML = `<tr><td colspan="14">${escapeHtml(message)}</td></tr>`;
   }
 

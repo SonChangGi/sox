@@ -30,8 +30,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 ANALYSIS_PATH = DATA_DIR / "sox-analysis.json"
 SUMMARY_PATH = DATA_DIR / "summary.json"
+HISTORY_PATH = DATA_DIR / "sox-history.json"
 USER_AGENT = "Mozilla/5.0 (compatible; sox-dashboard/0.1; +https://sonchanggi.github.io/sox/)"
-NASDAQ_DATE = os.environ.get("SOX_NASDAQ_TRADE_DATE", "2026-06-26")
+NASDAQ_TRADE_DATE_OVERRIDE = os.environ.get("SOX_NASDAQ_TRADE_DATE")
 YAHOO_PERIOD1 = int(dt.datetime(2023, 1, 1, tzinfo=dt.timezone.utc).timestamp())
 YAHOO_PERIOD2 = int(dt.datetime(2030, 1, 1, tzinfo=dt.timezone.utc).timestamp())
 YAHOO_TYPES = [
@@ -131,43 +132,70 @@ def http_json(url: str, *, data: dict[str, str] | None = None, timeout: int = 30
     return json.loads(payload)
 
 
+def recent_trade_date_candidates(*, today: dt.date | None = None, lookback_days: int = 10) -> list[str]:
+    """Return likely SOX trade dates, newest first.
+
+    GitHub schedules run in UTC. At 06:30 KST after the U.S. close, the latest
+    available U.S. session is normally the current UTC date; weekends are
+    skipped and market holidays harmlessly fall through to the next candidate.
+    """
+
+    anchor = today or dt.datetime.now(dt.timezone.utc).date()
+    candidates: list[str] = []
+    if NASDAQ_TRADE_DATE_OVERRIDE:
+        candidates.append(NASDAQ_TRADE_DATE_OVERRIDE)
+    for offset in range(0, lookback_days + 1):
+        candidate = anchor - dt.timedelta(days=offset)
+        if candidate.weekday() >= 5:
+            continue
+        iso = candidate.isoformat()
+        if iso not in candidates:
+            candidates.append(iso)
+    return candidates
+
+
 def fetch_constituents() -> tuple[list[dict[str, Any]], dict[str, Any], list[str]]:
     failures: list[str] = []
-    try:
-        payload = http_json(
-            "https://indexes.nasdaqomx.com/Index/WeightingData",
-            data={"id": "SOX", "tradeDate": NASDAQ_DATE, "timeOfDay": "SOD"},
-        )
-        rows = payload.get("aaData") or []
-        constituents = []
-        for row in rows:
-            symbol = str(row.get("Symbol") or "").strip().upper()
-            if not symbol:
-                continue
-            constituents.append({
-                "ticker": symbol,
-                "indexName": str(row.get("Name") or COMPANY_ALIASES.get(symbol, symbol)).strip(),
-                "displayName": COMPANY_ALIASES.get(symbol, str(row.get("Name") or symbol).title()),
-                "officialWeight": clean_number(row.get("SecurityWeightingPct")),
-            })
-        if len(constituents) >= EXPECTED_MIN_CONSTITUENTS:
-            return constituents, {
-                "source": "Nasdaq Global Index Watch /Index/WeightingData",
-                "tradeDate": NASDAQ_DATE,
-                "timeOfDay": "SOD",
-                "recordCount": len(constituents),
-                "officialWeightsAvailable": any(c.get("officialWeight") is not None for c in constituents),
-            }, failures
-        failures.append(f"Nasdaq constituent count too low: {len(constituents)}")
-    except Exception as exc:  # noqa: BLE001 - source failure is captured in JSON
-        failures.append(f"Nasdaq WeightingData failed: {type(exc).__name__}: {exc}")
+    candidates = recent_trade_date_candidates()
+    for trade_date in candidates:
+        try:
+            payload = http_json(
+                "https://indexes.nasdaqomx.com/Index/WeightingData",
+                data={"id": "SOX", "tradeDate": trade_date, "timeOfDay": "SOD"},
+            )
+            rows = payload.get("aaData") or []
+            constituents = []
+            for row in rows:
+                symbol = str(row.get("Symbol") or "").strip().upper()
+                if not symbol:
+                    continue
+                constituents.append({
+                    "ticker": symbol,
+                    "indexName": str(row.get("Name") or COMPANY_ALIASES.get(symbol, symbol)).strip(),
+                    "displayName": COMPANY_ALIASES.get(symbol, str(row.get("Name") or symbol).title()),
+                    "officialWeight": clean_number(row.get("SecurityWeightingPct")),
+                })
+            if len(constituents) >= EXPECTED_MIN_CONSTITUENTS:
+                return constituents, {
+                    "source": "Nasdaq Global Index Watch /Index/WeightingData",
+                    "tradeDate": trade_date,
+                    "requestedTradeDates": candidates,
+                    "timeOfDay": "SOD",
+                    "recordCount": len(constituents),
+                    "officialWeightsAvailable": any(c.get("officialWeight") is not None for c in constituents),
+                    "override": bool(NASDAQ_TRADE_DATE_OVERRIDE),
+                }, failures
+            failures.append(f"Nasdaq constituent count too low for {trade_date}: {len(constituents)}")
+        except Exception as exc:  # noqa: BLE001 - source failure is captured in JSON
+            failures.append(f"Nasdaq WeightingData failed for {trade_date}: {type(exc).__name__}: {exc}")
 
     return [
         {"ticker": ticker, "indexName": name, "displayName": COMPANY_ALIASES.get(ticker, name.title()), "officialWeight": None}
         for ticker, name in SEED_CONSTITUENTS
     ], {
         "source": "bundled seed from last verified Nasdaq free SOX constituent list",
-        "tradeDate": NASDAQ_DATE,
+        "tradeDate": candidates[0] if candidates else None,
+        "requestedTradeDates": candidates,
         "timeOfDay": "SOD",
         "recordCount": len(SEED_CONSTITUENTS),
         "officialWeightsAvailable": False,
@@ -579,6 +607,10 @@ def build_payload(rows: list[dict[str, Any]], constituent_meta: dict[str, Any], 
                 "usage": "Daily chart history, market cap, PE, revenue, net income, EPS timeseries for generated analytics.",
             },
         },
+        "history": {
+            "url": "data/sox-history.json",
+            "policy": "Each successful refresh appends or replaces the stored snapshot for its dataAsOf date so the browser can inspect prior generated dates.",
+        },
         "status": {
             "level": "ok" if not failures and price_coverage >= EXPECTED_MIN_CONSTITUENTS else "degraded",
             "message": "Generated from live public sources." if not failures else "Generated with partial source failures; see failures list.",
@@ -607,34 +639,134 @@ def build_payload(rows: list[dict[str, Any]], constituent_meta: dict[str, Any], 
     }
 
 
-def build_summary(analysis: dict[str, Any]) -> dict[str, Any]:
+def compact_history_snapshot(analysis: dict[str, Any]) -> dict[str, Any]:
+    """Return a browser-usable historical snapshot without heavy price charts."""
+
+    constituents = []
+    for row in analysis.get("constituents") or []:
+        if not isinstance(row, dict):
+            continue
+        compact = dict(row)
+        compact.pop("chart", None)
+        constituents.append(compact)
+    return {
+        "schemaVersion": analysis.get("schemaVersion", 1),
+        "projectId": "sox",
+        "generatedAt": analysis.get("generatedAt"),
+        "dataAsOf": analysis.get("dataAsOf"),
+        "index": analysis.get("index"),
+        "coverage": analysis.get("coverage"),
+        "sources": analysis.get("sources"),
+        "status": analysis.get("status"),
+        "summaryCards": analysis.get("summaryCards"),
+        "leaders": analysis.get("leaders"),
+        "constituents": constituents,
+        "methodology": analysis.get("methodology"),
+    }
+
+
+def _load_json_object(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def build_history(analysis: dict[str, Any]) -> dict[str, Any]:
+    """Merge the latest generated analysis into stored per-date snapshots."""
+
+    snapshots_by_date: dict[str, dict[str, Any]] = {}
+
+    existing_history = _load_json_object(HISTORY_PATH)
+    for snapshot in existing_history.get("snapshots") or []:
+        if isinstance(snapshot, dict) and snapshot.get("dataAsOf"):
+            snapshots_by_date[str(snapshot["dataAsOf"])] = snapshot
+
+    existing_analysis = _load_json_object(ANALYSIS_PATH)
+    if existing_analysis.get("dataAsOf"):
+        snapshots_by_date[str(existing_analysis["dataAsOf"])] = compact_history_snapshot(existing_analysis)
+
+    if analysis.get("dataAsOf"):
+        snapshots_by_date[str(analysis["dataAsOf"])] = compact_history_snapshot(analysis)
+
+    snapshots = sorted(snapshots_by_date.values(), key=lambda item: str(item.get("dataAsOf") or ""), reverse=True)
+    return {
+        "schemaVersion": 1,
+        "projectId": "sox",
+        "generatedAt": analysis.get("generatedAt") or now_iso(),
+        "latestDataAsOf": analysis.get("dataAsOf"),
+        "snapshotCount": len(snapshots),
+        "snapshots": snapshots,
+    }
+
+
+def build_summary(analysis: dict[str, Any], history: dict[str, Any] | None = None) -> dict[str, Any]:
     leaders = analysis.get("leaders", {}).get("combined", [])[:5]
     primary = []
-    for row in leaders:
+    for index, row in enumerate(leaders, start=1):
         primary.append({
             "id": row.get("ticker"),
+            "symbol": row.get("ticker"),
             "label": row.get("ticker"),
             "name": row.get("name"),
             "metrics": {
+                "rank": row.get("rank") or index,
                 "score": row.get("combined"),
                 "priceMomentum": row.get("priceMomentum"),
                 "earningsMomentum": row.get("earningsMomentum"),
                 "weight": row.get("proxyWeight"),
             },
             "status": row.get("label"),
+            "signals": [row.get("label")] if row.get("label") else [],
+            "warnings": ["Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."],
         })
+    coverage = analysis.get("coverage") or {}
+    history = history or {}
     return {
         "schemaVersion": 1,
         "contract": "quant-research-summary",
         "projectId": "sox",
         "projectName": "SOX Semiconductor Index",
-        "status": analysis.get("status", {}).get("level", "unknown"),
+        "status": {
+            "state": analysis.get("status", {}).get("level", "unknown"),
+            "label": analysis.get("status", {}).get("message", "SOX public summary"),
+            "cadence": "scheduled 07:30/09:30/11:30/13:30 KST Tue-Sat plus reviewed workflow_dispatch",
+            "expectedFreshnessDays": 3,
+            "degradedReasons": analysis.get("status", {}).get("failures", [])[:5],
+        },
         "generatedAt": analysis.get("generatedAt"),
         "dataAsOf": analysis.get("dataAsOf"),
         "summary": "SOX 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀을 정적 JSON으로 비교합니다.",
         "primaryEntities": primary,
         "sourceUrl": "https://sonchanggi.github.io/sox/data/sox-analysis.json",
+        "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
         "pageUrl": "https://sonchanggi.github.io/sox/",
+        "coverage": {
+            "entityCount": analysis.get("index", {}).get("constituentCount"),
+            "price": coverage.get("price"),
+            "marketCap": coverage.get("marketCap"),
+            "fundamentals": coverage.get("fundamentals"),
+            "snapshotCount": history.get("snapshotCount", 0),
+            "historyStorage": "data/sox-history.json",
+        },
+        "automation": {
+            "workflowUrl": "https://github.com/SonChangGi/sox/actions/workflows/deploy-pages.yml",
+            "manualUpdateLabel": "GitHub Actions deploy-pages 수동 실행",
+            "tokenPolicy": "Static page keeps no GitHub token; refresh script owns public-source access.",
+            "scheduleKst": ["07:30 Tue-Sat", "09:30 Tue-Sat retry", "11:30 Tue-Sat retry", "13:30 Tue-Sat retry"],
+            "validation": "npm test verifies generated analysis, history, summary contract, browser endpoint boundaries, and static smoke readback.",
+        },
+        "limitations": [
+            "Research only; not investment advice.",
+            analysis.get("methodology", {}).get("weightCaveat"),
+            "Nasdaq/Yahoo public endpoints can lag or omit fields; failed providers are captured in status.degradedReasons.",
+            analysis.get("status", {}).get("publicPagesReadback"),
+        ],
+        "sources": [
+            {"label": "Nasdaq Global Index Watch", "url": "https://indexes.nasdaqomx.com/Index/Weighting/SOX"},
+            {"label": "Yahoo Finance public endpoints", "url": "https://query1.finance.yahoo.com/"},
+        ],
         "freshness": {
             "status": analysis.get("status", {}).get("level", "unknown"),
             "detail": analysis.get("status", {}).get("message"),
@@ -674,10 +806,13 @@ def main() -> int:
                     })
         enrich_scores(rows)
         analysis = build_payload(rows, meta, failures)
-        summary = build_summary(analysis)
+        history = build_history(analysis)
+        summary = build_summary(analysis, history)
         ANALYSIS_PATH.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
         SUMMARY_PATH.write_text(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
         print(f"wrote {ANALYSIS_PATH} ({len(rows)} constituents, status={analysis['status']['level']})")
+        print(f"wrote {HISTORY_PATH} ({history['snapshotCount']} stored snapshots)")
         print(f"wrote {SUMMARY_PATH}")
         return 0
     except Exception as exc:  # noqa: BLE001

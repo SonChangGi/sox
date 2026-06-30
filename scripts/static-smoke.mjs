@@ -39,20 +39,26 @@ async function fetchText(base, pathname) {
 const port = await listen();
 const base = `http://127.0.0.1:${port}`;
 try {
-  const [html, app, css, analysis, summary] = await Promise.all([
+  const [html, app, css, analysis, history, summary] = await Promise.all([
     fetchText(base, '/'),
     fetchText(base, '/assets/app.js'),
     fetchText(base, '/assets/styles.css'),
     fetchText(base, '/data/sox-analysis.json'),
+    fetchText(base, '/data/sox-history.json'),
     fetchText(base, '/data/summary.json'),
   ]);
+  const parsedAnalysis = JSON.parse(analysis);
+  const parsedHistory = JSON.parse(history);
+  const parsedSummary = JSON.parse(summary);
   const assertions = [
     ['html shell marker', html.includes('SOX Semiconductor Index')],
     ['quant-dashboard link', html.includes('https://sonchanggi.github.io/quant-dashboard/')],
     ['app generated-json marker', app.includes('data/sox-analysis.json')],
+    ['app history-json marker', app.includes('data/sox-history.json')],
     ['css dashboard marker', css.includes('--cyan')],
-    ['analysis JSON marker', JSON.parse(analysis).projectId === 'sox'],
-    ['summary JSON marker', JSON.parse(summary).contract === 'quant-research-summary'],
+    ['analysis JSON marker', parsedAnalysis.projectId === 'sox'],
+    ['history JSON marker', parsedHistory.projectId === 'sox' && parsedHistory.snapshots?.some((snapshot) => snapshot.dataAsOf === parsedAnalysis.dataAsOf)],
+    ['summary JSON marker', parsedSummary.contract === 'quant-research-summary'],
   ];
   const failed = assertions.filter(([, ok]) => !ok);
   if (failed.length) throw new Error(`static smoke failed: ${failed.map(([name]) => name).join(', ')}`);

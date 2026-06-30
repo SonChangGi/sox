@@ -85,6 +85,10 @@ h3 { font-size: clamp(1.2rem, 2.1vw, 1.8rem); }
 }
 .hero-note { align-self: end; padding: 24px; }
 .hero-note p { margin: 10px 0 0; color: var(--muted); line-height: 1.7; }
+.snapshot-control { margin-top: 18px; display: grid; gap: 8px; }
+.snapshot-control label { color: var(--ink); font-weight: 850; letter-spacing: -0.01em; }
+.snapshot-control select { width: 100%; }
+.snapshot-summary { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
 .status-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 
 .section { width: min(1240px, calc(100% - 40px)); margin: 0 auto 46px; }
@@ -307,4 +311,3 @@ td.name-cell { color: var(--muted); max-width: 220px; overflow: hidden; text-ove
     line-height: 1.14;
   }
 }
-

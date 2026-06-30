@@ -33,9 +33,16 @@
       <aside class="hero-note" aria-label="데이터 정책">
         <strong>데이터 정책</strong>
         <p>
-          브라우저는 <code>data/sox-analysis.json</code>과 <code>data/summary.json</code>만 읽습니다.
+          브라우저는 <code>data/sox-analysis.json</code>, <code>data/sox-history.json</code>, <code>data/summary.json</code>만 읽습니다.
           외부 금융 데이터 접근은 로컬 refresh script에서 처리하며, 공식 비중이 없으면 시가총액 정규화 프록시로 표시합니다.
         </p>
+        <div class="snapshot-control">
+          <label for="snapshot-date-select">저장 기준일 선택</label>
+          <select id="snapshot-date-select" disabled>
+            <option>snapshot loading</option>
+          </select>
+          <p id="snapshot-summary" class="snapshot-summary">저장된 날짜 목록을 불러오는 중입니다.</p>
+        </div>
         <div id="source-status" class="status-stack" aria-live="polite">
           <span class="status-chip neutral">generated JSON loading</span>
         </div>

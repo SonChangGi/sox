@@ -7,7 +7,8 @@
     "refresh": "python3 scripts/fetch_sox_data.py --offline-ok",
     "verify": "node scripts/verify.mjs",
     "test:smoke": "node scripts/static-smoke.mjs",
-    "test": "npm run refresh && node --check assets/app.js && npm run verify && npm run test:smoke"
+    "test": "python3 -m py_compile scripts/fetch_sox_data.py scripts/check_sox_freshness.py && node --check assets/app.js && node --check scripts/verify.mjs && node --check scripts/static-smoke.mjs && npm run verify && npm run test:smoke",
+    "test:refresh": "npm run refresh && npm test"
   },
   "engines": {
     "node": ">=18"

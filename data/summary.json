@@ -1,16 +1,52 @@
 {
+  "automation": {
+    "manualUpdateLabel": "GitHub Actions deploy-pages 수동 실행",
+    "scheduleKst": [
+      "07:30 Tue-Sat",
+      "09:30 Tue-Sat retry",
+      "11:30 Tue-Sat retry",
+      "13:30 Tue-Sat retry"
+    ],
+    "tokenPolicy": "Static page keeps no GitHub token; refresh script owns public-source access.",
+    "validation": "npm test verifies generated analysis, history, summary contract, browser endpoint boundaries, and static smoke readback.",
+    "workflowUrl": "https://github.com/SonChangGi/sox/actions/workflows/deploy-pages.yml"
+  },
   "caveats": [
     "Research only; not investment advice.",
     "Proxy weights are normalized by Yahoo trailing market cap and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
     "pending: verify https://sonchanggi.github.io/sox/ after GitHub Pages deployment"
   ],
   "contract": "quant-research-summary",
-  "dataAsOf": "2026-06-26",
+  "coverage": {
+    "entityCount": 30,
+    "fundamentals": {
+      "count": 30,
+      "ratio": 1.0
+    },
+    "historyStorage": "data/sox-history.json",
+    "marketCap": {
+      "count": 30,
+      "ratio": 1.0
+    },
+    "price": {
+      "count": 30,
+      "ratio": 1.0
+    },
+    "snapshotCount": 2
+  },
+  "dataAsOf": "2026-06-29",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-06-29T01:25:02Z",
+  "generatedAt": "2026-06-30T05:35:51Z",
+  "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
+  "limitations": [
+    "Research only; not investment advice.",
+    "Proxy weights are normalized by Yahoo trailing market cap and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
+    "Nasdaq/Yahoo public endpoints can lag or omit fields; failed providers are captured in status.degradedReasons.",
+    "pending: verify https://sonchanggi.github.io/sox/ after GitHub Pages deployment"
+  ],
   "pageUrl": "https://sonchanggi.github.io/sox/",
   "primaryEntities": [
     {
@@ -18,66 +54,122 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.9765517241379311,
-        "score": 0.9847758620689657,
-        "weight": 0.08575927305003478
+        "priceMomentum": 0.943448275862069,
+        "rank": 1,
+        "score": 0.9665689655172414,
+        "weight": 0.0856929644836898
       },
       "name": "Micron Technology",
-      "status": "가격·실적 동반 강세"
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "MU",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
     },
     {
       "id": "ALAB",
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.8717241379310345,
-        "score": 0.8285862068965517,
-        "weight": 0.0045028945806495895
+        "priceMomentum": 0.9351724137931035,
+        "rank": 2,
+        "score": 0.8634827586206897,
+        "weight": 0.004448536853159434
       },
       "name": "Astera Labs",
-      "status": "가격·실적 동반 강세"
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "ALAB",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
     },
     {
       "id": "TER",
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8293103448275861,
-        "priceMomentum": 0.7255172413793104,
-        "score": 0.7722241379310345,
-        "weight": 0.004586026253616049
+        "priceMomentum": 0.7496551724137931,
+        "rank": 3,
+        "score": 0.7855,
+        "weight": 0.004530664983017349
       },
       "name": "Teradyne",
-      "status": "가격·실적 동반 강세"
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "TER",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "CRDO",
+      "label": "CRDO",
+      "metrics": {
+        "earningsMomentum": 0.9103448275862069,
+        "priceMomentum": 0.603448275862069,
+        "rank": 4,
+        "score": 0.741551724137931,
+        "weight": 0.002940306899127732
+      },
+      "name": "Credo Technology",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "CRDO",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
     },
     {
       "id": "AMD",
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6517241379310345,
-        "priceMomentum": 0.8206896551724138,
-        "score": 0.7446551724137931,
-        "weight": 0.05703368935189604
+        "priceMomentum": 0.7820689655172414,
+        "rank": 5,
+        "score": 0.7234137931034483,
+        "weight": 0.05634519405447752
       },
       "name": "Advanced Micro Devices",
-      "status": "중립/혼재"
-    },
-    {
-      "id": "CRDO",
-      "label": "CRDO",
-      "metrics": {
-        "earningsMomentum": 0.9086206896551725,
-        "priceMomentum": 0.5910344827586207,
-        "score": 0.733948275862069,
-        "weight": 0.0029762352068918225
-      },
-      "name": "Credo Technology",
-      "status": "중립/혼재"
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "AMD",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
     }
   ],
   "projectId": "sox",
   "projectName": "SOX Semiconductor Index",
   "schemaVersion": 1,
   "sourceUrl": "https://sonchanggi.github.io/sox/data/sox-analysis.json",
-  "status": "ok",
+  "sources": [
+    {
+      "label": "Nasdaq Global Index Watch",
+      "url": "https://indexes.nasdaqomx.com/Index/Weighting/SOX"
+    },
+    {
+      "label": "Yahoo Finance public endpoints",
+      "url": "https://query1.finance.yahoo.com/"
+    }
+  ],
+  "status": {
+    "cadence": "scheduled 07:30/09:30/11:30/13:30 KST Tue-Sat plus reviewed workflow_dispatch",
+    "degradedReasons": [],
+    "expectedFreshnessDays": 3,
+    "label": "Generated from live public sources.",
+    "state": "ok"
+  },
   "summary": "SOX 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀을 정적 JSON으로 비교합니다."
 }
