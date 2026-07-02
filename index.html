@@ -6,9 +6,9 @@
   <meta name="description" content="SOX 필라델피아 반도체 지수 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀을 비교하는 정적 리서치 대시보드" />
   <title>SOX Semiconductor Research Cockpit</title>
   <link rel="stylesheet" href="assets/styles.css" />
-  <link rel="stylesheet" href="assets/common-ui.css?v=20260701-ralph-table-v5d" />
+  <link rel="stylesheet" href="assets/common-ui.css?v=20260702-light-system-v6" />
   <script src="assets/app.js" defer></script>
-  <script src="assets/common-ui.js?v=20260701-fullpage-v4" defer></script>
+  <script src="assets/common-ui.js?v=20260702-light-system-v6" defer></script>
 </head>
 <body id="top">
   <header class="hero" aria-labelledby="page-title">
@@ -23,8 +23,8 @@
         <p class="eyebrow">SOX Semiconductor Index</p>
         <h1 id="page-title">필라델피아 반도체 지수 리서치 cockpit</h1>
         <p class="hero-copy">
-          SOX 구성종목의 프록시 비중, 가격·실적 모멘텀, 밸류에이션 맥락을 비교합니다.
-          모든 수치는 리서치 관찰용이며 투자 조언이 아닙니다.
+          SOX 구성종목의 프록시 비중과 가격·실적 모멘텀을 먼저 비교합니다.
+          세부 산식과 데이터 한계는 접힘 영역에서 확인합니다.
         </p>
         <div class="hero-actions" aria-label="주요 섹션 바로가기">
           <a href="#constituents">종목 테이블 보기</a>
@@ -36,7 +36,7 @@
         <strong>데이터 정책</strong>
         <p>
           브라우저는 커밋된 <code>data/sox-analysis.json</code>, <code>data/sox-history.json</code>, <code>data/summary.json</code>만 읽습니다.
-          공식 비중이 없으면 시가총액 정규화 프록시로 명확히 표시합니다.
+          공식 비중이 없으면 시가총액 정규화 프록시로 표시하며, 투자 조언이 아닙니다.
         </p>
         <div class="snapshot-control">
           <label for="snapshot-date-select">저장 기준일 선택</label>
@@ -159,7 +159,9 @@
       </div>
     </section>
 
-    <section class="section methodology-section" id="methodology" aria-labelledby="methodology-title">
+    <details class="section methodology-section" id="methodology" aria-labelledby="methodology-title">
+      <summary>방법론과 데이터 한계</summary>
+      <div class="details-body">
       <div class="section-heading">
         <p class="eyebrow">Methodology & Caveats</p>
         <h2 id="methodology-title">방법론과 한계</h2>
@@ -181,7 +183,8 @@
           <p>본 페이지는 개인 리서치 대시보드이며 투자, 세무, 법률 또는 매매 조언이 아닙니다. 공개 데이터는 지연, 누락, 변경될 수 있습니다.</p>
         </article>
       </div>
-    </section>
+      </div>
+    </details>
   </main>
 
   <footer class="site-footer">
