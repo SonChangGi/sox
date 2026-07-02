@@ -29,17 +29,17 @@
       "ratio": 1.0
     },
     "price": {
-      "count": 30,
-      "ratio": 1.0
+      "count": 29,
+      "ratio": 0.9666666666666667
     },
-    "snapshotCount": 4
+    "snapshotCount": 5
   },
-  "dataAsOf": "2026-07-01",
+  "dataAsOf": "2026-07-02",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-01T23:52:42Z",
+  "generatedAt": "2026-07-02T23:40:16Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -53,11 +53,11 @@
       "id": "MU",
       "label": "MU",
       "metrics": {
-        "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8786206896551725,
+        "earningsMomentum": 0.9948275862068966,
+        "priceMomentum": 0.9142857142857143,
         "rank": 1,
-        "score": 0.9301379310344828,
-        "weight": 0.08262635133405624
+        "score": 0.9505295566502463,
+        "weight": 0.07665421071464644
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.9227586206896552,
+        "priceMomentum": 0.9321428571428572,
         "rank": 2,
-        "score": 0.8566551724137932,
-        "weight": 0.005247525274053098
+        "score": 0.8618165024630542,
+        "weight": 0.004855796340410963
       },
       "name": "Astera Labs",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9086206896551725,
-        "priceMomentum": 0.6848275862068965,
+        "priceMomentum": 0.7235714285714286,
         "rank": 3,
-        "score": 0.7855344827586208,
-        "weight": 0.0032142149788957964
+        "score": 0.8068435960591134,
+        "weight": 0.0031766646445792767
       },
       "name": "Credo Technology",
       "signals": [
@@ -110,41 +110,41 @@
       ]
     },
     {
-      "id": "TER",
-      "label": "TER",
+      "id": "INTC",
+      "label": "INTC",
       "metrics": {
-        "earningsMomentum": 0.8293103448275861,
-        "priceMomentum": 0.6903448275862069,
+        "earningsMomentum": 0.5206896551724138,
+        "priceMomentum": 0.9064285714285715,
         "rank": 4,
-        "score": 0.7528793103448276,
-        "weight": 0.004800556543717233
+        "score": 0.7328460591133006,
+        "weight": 0.041974733359772684
       },
-      "name": "Teradyne",
+      "name": "Intel",
       "signals": [
-        "가격·실적 동반 강세"
+        "중립/혼재"
       ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "TER",
+      "status": "중립/혼재",
+      "symbol": "INTC",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
     },
     {
-      "id": "AMD",
-      "label": "AMD",
+      "id": "TER",
+      "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.65,
-        "priceMomentum": 0.8110344827586207,
+        "earningsMomentum": 0.8293103448275861,
+        "priceMomentum": 0.5735714285714286,
         "rank": 5,
-        "score": 0.7385689655172414,
-        "weight": 0.060036442955293666
+        "score": 0.6886539408866995,
+        "weight": 0.004398435488368131
       },
-      "name": "Advanced Micro Devices",
+      "name": "Teradyne",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "AMD",
+      "symbol": "TER",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
