@@ -29,17 +29,17 @@
       "ratio": 1.0
     },
     "price": {
-      "count": 29,
-      "ratio": 0.9666666666666667
+      "count": 30,
+      "ratio": 1.0
     },
     "snapshotCount": 5
   },
   "dataAsOf": "2026-07-02",
   "freshness": {
-    "detail": "Generated from live public sources.",
-    "status": "ok"
+    "detail": "Generated with partial source failures; see failures list.",
+    "status": "degraded"
   },
-  "generatedAt": "2026-07-02T23:40:16Z",
+  "generatedAt": "2026-07-03T23:36:48Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.9142857142857143,
+        "priceMomentum": 0.9103448275862069,
         "rank": 1,
-        "score": 0.9505295566502463,
-        "weight": 0.07665421071464644
+        "score": 0.9483620689655172,
+        "weight": 0.0774119726981082
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.9321428571428572,
+        "priceMomentum": 0.9241379310344828,
         "rank": 2,
-        "score": 0.8618165024630542,
-        "weight": 0.004855796340410963
+        "score": 0.8574137931034483,
+        "weight": 0.004903798111375557
       },
       "name": "Astera Labs",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9086206896551725,
-        "priceMomentum": 0.7235714285714286,
+        "priceMomentum": 0.7096551724137931,
         "rank": 3,
-        "score": 0.8068435960591134,
-        "weight": 0.0031766646445792767
+        "score": 0.7991896551724138,
+        "weight": 0.0032080674296243164
       },
       "name": "Credo Technology",
       "signals": [
@@ -110,14 +110,34 @@
       ]
     },
     {
+      "id": "AMD",
+      "label": "AMD",
+      "metrics": {
+        "earningsMomentum": 0.65,
+        "priceMomentum": 0.8489655172413794,
+        "rank": 4,
+        "score": 0.7594310344827587,
+        "weight": 0.056065009551471055
+      },
+      "name": "Advanced Micro Devices",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "AMD",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "INTC",
       "label": "INTC",
       "metrics": {
         "earningsMomentum": 0.5206896551724138,
-        "priceMomentum": 0.9064285714285715,
-        "rank": 4,
-        "score": 0.7328460591133006,
-        "weight": 0.041974733359772684
+        "priceMomentum": 0.903448275862069,
+        "rank": 5,
+        "score": 0.7312068965517242,
+        "weight": 0.04016373110136992
       },
       "name": "Intel",
       "signals": [
@@ -125,26 +145,6 @@
       ],
       "status": "중립/혼재",
       "symbol": "INTC",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
-      "id": "TER",
-      "label": "TER",
-      "metrics": {
-        "earningsMomentum": 0.8293103448275861,
-        "priceMomentum": 0.5735714285714286,
-        "rank": 5,
-        "score": 0.6886539408866995,
-        "weight": 0.004398435488368131
-      },
-      "name": "Teradyne",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "TER",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
@@ -166,10 +166,12 @@
   ],
   "status": {
     "cadence": "scheduled 07:30/09:30/11:30/13:30 KST Tue-Sat plus reviewed workflow_dispatch",
-    "degradedReasons": [],
+    "degradedReasons": [
+      "Nasdaq constituent count too low for 2026-07-03: 0"
+    ],
     "expectedFreshnessDays": 3,
-    "label": "Generated from live public sources.",
-    "state": "ok"
+    "label": "Generated with partial source failures; see failures list.",
+    "state": "degraded"
   },
   "summary": "SOX 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀을 정적 JSON으로 비교합니다."
 }
