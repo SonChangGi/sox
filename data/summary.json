@@ -39,7 +39,7 @@
     "detail": "Generated with partial source failures; see failures list.",
     "status": "degraded"
   },
-  "generatedAt": "2026-07-03T23:36:48Z",
+  "generatedAt": "2026-07-04T04:12:38Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.9103448275862069,
         "rank": 1,
         "score": 0.9483620689655172,
-        "weight": 0.0774119726981082
+        "weight": 0.07798460874268105
       },
       "name": "Micron Technology",
       "signals": [
@@ -77,7 +77,7 @@
         "priceMomentum": 0.9241379310344828,
         "rank": 2,
         "score": 0.8574137931034483,
-        "weight": 0.004903798111375557
+        "weight": 0.004940072752829701
       },
       "name": "Astera Labs",
       "signals": [
@@ -97,7 +97,7 @@
         "priceMomentum": 0.7096551724137931,
         "rank": 3,
         "score": 0.7991896551724138,
-        "weight": 0.0032080674296243164
+        "weight": 0.0032317983200743916
       },
       "name": "Credo Technology",
       "signals": [
@@ -117,7 +117,7 @@
         "priceMomentum": 0.8489655172413794,
         "rank": 4,
         "score": 0.7594310344827587,
-        "weight": 0.056065009551471055
+        "weight": 0.05647973668203645
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -137,7 +137,7 @@
         "priceMomentum": 0.903448275862069,
         "rank": 5,
         "score": 0.7312068965517242,
-        "weight": 0.04016373110136992
+        "weight": 0.04046083243223082
       },
       "name": "Intel",
       "signals": [
