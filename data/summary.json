@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 7
+    "snapshotCount": 8
   },
-  "dataAsOf": "2026-07-07",
+  "dataAsOf": "2026-07-08",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-07T23:30:46Z",
+  "generatedAt": "2026-07-08T23:38:21Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.9117241379310345,
+        "priceMomentum": 0.92,
         "rank": 1,
-        "score": 0.9491206896551725,
-        "weight": 0.0748854146336011
+        "score": 0.9536724137931036,
+        "weight": 0.07489245754372449
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "ALAB",
-      "label": "ALAB",
-      "metrics": {
-        "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.9172413793103449,
-        "rank": 2,
-        "score": 0.8536206896551725,
-        "weight": 0.004734826924662187
-      },
-      "name": "Astera Labs",
-      "signals": [
-        "가격·실적 동반 강세"
-      ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "ALAB",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "CRDO",
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9086206896551725,
-        "priceMomentum": 0.8062068965517242,
-        "rank": 3,
-        "score": 0.8522931034482759,
-        "weight": 0.003066050407661702
+        "priceMomentum": 0.8303448275862069,
+        "rank": 2,
+        "score": 0.8655689655172415,
+        "weight": 0.0030663387671180874
       },
       "name": "Credo Technology",
       "signals": [
@@ -110,14 +90,34 @@
       ]
     },
     {
+      "id": "ALAB",
+      "label": "ALAB",
+      "metrics": {
+        "earningsMomentum": 0.7758620689655172,
+        "priceMomentum": 0.9262068965517242,
+        "rank": 3,
+        "score": 0.8585517241379311,
+        "weight": 0.00473527223114334
+      },
+      "name": "Astera Labs",
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "ALAB",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "AMD",
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.65,
-        "priceMomentum": 0.883448275862069,
+        "priceMomentum": 0.8724137931034484,
         "rank": 4,
-        "score": 0.778396551724138,
-        "weight": 0.057388454958534764
+        "score": 0.7723275862068967,
+        "weight": 0.05739385229434936
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -134,10 +134,10 @@
       "label": "INTC",
       "metrics": {
         "earningsMomentum": 0.5206896551724138,
-        "priceMomentum": 0.8606896551724138,
+        "priceMomentum": 0.8365517241379311,
         "rank": 5,
-        "score": 0.7076896551724139,
-        "weight": 0.041111818079003465
+        "score": 0.6944137931034484,
+        "weight": 0.04111568461083955
       },
       "name": "Intel",
       "signals": [
