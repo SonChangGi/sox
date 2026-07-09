@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 8
+    "snapshotCount": 9
   },
-  "dataAsOf": "2026-07-08",
+  "dataAsOf": "2026-07-09",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-08T23:38:21Z",
+  "generatedAt": "2026-07-09T23:47:32Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.92,
+        "priceMomentum": 0.9227586206896552,
         "rank": 1,
-        "score": 0.9536724137931036,
-        "weight": 0.07489245754372449
+        "score": 0.9551896551724139,
+        "weight": 0.07216303942135313
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9086206896551725,
-        "priceMomentum": 0.8303448275862069,
+        "priceMomentum": 0.8351724137931035,
         "rank": 2,
-        "score": 0.8655689655172415,
-        "weight": 0.0030663387671180874
+        "score": 0.8682241379310346,
+        "weight": 0.0032486430645858773
       },
       "name": "Credo Technology",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.9262068965517242,
+        "priceMomentum": 0.9386206896551724,
         "rank": 3,
-        "score": 0.8585517241379311,
-        "weight": 0.00473527223114334
+        "score": 0.8653793103448276,
+        "weight": 0.004538321416374087
       },
       "name": "Astera Labs",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.65,
-        "priceMomentum": 0.8724137931034484,
+        "priceMomentum": 0.8896551724137931,
         "rank": 4,
-        "score": 0.7723275862068967,
-        "weight": 0.05739385229434936
+        "score": 0.7818103448275863,
+        "weight": 0.05681633564640074
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -134,10 +134,10 @@
       "label": "INTC",
       "metrics": {
         "earningsMomentum": 0.5206896551724138,
-        "priceMomentum": 0.8365517241379311,
+        "priceMomentum": 0.7875862068965517,
         "rank": 5,
-        "score": 0.6944137931034484,
-        "weight": 0.04111568461083955
+        "score": 0.6674827586206897,
+        "weight": 0.03731270031218668
       },
       "name": "Intel",
       "signals": [
