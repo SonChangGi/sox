@@ -3,6 +3,7 @@
 
   const DATA_URL = 'data/sox-analysis.json';
   const HISTORY_URL = 'data/sox-history.json';
+  const THEME_STORAGE_KEY = 'sox-theme';
   const state = {
     analysis: null,
     latestAnalysis: null,
@@ -32,11 +33,14 @@
     tableBody: document.querySelector('#constituent-body'),
     sourceList: document.querySelector('#source-list'),
     weightCaveat: document.querySelector('#weight-caveat'),
+    themeToggle: document.querySelector('#theme-toggle'),
+    themeToggleText: document.querySelector('.theme-toggle-text'),
   };
 
   document.addEventListener('DOMContentLoaded', init);
 
   async function init() {
+    initTheme();
     bindControls();
     try {
       const [analysis, history] = await Promise.all([
@@ -70,6 +74,10 @@
   }
 
   function bindControls() {
+    els.themeToggle?.addEventListener('click', () => {
+      const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      setTheme(nextTheme, { persist: true });
+    });
     els.searchInput?.addEventListener('input', updateTable);
     els.sortSelect?.addEventListener('change', () => {
       state.sortKey = els.sortSelect.value;
@@ -97,6 +105,24 @@
     els.snapshotDate?.addEventListener('change', () => {
       applySnapshot(els.snapshotDate.value, { updateUrl: true });
     });
+  }
+
+  function initTheme() {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const theme = storedTheme === 'dark' ? 'dark' : 'light';
+    setTheme(theme, { persist: false });
+  }
+
+  function setTheme(theme, options = {}) {
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = nextTheme;
+    if (options.persist) localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    const isDark = nextTheme === 'dark';
+    if (els.themeToggle) {
+      els.themeToggle.setAttribute('aria-pressed', String(isDark));
+      els.themeToggle.setAttribute('aria-label', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
+    }
+    if (els.themeToggleText) els.themeToggleText.textContent = isDark ? '라이트 모드' : '다크 모드';
   }
 
   function renderAll() {

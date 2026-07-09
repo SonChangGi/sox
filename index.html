@@ -1,25 +1,44 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
   <meta name="description" content="SOX 필라델피아 반도체 지수 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀을 비교하는 정적 리서치 대시보드" />
   <title>SOX Semiconductor Research Cockpit</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script src="assets/app.js" defer></script>
+  <script>
+    (() => {
+      const storedTheme = localStorage.getItem('sox-theme');
+      document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/styles.css?v=20260710-hero-card-fix" />
+  <script src="assets/app.js?v=20260710-hero-card-fix" defer></script>
 </head>
 <body id="top">
+  <nav class="site-nav" aria-label="연결 프로젝트 바로가기">
+    <a class="site-nav-brand" href="https://sonchanggi.github.io/quant-dashboard/" aria-label="Quant Research Hub로 이동">Quant Research Hub</a>
+    <div class="site-nav-links" aria-label="프로젝트 목록">
+      <a href="https://sonchanggi.github.io/quant-dashboard/">Hub</a>
+      <a href="https://sonchanggi.github.io/momentum-factor-lab/">Momentum</a>
+      <a href="https://sonchanggi.github.io/dram-price/">DRAM</a>
+      <a href="https://sonchanggi.github.io/best-factor/">Best Factor</a>
+      <a href="https://sonchanggi.github.io/etf-tracking/">ETF</a>
+      <a class="is-active" href="#top" aria-current="page">SOX</a>
+      <a href="https://sonchanggi.github.io/quant-dashboard/risk-score/">Risk</a>
+      <a href="https://sonchanggi.github.io/port/">Port</a>
+      <a href="https://sonchanggi.github.io/valuation/">Valuation</a>
+    </div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="다크 모드로 전환">
+      <span class="theme-toggle-icon" aria-hidden="true"></span>
+      <span class="theme-toggle-text">다크 모드</span>
+    </button>
+  </nav>
   <header class="hero" aria-labelledby="page-title">
-    <nav class="top-nav" aria-label="프로젝트 이동">
-      <a href="https://sonchanggi.github.io/quant-dashboard/">← Quant Research Hub</a>
-      <a href="#momentum">Momentum</a>
-      <a href="#constituents">Constituents</a>
-      <a href="#methodology">Methodology</a>
-    </nav>
     <div class="hero-grid">
       <div>
         <p class="eyebrow">SOX Semiconductor Index</p>
-        <h1 id="page-title">필라델피아 반도체 지수 리서치 cockpit</h1>
+        <h1 id="page-title">SOX 반도체 리서치 대시보드</h1>
         <p class="hero-copy">
           SOX 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀, 밸류에이션 컨텍스트를 정적 JSON으로 읽어
           한 화면에서 비교합니다. 모든 수치는 리서치 관찰용이며 투자 조언이 아닙니다.
@@ -32,10 +51,7 @@
       </div>
       <aside class="hero-note" aria-label="데이터 정책">
         <strong>데이터 정책</strong>
-        <p>
-          브라우저는 <code>data/sox-analysis.json</code>, <code>data/sox-history.json</code>, <code>data/summary.json</code>만 읽습니다.
-          외부 금융 데이터 접근은 로컬 refresh script에서 처리하며, 공식 비중이 없으면 시가총액 정규화 프록시로 표시합니다.
-        </p>
+        <p>정적 JSON 기준 · 공식 비중이 없으면 시가총액 프록시 사용 <span class="sr-only">data/sox-analysis.json data/sox-history.json</span></p>
         <div class="snapshot-control">
           <label for="snapshot-date-select">저장 기준일 선택</label>
           <select id="snapshot-date-select" disabled>
