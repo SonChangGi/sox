@@ -783,6 +783,17 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--offline-ok", action="store_true", help="Use existing generated JSON if live refresh fails.")
     parser.add_argument("--max-workers", type=int, default=8)
+    degraded_policy = parser.add_mutually_exclusive_group()
+    degraded_policy.add_argument(
+        "--allow-degraded",
+        action="store_true",
+        help="Exit successfully when partial provider failures are recorded in generated JSON.",
+    )
+    degraded_policy.add_argument(
+        "--fail-on-degraded",
+        action="store_true",
+        help="Exit non-zero after writing JSON if generated status is degraded.",
+    )
     args = parser.parse_args()
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     failures: list[str] = []
@@ -814,6 +825,9 @@ def main() -> int:
         print(f"wrote {ANALYSIS_PATH} ({len(rows)} constituents, status={analysis['status']['level']})")
         print(f"wrote {HISTORY_PATH} ({history['snapshotCount']} stored snapshots)")
         print(f"wrote {SUMMARY_PATH}")
+        if args.fail_on_degraded and analysis["status"]["level"] != "ok":
+            print("refresh degraded; generated JSON was written but strict mode failed the run", file=sys.stderr)
+            return 2
         return 0
     except Exception as exc:  # noqa: BLE001
         if args.offline_ok and ANALYSIS_PATH.exists() and SUMMARY_PATH.exists():

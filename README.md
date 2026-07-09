@@ -22,7 +22,7 @@
 - 허브 요약: `data/summary.json`
 - refresh script: `scripts/fetch_sox_data.py`
 
-`scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
+`scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 부분 provider 실패는 기본적으로 `status.level=degraded`와 failures 목록으로 저장하고 workflow 실패로 보지 않습니다. 엄격히 실패 처리해야 하는 수동 점검에는 `--fail-on-degraded`를 사용할 수 있습니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
 
 > 주의: `proxy weight`는 Yahoo trailing market cap을 SOX universe 안에서 정규화한 값이며, 공식 SOX 지수 비중이 아닙니다. 본 페이지는 개인 리서치용이며 투자, 세무, 법률 또는 매매 조언이 아닙니다.
 
@@ -51,6 +51,6 @@ npm test
 
 ## 배포 메모
 
-`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 `scripts/check_sox_freshness.py`가 이미 06:30 KST 이후 최신 예상 미국 정규장 기준일을 저장한 것으로 확인하면 skip하고, 실패/지연 시 다음 slot에서 다시 수집합니다.
+`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 이미 06:30 KST 이후 저장됐다고 판단하면 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing 상태이거나 수동 실행이면 다시 수집하고, generated data 커밋은 push 전에 원격 branch 위로 rebase합니다.
 
 GitHub Pages 배포 후 `https://sonchanggi.github.io/sox/`와 `https://sonchanggi.github.io/sox/data/summary.json`을 public readback으로 확인하세요.

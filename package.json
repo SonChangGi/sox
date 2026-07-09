@@ -4,10 +4,10 @@
   "private": true,
   "description": "Static SOX index research dashboard with generated finance data.",
   "scripts": {
-    "refresh": "python3 scripts/fetch_sox_data.py --offline-ok",
+    "refresh": "python3 scripts/fetch_sox_data.py --offline-ok --allow-degraded",
     "verify": "node scripts/verify.mjs",
     "test:smoke": "node scripts/static-smoke.mjs",
-    "test": "python3 -m py_compile scripts/fetch_sox_data.py scripts/check_sox_freshness.py && node --check assets/app.js && node --check scripts/verify.mjs && node --check scripts/static-smoke.mjs && npm run verify && npm run test:smoke",
+    "test": "python3 -m py_compile scripts/fetch_sox_data.py scripts/check_sox_freshness.py scripts/test_check_sox_freshness.py && python3 scripts/test_check_sox_freshness.py && node --check assets/app.js && node --check scripts/verify.mjs && node --check scripts/static-smoke.mjs && npm run verify && npm run test:smoke",
     "test:refresh": "npm run refresh && npm test"
   },
   "engines": {

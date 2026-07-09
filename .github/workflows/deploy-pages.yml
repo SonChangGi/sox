@@ -22,26 +22,42 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    outputs:
+      should_collect: ${{ steps.freshness.outputs.should_collect }}
+      should_deploy: ${{ steps.freshness.outputs.should_deploy }}
+      freshness_reason: ${{ steps.freshness.outputs.freshness_reason }}
+      expected_data_as_of: ${{ steps.freshness.outputs.expected_data_as_of }}
+      actual_data_as_of: ${{ steps.freshness.outputs.actual_data_as_of }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decide whether SOX collection is needed
+        id: freshness
+        run: |
+          python3 scripts/check_sox_freshness.py --event-name "${{ github.event_name }}" | tee /tmp/sox-freshness.env
+          cat /tmp/sox-freshness.env >> "$GITHUB_OUTPUT"
   build:
+    needs: freshness
+    if: needs.freshness.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Decide whether SOX collection is needed
-        id: freshness
-        run: python3 scripts/check_sox_freshness.py --event-name "${{ github.event_name }}" >> "$GITHUB_OUTPUT"
       - name: Refresh generated SOX data
-        if: steps.freshness.outputs.should_collect == 'true'
-        run: python3 scripts/fetch_sox_data.py --offline-ok
+        if: needs.freshness.outputs.should_collect == 'true'
+        run: python3 scripts/fetch_sox_data.py --offline-ok --allow-degraded
       - name: Verify static dashboard
         run: npm test
       - name: Commit generated SOX data
-        if: steps.freshness.outputs.should_collect == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: needs.freshness.outputs.should_collect == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           if git diff --quiet -- data/sox-analysis.json data/sox-history.json data/summary.json; then
             echo "No generated SOX data changes."
@@ -61,7 +77,11 @@ jobs:
           Not-tested: Provider completeness beyond public Nasdaq/Yahoo endpoints.
           EOF
           git commit -F /tmp/sox-data-commit-message
-          git push
+          branch="${GITHUB_REF_NAME:-main}"
+          git fetch origin "$branch:refs/remotes/origin/$branch"
+          git rebase "origin/$branch"
+          npm test
+          git push origin "HEAD:$branch"
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -71,7 +91,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: [freshness, build]
+    if: needs.freshness.outputs.should_deploy == 'true'
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
