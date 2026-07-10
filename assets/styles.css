@@ -1,16 +1,16 @@
 :root {
   color-scheme: light;
-  --bg: #f7f9fc;
-  --bg-soft: #eef4fb;
+  --bg: #f7f9fb;
+  --bg-soft: #f2f4f6;
   --surface: #ffffff;
   --surface-strong: #ffffff;
-  --surface-soft: #f3f6fb;
-  --surface-muted: #eaf1f8;
-  --ink: #171923;
-  --muted: #4b5565;
-  --faint: #7a8699;
-  --line: #dfe7f2;
-  --line-strong: #c9d6e6;
+  --surface-soft: #f2f4f6;
+  --surface-muted: #e7ecf2;
+  --ink: #191f28;
+  --muted: #6b7684;
+  --faint: #8b95a1;
+  --line: #e5e8eb;
+  --line-strong: #d1d6db;
   --accent: #3182f6;
   --accent-strong: #0f67e7;
   --accent-soft: #e8f2ff;
@@ -29,17 +29,17 @@
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b0f16;
-  --bg-soft: #101722;
-  --surface: #151b25;
-  --surface-strong: #1a2230;
-  --surface-soft: #111827;
-  --surface-muted: #202938;
-  --ink: #f4f7fb;
-  --muted: #b8c2d1;
-  --faint: #8794a8;
-  --line: #2b3647;
-  --line-strong: #3b4a60;
+  --bg: #111318;
+  --bg-soft: #151922;
+  --surface: #181d26;
+  --surface-strong: #1d2430;
+  --surface-soft: #242b38;
+  --surface-muted: #2f3848;
+  --ink: #f2f4f6;
+  --muted: #a8b2c0;
+  --faint: #8e9aad;
+  --line: #303948;
+  --line-strong: #465267;
   --accent: #74b4ff;
   --accent-strong: #9cccff;
   --accent-soft: rgba(49, 130, 246, 0.16);
@@ -72,7 +72,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   color: var(--ink);
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  background: var(--bg);
   font-size: 16px;
 }
 
@@ -92,10 +92,12 @@ code {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
-  min-height: 64px;
-  padding: 10px clamp(18px, 5vw, 72px);
-  border-bottom: 1px solid color-mix(in srgb, var(--line), transparent 12%);
+  gap: 12px;
+  width: min(1320px, calc(100% - 32px));
+  margin: 14px auto 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--surface), transparent 8%);
   backdrop-filter: blur(18px);
 }
@@ -792,16 +794,15 @@ td.name-cell {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 64px;
-  min-height: 40px;
+  width: 40px;
+  height: 40px;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 9px 12px;
+  border-radius: var(--radius-sm);
   color: var(--ink);
   background: color-mix(in srgb, var(--surface), transparent 8%);
   box-shadow: var(--shadow-soft);
   text-decoration: none;
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 900;
   backdrop-filter: blur(14px);
 }
@@ -860,7 +861,9 @@ td.name-cell {
 @media (max-width: 760px) {
   .site-nav {
     grid-template-columns: 1fr auto;
-    padding-inline: 16px;
+    width: calc(100% - 24px);
+    margin-top: 10px;
+    padding: 8px;
   }
 
   .site-nav-brand {
@@ -954,10 +957,9 @@ td.name-cell {
   }
 
   .page-jump-nav a {
-    min-width: 54px;
-    min-height: 36px;
-    padding: 8px 10px;
-    font-size: 0.76rem;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
   }
 }
 
