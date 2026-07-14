@@ -20,26 +20,26 @@
   "coverage": {
     "entityCount": 30,
     "fundamentals": {
-      "count": 28,
-      "ratio": 0.9333333333333333
+      "count": 30,
+      "ratio": 1.0
     },
     "historyStorage": "data/sox-history.json",
     "marketCap": {
-      "count": 28,
-      "ratio": 0.9333333333333333
+      "count": 30,
+      "ratio": 1.0
     },
     "price": {
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 11
+    "snapshotCount": 12
   },
-  "dataAsOf": "2026-07-13",
+  "dataAsOf": "2026-07-14",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-13T23:27:23Z",
+  "generatedAt": "2026-07-14T23:26:49Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -50,41 +50,41 @@
   "pageUrl": "https://sonchanggi.github.io/sox/",
   "primaryEntities": [
     {
-      "id": "AMD",
-      "label": "AMD",
+      "id": "MU",
+      "label": "MU",
       "metrics": {
-        "earningsMomentum": null,
-        "priceMomentum": 0.9420689655172414,
+        "earningsMomentum": 0.9948275862068966,
+        "priceMomentum": 0.943448275862069,
         "rank": 1,
-        "score": 0.9420689655172414,
-        "weight": null
+        "score": 0.9665689655172414,
+        "weight": 0.0718058069182948
       },
-      "name": "Advanced Micro Devices",
+      "name": "Micron Technology",
       "signals": [
-        "가격 선행 / 실적 확인"
+        "가격·실적 동반 강세"
       ],
-      "status": "가격 선행 / 실적 확인",
-      "symbol": "AMD",
+      "status": "가격·실적 동반 강세",
+      "symbol": "MU",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
     },
     {
-      "id": "MU",
-      "label": "MU",
+      "id": "AMD",
+      "label": "AMD",
       "metrics": {
-        "earningsMomentum": null,
-        "priceMomentum": 0.9331034482758621,
+        "earningsMomentum": 0.65,
+        "priceMomentum": 0.9600000000000001,
         "rank": 2,
-        "score": 0.9331034482758622,
-        "weight": null
+        "score": 0.8205000000000002,
+        "weight": 0.05912630742639865
       },
-      "name": "Micron Technology",
+      "name": "Advanced Micro Devices",
       "signals": [
-        "가격 선행 / 실적 확인"
+        "중립/혼재"
       ],
-      "status": "가격 선행 / 실적 확인",
-      "symbol": "MU",
+      "status": "중립/혼재",
+      "symbol": "AMD",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
@@ -93,11 +93,11 @@
       "id": "ALAB",
       "label": "ALAB",
       "metrics": {
-        "earningsMomentum": 0.7981481481481482,
-        "priceMomentum": 0.8979310344827587,
+        "earningsMomentum": 0.7758620689655172,
+        "priceMomentum": 0.853103448275862,
         "rank": 3,
-        "score": 0.853028735632184,
-        "weight": 0.00534236768410357
+        "score": 0.8183448275862069,
+        "weight": 0.004210894019686659
       },
       "name": "Astera Labs",
       "signals": [
@@ -113,38 +113,38 @@
       "id": "CRDO",
       "label": "CRDO",
       "metrics": {
-        "earningsMomentum": 0.9388888888888889,
-        "priceMomentum": 0.7358620689655172,
+        "earningsMomentum": 0.9086206896551725,
+        "priceMomentum": 0.6441379310344828,
         "rank": 4,
-        "score": 0.8272241379310346,
-        "weight": 0.003628087642368087
+        "score": 0.7631551724137933,
+        "weight": 0.002997302568528475
       },
       "name": "Credo Technology",
       "signals": [
-        "가격·실적 동반 강세"
+        "중립/혼재"
       ],
-      "status": "가격·실적 동반 강세",
+      "status": "중립/혼재",
       "symbol": "CRDO",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
     },
     {
-      "id": "AMAT",
-      "label": "AMAT",
+      "id": "TER",
+      "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.43518518518518523,
-        "priceMomentum": 0.8158620689655173,
+        "earningsMomentum": 0.8327586206896551,
+        "priceMomentum": 0.49310344827586206,
         "rank": 5,
-        "score": 0.6445574712643679,
-        "weight": 0.03610270149156672
+        "score": 0.6459482758620689,
+        "weight": 0.003623269225483135
       },
-      "name": "Applied Materials",
+      "name": "Teradyne",
       "signals": [
-        "가격 선행 / 실적 확인"
+        "중립/혼재"
       ],
-      "status": "가격 선행 / 실적 확인",
-      "symbol": "AMAT",
+      "status": "중립/혼재",
+      "symbol": "TER",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
