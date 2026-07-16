@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 13
+    "snapshotCount": 14
   },
-  "dataAsOf": "2026-07-15",
+  "dataAsOf": "2026-07-16",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-15T23:31:45Z",
+  "generatedAt": "2026-07-16T23:27:25Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.88,
+        "priceMomentum": 0.8510344827586207,
         "rank": 1,
-        "score": 0.9316724137931035,
-        "weight": 0.07354141281427776
+        "score": 0.9157413793103448,
+        "weight": 0.0683772912766501
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.65,
-        "priceMomentum": 0.9613793103448276,
+        "priceMomentum": 0.9082758620689655,
         "rank": 2,
-        "score": 0.8212586206896553,
-        "weight": 0.05919860441151512
+        "score": 0.7920517241379311,
+        "weight": 0.057767293202865715
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.8551724137931035,
+        "priceMomentum": 0.7813793103448275,
         "rank": 3,
-        "score": 0.8194827586206896,
-        "weight": 0.004107293854936618
+        "score": 0.778896551724138,
+        "weight": 0.004023754131087544
       },
       "name": "Astera Labs",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9103448275862069,
-        "priceMomentum": 0.6193103448275862,
+        "priceMomentum": 0.5158620689655172,
         "rank": 4,
-        "score": 0.7502758620689656,
-        "weight": 0.002917096333276467
+        "score": 0.6933793103448276,
+        "weight": 0.0028308660794983654
       },
       "name": "Credo Technology",
       "signals": [
@@ -134,10 +134,10 @@
       "label": "AMAT",
       "metrics": {
         "earningsMomentum": 0.4103448275862069,
-        "priceMomentum": 0.8262068965517242,
+        "priceMomentum": 0.8503448275862069,
         "rank": 5,
-        "score": 0.6390689655172415,
-        "weight": 0.031326090578747384
+        "score": 0.6523448275862069,
+        "weight": 0.030800878634207038
       },
       "name": "Applied Materials",
       "signals": [
