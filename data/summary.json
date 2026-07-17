@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 14
+    "snapshotCount": 15
   },
-  "dataAsOf": "2026-07-16",
+  "dataAsOf": "2026-07-17",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-16T23:27:25Z",
+  "generatedAt": "2026-07-17T23:27:02Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.8510344827586207,
+        "priceMomentum": 0.8613793103448276,
         "rank": 1,
-        "score": 0.9157413793103448,
-        "weight": 0.0683772912766501
+        "score": 0.9214310344827588,
+        "weight": 0.06642087156275141
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.65,
-        "priceMomentum": 0.9082758620689655,
+        "priceMomentum": 0.9151724137931034,
         "rank": 2,
-        "score": 0.7920517241379311,
-        "weight": 0.057767293202865715
+        "score": 0.7958448275862069,
+        "weight": 0.05630434273940746
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.7813793103448275,
+        "priceMomentum": 0.7462068965517241,
         "rank": 3,
-        "score": 0.778896551724138,
-        "weight": 0.004023754131087544
+        "score": 0.759551724137931,
+        "weight": 0.003777778382996517
       },
       "name": "Astera Labs",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9103448275862069,
-        "priceMomentum": 0.5158620689655172,
+        "priceMomentum": 0.5406896551724139,
         "rank": 4,
-        "score": 0.6933793103448276,
-        "weight": 0.0028308660794983654
+        "score": 0.7070344827586208,
+        "weight": 0.002673231872408601
       },
       "name": "Credo Technology",
       "signals": [
@@ -130,21 +130,21 @@
       ]
     },
     {
-      "id": "AMAT",
-      "label": "AMAT",
+      "id": "INTC",
+      "label": "INTC",
       "metrics": {
-        "earningsMomentum": 0.4103448275862069,
-        "priceMomentum": 0.8503448275862069,
+        "earningsMomentum": 0.5206896551724138,
+        "priceMomentum": 0.723448275862069,
         "rank": 5,
-        "score": 0.6523448275862069,
-        "weight": 0.030800878634207038
+        "score": 0.6322068965517242,
+        "weight": 0.03359798544240825
       },
-      "name": "Applied Materials",
+      "name": "Intel",
       "signals": [
-        "가격 선행 / 실적 확인"
+        "중립/혼재"
       ],
-      "status": "가격 선행 / 실적 확인",
-      "symbol": "AMAT",
+      "status": "중립/혼재",
+      "symbol": "INTC",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
