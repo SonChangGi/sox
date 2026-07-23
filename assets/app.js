@@ -3,13 +3,15 @@
 
   const DATA_URL = 'data/sox-analysis.json';
   const HISTORY_URL = 'data/sox-history.json';
-  const THEME_STORAGE_KEY = 'sox-theme';
+  const THEME_STORAGE_KEY = 'quant-research-theme';
+  const LEGACY_THEME_STORAGE_KEY = 'sox-theme';
   const state = {
     analysis: null,
     latestAnalysis: null,
     history: null,
     snapshots: [],
     selectedDate: '',
+    selectedTicker: '',
     rows: [],
     filteredRows: [],
     sortKey: 'rank',
@@ -23,16 +25,23 @@
     priceChart: document.querySelector('#price-chart'),
     earningsChart: document.querySelector('#earnings-chart'),
     quadrantChart: document.querySelector('#quadrant-chart'),
+    chartSelection: document.querySelector('#chart-selection'),
     leaderGrid: document.querySelector('#leader-grid'),
     searchInput: document.querySelector('#search-input'),
     sortSelect: document.querySelector('#sort-select'),
     sortDirection: document.querySelector('#sort-direction'),
     snapshotDate: document.querySelector('#snapshot-date-select'),
     snapshotSummary: document.querySelector('#snapshot-summary'),
+    statusMessage: document.querySelector('#status-message'),
     table: document.querySelector('#constituent-table'),
     tableBody: document.querySelector('#constituent-body'),
     sourceList: document.querySelector('#source-list'),
     weightCaveat: document.querySelector('#weight-caveat'),
+    opsSelectedDate: document.querySelector('#ops-selected-date'),
+    opsGeneratedAt: document.querySelector('#ops-generated-at'),
+    opsWeightMethod: document.querySelector('#ops-weight-method'),
+    opsDataStatus: document.querySelector('#ops-data-status'),
+    opsPublicReadback: document.querySelector('#ops-public-readback'),
     themeToggle: document.querySelector('#theme-toggle'),
     themeToggleText: document.querySelector('.theme-toggle-text'),
   };
@@ -105,11 +114,17 @@
     els.snapshotDate?.addEventListener('change', () => {
       applySnapshot(els.snapshotDate.value, { updateUrl: true });
     });
+    document.querySelector('#charts')?.addEventListener('click', handleChartSelection);
+    document.querySelector('#charts')?.addEventListener('focusin', handleChartSelection);
+    document.querySelector('#charts')?.addEventListener('pointerover', handleChartSelection);
   }
 
   function initTheme() {
-    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem(LEGACY_THEME_STORAGE_KEY);
     const theme = storedTheme === 'dark' ? 'dark' : 'light';
+    if (!localStorage.getItem(THEME_STORAGE_KEY) && storedTheme) {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    }
     setTheme(theme, { persist: false });
   }
 
@@ -154,6 +169,10 @@
     state.selectedDate = snapshot.dataAsOf || '';
     state.rows = Array.isArray(snapshot.constituents) ? snapshot.constituents : [];
     state.filteredRows = [...state.rows];
+    const selectedStillExists = state.rows.some((row) => row.ticker === state.selectedTicker);
+    if (!selectedStillExists) {
+      state.selectedTicker = snapshot.leaders?.combined?.[0]?.ticker || state.rows[0]?.ticker || '';
+    }
     if (options.updateUrl && state.selectedDate) {
       const nextUrl = new URL(window.location.href);
       nextUrl.searchParams.set('date', state.selectedDate);
@@ -174,7 +193,7 @@
     if (els.snapshotSummary) {
       const count = snapshots.length;
       const latest = state.latestAnalysis?.dataAsOf ? `최신 ${formatDate(state.latestAnalysis.dataAsOf)}` : '최신 기준일 확인 중';
-      els.snapshotSummary.textContent = `${count}개 저장 snapshot · 선택 ${formatDate(state.selectedDate)} · ${latest}`;
+      els.snapshotSummary.textContent = `선택 ${formatDate(state.selectedDate)} · ${count}개 저장 · ${latest}`;
     }
   }
 
@@ -182,17 +201,18 @@
     const analysis = state.analysis;
     const status = analysis.status || {};
     const coverage = analysis.coverage || {};
+    const isOk = status.level === 'ok';
     const chips = [
-      chip(status.level === 'ok' ? 'ok' : 'warning', status.level || 'unknown'),
-      chip('neutral', `생성 ${formatDateTime(analysis.generatedAt)}`),
-      chip('neutral', `기준 ${formatDate(analysis.dataAsOf)}`),
-      chip('neutral', `선택 ${formatDate(state.selectedDate || analysis.dataAsOf)}`),
-      chip('neutral', `저장 ${state.snapshots.length || 1} dates`),
-      chip('neutral', analysis.index?.weightMethodLabel || 'proxy weight'),
-      chip(coverage.fundamentals?.ratio > 0.7 ? 'ok' : 'warning', `재무 커버리지 ${formatPercent(coverage.fundamentals?.ratio)}`),
+      chip(isOk ? 'ok' : 'warning', isOk ? '데이터 정상' : `데이터 ${status.level || '확인 필요'}`),
+      chip(coverage.fundamentals?.ratio > 0.7 ? 'ok' : 'warning', `재무 ${formatPercent(coverage.fundamentals?.ratio)}`),
+      chip('neutral', analysis.index?.weightMethod === 'official' ? '공식 비중' : '프록시 비중'),
     ];
-    if (status.publicPagesReadback) chips.push(chip('warning', status.publicPagesReadback));
     els.sourceStatus.innerHTML = chips.join('');
+    if (els.statusMessage) {
+      const warningMessage = isOk ? '' : status.message || '일부 데이터를 확인할 수 없습니다.';
+      els.statusMessage.textContent = warningMessage;
+      els.statusMessage.hidden = !warningMessage;
+    }
   }
 
   function renderMetrics() {
@@ -203,15 +223,12 @@
     const topPrice = leaders.priceMomentum?.[0];
     const topEarnings = leaders.earningsMomentum?.[0];
     const cards = [
-      metricCard('Constituents', formatNumber(analysis.index?.constituentCount, { maximumFractionDigits: 0 }), `${analysis.index?.constituentSource?.source || 'Nasdaq'} · ${analysis.index?.constituentSource?.tradeDate || '-'}`),
-      metricCard('Top proxy weight', topWeight?.ticker || '-', `${formatPercent(topWeight?.proxyWeight)} · ${topWeight?.name || ''}`),
-      metricCard('Top combined', topCombined?.ticker || '-', `${formatScore(topCombined?.combined)} · ${topCombined?.label || ''}`),
-      metricCard('Data coverage', `${analysis.coverage?.price?.count || 0}/${analysis.index?.constituentCount || 0}`, `Price · fundamentals ${formatPercent(analysis.coverage?.fundamentals?.ratio)}`),
-      metricCard('Price leader', topPrice?.ticker || '-', `${formatScore(topPrice?.priceMomentum)} · 3M ${formatPercent(topPrice?.return3m)}`),
-      metricCard('Earnings leader', topEarnings?.ticker || '-', `${formatScore(topEarnings?.earningsMomentum)} · Rev YoY ${formatPercent(topEarnings?.quarterlyRevenueYoY)}`),
-      metricCard('Stored dates', state.snapshots.length || 1, `선택 ${formatDate(state.selectedDate || analysis.dataAsOf)} · history JSON`),
-      metricCard('Weight method', analysis.index?.weightMethod === 'official' ? 'Official' : 'Proxy', analysis.index?.weightMethodLabel || 'market-cap proxy'),
-      metricCard('Status', analysis.status?.level || 'unknown', analysis.status?.message || ''),
+      metricCard('구성종목', formatNumber(analysis.index?.constituentCount, { maximumFractionDigits: 0 }), `구성 기준 ${analysis.index?.constituentSource?.tradeDate || '-'}`),
+      metricCard('최대 프록시 비중', topWeight?.ticker || '-', `${formatPercent(topWeight?.proxyWeight)} · ${topWeight?.name || ''}`),
+      metricCard('종합 1위', topCombined?.ticker || '-', `${formatScore(topCombined?.combined)} · ${topCombined?.label || ''}`),
+      metricCard('데이터 커버리지', `${analysis.coverage?.price?.count || 0}/${analysis.index?.constituentCount || 0}`, `가격 · 재무 ${formatPercent(analysis.coverage?.fundamentals?.ratio)}`),
+      metricCard('가격 1위', topPrice?.ticker || '-', `${formatScore(topPrice?.priceMomentum)} · 3M ${formatPercent(topPrice?.return3m)}`),
+      metricCard('실적 1위', topEarnings?.ticker || '-', `${formatScore(topEarnings?.earningsMomentum)} · 매출 YoY ${formatPercent(topEarnings?.quarterlyRevenueYoY)}`),
     ];
     els.metricGrid.innerHTML = cards.join('');
   }
@@ -222,6 +239,7 @@
     renderBarChart(els.priceChart, leaders.priceMomentum || [], 'priceMomentum', { kind: 'score', color: 'green' });
     renderBarChart(els.earningsChart, leaders.earningsMomentum || [], 'earningsMomentum', { kind: 'score', color: 'amber' });
     renderQuadrant();
+    syncChartSelection();
   }
 
   function renderBarChart(target, rows, key, options = {}) {
@@ -236,11 +254,13 @@
     target.classList.remove('skeleton-box');
     target.innerHTML = valid.map((row) => {
       const width = Math.max(4, Math.abs(row[key]) / max * 100);
-      return `<div class="bar-row">
+      const value = options.kind === 'score' ? formatScore(row[key]) : formatPercent(row[key]);
+      const selected = row.ticker === state.selectedTicker;
+      return `<button class="bar-row${selected ? ' is-active' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${selected}" aria-label="${escapeAttr(`${row.ticker} ${value}`)}">
         <span class="bar-label">${escapeHtml(row.ticker)}</span>
         <span class="bar-track"><span class="bar-fill ${options.color || ''}" style="width:${width.toFixed(2)}%"></span></span>
-        <span class="bar-value">${options.kind === 'score' ? formatScore(row[key]) : formatPercent(row[key])}</span>
-      </div>`;
+        <span class="bar-value">${value}</span>
+      </button>`;
     }).join('');
   }
 
@@ -259,8 +279,45 @@
     target.innerHTML = '<span class="quad-axis y">earnings momentum ↑</span><span class="quad-axis x">price momentum →</span>' + rows.map((row) => {
       const x = clamp(row.scores.priceMomentum, 0.03, 0.97) * 100;
       const y = (1 - clamp(row.scores.earningsMomentum, 0.03, 0.97)) * 100;
-      return `<span class="quad-point" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" title="${escapeHtml(row.ticker)} · ${escapeHtml(row.scores.label || '')}">${escapeHtml(row.ticker)}</span>`;
+      const selected = row.ticker === state.selectedTicker;
+      return `<button class="quad-point${selected ? ' is-active' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${selected}" aria-label="${escapeAttr(`${row.ticker} · 가격 ${formatScore(row.scores.priceMomentum)} · 실적 ${formatScore(row.scores.earningsMomentum)} · ${row.scores.label || ''}`)}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%">${escapeHtml(row.ticker)}</button>`;
     }).join('');
+  }
+
+  function handleChartSelection(event) {
+    const target = event.target.closest?.('[data-chart-ticker]');
+    if (!target) return;
+    const ticker = target.getAttribute('data-chart-ticker');
+    if (!ticker || ticker === state.selectedTicker) return;
+    state.selectedTicker = ticker;
+    syncChartSelection();
+  }
+
+  function syncChartSelection() {
+    document.querySelectorAll('[data-chart-ticker]').forEach((element) => {
+      const selected = element.getAttribute('data-chart-ticker') === state.selectedTicker;
+      element.classList.toggle('is-active', selected);
+      element.setAttribute('aria-pressed', String(selected));
+    });
+    [els.weightChart, els.priceChart, els.earningsChart, els.quadrantChart].forEach((chart) => {
+      chart?.classList.toggle('has-active', Boolean(chart.querySelector('.is-active')));
+    });
+    if (!els.chartSelection) return;
+    const row = state.rows.find((item) => item.ticker === state.selectedTicker);
+    if (!row) {
+      els.chartSelection.textContent = '차트 항목을 선택하면 종목별 값을 한곳에서 확인할 수 있습니다.';
+      return;
+    }
+    const scores = row.scores || {};
+    els.chartSelection.innerHTML = `
+      <strong>${escapeHtml(row.ticker)} <span>${escapeHtml(row.name || '')}</span></strong>
+      <dl>
+        <div><dt>프록시 비중</dt><dd>${formatPercent(row.proxyWeight)}</dd></div>
+        <div><dt>가격 점수</dt><dd>${formatScore(scores.priceMomentum)}</dd></div>
+        <div><dt>실적 점수</dt><dd>${formatScore(scores.earningsMomentum)}</dd></div>
+        <div><dt>종합 점수</dt><dd>${formatScore(scores.combined)}</dd></div>
+        <div><dt>신호</dt><dd>${escapeHtml(scores.label || '-')}</dd></div>
+      </dl>`;
   }
 
   function renderLeaders() {
@@ -294,6 +351,14 @@
     const sources = analysis.sources || {};
     els.sourceList.innerHTML = Object.values(sources).map((source) => `<li><a href="${escapeAttr(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.name)}</a>: ${escapeHtml(source.usage)}</li>`).join('');
     els.weightCaveat.textContent = analysis.methodology?.weightCaveat || els.weightCaveat.textContent;
+    if (els.opsSelectedDate) els.opsSelectedDate.textContent = formatDate(state.selectedDate || analysis.dataAsOf);
+    if (els.opsGeneratedAt) els.opsGeneratedAt.textContent = formatDateTime(analysis.generatedAt);
+    if (els.opsWeightMethod) els.opsWeightMethod.textContent = analysis.index?.weightMethodLabel || '-';
+    if (els.opsDataStatus) els.opsDataStatus.textContent = `${analysis.status?.level || 'unknown'} · ${analysis.status?.message || '-'}`;
+    if (els.opsPublicReadback) {
+      els.opsPublicReadback.textContent = analysis.status?.publicPagesReadback || '';
+      els.opsPublicReadback.hidden = !analysis.status?.publicPagesReadback;
+    }
   }
 
   function updateTable() {
@@ -413,10 +478,10 @@
   }
 
   function renderError(error) {
-    const message = `generated JSON을 불러오지 못했습니다: ${error.message}`;
+    const message = `데이터를 불러오지 못했습니다: ${error.message}`;
     if (els.sourceStatus) els.sourceStatus.innerHTML = chip('error', message);
-    if (els.snapshotSummary) els.snapshotSummary.textContent = 'snapshot history 로드 실패';
-    if (els.metricGrid) els.metricGrid.innerHTML = `<article class="metric-card"><p class="eyebrow">Error</p><div class="detail">${escapeHtml(message)}<br/>로컬에서 <code>python3 scripts/fetch_sox_data.py --offline-ok</code>를 실행해 data/sox-analysis.json, data/sox-history.json, data/summary.json을 갱신해 주세요.</div></article>`;
+    if (els.snapshotSummary) els.snapshotSummary.textContent = '저장된 기준일을 확인할 수 없습니다.';
+    if (els.metricGrid) els.metricGrid.innerHTML = `<article class="metric-card"><p class="eyebrow">Error</p><div class="detail">${escapeHtml(message)} 잠시 후 다시 시도해 주세요.</div></article>`;
     if (els.tableBody) els.tableBody.innerHTML = `<tr><td colspan="14">${escapeHtml(message)}</td></tr>`;
   }
 
