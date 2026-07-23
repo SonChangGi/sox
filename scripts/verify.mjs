@@ -61,6 +61,9 @@ check(summary.pageUrl === 'https://sonchanggi.github.io/sox/', 'summary pageUrl 
 
 check(html.includes('Quant Research Hub'), 'index links/copy includes Quant Research Hub');
 check(html.includes('https://sonchanggi.github.io/quant-dashboard/'), 'index has quant-dashboard return link');
+check(html.includes('https://sonchanggi.github.io/kelly/'), 'shared project navigation includes Kelly');
+check(html.includes('class="skip-link"'), 'index includes a keyboard skip link');
+check(html.includes('<details class="ops-details">'), 'source and operations copy is consolidated in one closed details section');
 check(html.includes('투자 조언이 아닙니다'), 'research-only disclaimer is visible');
 check(html.includes('프록시 비중'), 'proxy-weight Korean copy is visible');
 check(html.includes('data/sox-analysis.json'), 'index documents generated JSON path');
@@ -75,6 +78,10 @@ check(app.includes("const HISTORY_URL = 'data/sox-history.json'"), 'browser app 
 check(app.includes('applySnapshot') && app.includes('snapshot-date-select'), 'browser app supports date-selectable snapshots');
 check(app.includes('sortDirection') && app.includes('updateSortIndicators'), 'browser app manages two-way sort direction state');
 check(app.includes('rowSearchText'), 'browser app searches across table columns');
+check(app.includes("const THEME_STORAGE_KEY = 'quant-research-theme'"), 'browser app uses the shared theme storage key');
+check(app.includes('data-chart-ticker') && app.includes('aria-pressed'), 'chart marks expose selectable keyboard state');
+check(app.includes('syncChartSelection'), 'chart selection is synchronized across views');
+check(!app.includes("metricCard('Stored dates'") && !app.includes("metricCard('Weight method'") && !app.includes("metricCard('Status'"), 'operational metrics are removed from the primary result grid');
 check(workflow.includes('30 22 * * 1-5'), 'workflow schedules SOX primary 07:30 KST slot');
 check(workflow.includes('jobs:\n  freshness:'), 'workflow runs a lightweight freshness preflight job');
 check(workflow.includes('scripts/check_sox_freshness.py'), 'workflow uses freshness gate before retries');
@@ -89,6 +96,8 @@ check(css.includes('color-scheme: dark'), 'CSS declares dark color scheme');
 check(/\.bar-fill\s*\{[^}]*display:\s*block/s.test(css), 'bar fill spans render with block width so charts are visible');
 check(css.includes('.sort-indicator'), 'table sort indicator CSS exists');
 check(css.includes('.snapshot-control'), 'snapshot selector CSS exists');
+check(css.includes('.chart-readout'), 'chart values have an external readout surface');
+check(css.includes('.ops-details'), 'collapsed operations detail CSS exists');
 
 const failed = checks.filter((item) => !item.ok);
 if (failed.length) {
