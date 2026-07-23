@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 18
+    "snapshotCount": 19
   },
-  "dataAsOf": "2026-07-22",
+  "dataAsOf": "2026-07-23",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-07-22T23:32:04Z",
+  "generatedAt": "2026-07-23T23:30:08Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.8917241379310344,
+        "priceMomentum": 0.9489655172413793,
         "rank": 1,
-        "score": 0.9381206896551724,
-        "weight": 0.07397416161058094
+        "score": 0.9696034482758622,
+        "weight": 0.07248512078391818
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6482758620689655,
-        "priceMomentum": 0.9400000000000001,
+        "priceMomentum": 0.9441379310344828,
         "rank": 2,
-        "score": 0.8087241379310346,
-        "weight": 0.059894348309168934
+        "score": 0.811,
+        "weight": 0.06024403215513354
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -94,16 +94,16 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.9086206896551725,
-        "priceMomentum": 0.6186206896551725,
+        "priceMomentum": 0.6937931034482758,
         "rank": 3,
-        "score": 0.7491206896551725,
-        "weight": 0.002816562882504656
+        "score": 0.7904655172413795,
+        "weight": 0.0028473705881568974
       },
       "name": "Credo Technology",
       "signals": [
-        "중립/혼재"
+        "가격·실적 동반 강세"
       ],
-      "status": "중립/혼재",
+      "status": "가격·실적 동반 강세",
       "symbol": "CRDO",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
@@ -114,10 +114,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7741379310344827,
-        "priceMomentum": 0.7144827586206897,
+        "priceMomentum": 0.7158620689655172,
         "rank": 4,
-        "score": 0.7413275862068966,
-        "weight": 0.0036982136680875264
+        "score": 0.7420862068965517,
+        "weight": 0.003793926635694289
       },
       "name": "Astera Labs",
       "signals": [
@@ -134,10 +134,10 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8293103448275861,
-        "priceMomentum": 0.613103448275862,
+        "priceMomentum": 0.6406896551724138,
         "rank": 5,
-        "score": 0.710396551724138,
-        "weight": 0.003950440847587669
+        "score": 0.7255689655172414,
+        "weight": 0.003868713279434647
       },
       "name": "Teradyne",
       "signals": [
