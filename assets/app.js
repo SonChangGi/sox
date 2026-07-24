@@ -11,7 +11,8 @@
     history: null,
     snapshots: [],
     selectedDate: '',
-    selectedTicker: '',
+    pinnedTicker: '',
+    previewTicker: '',
     rows: [],
     filteredRows: [],
     sortKey: 'rank',
@@ -114,9 +115,19 @@
     els.snapshotDate?.addEventListener('change', () => {
       applySnapshot(els.snapshotDate.value, { updateUrl: true });
     });
+    els.tableBody?.addEventListener('click', (event) => {
+      const ticker = event.target.closest?.('[data-table-ticker]')?.getAttribute('data-table-ticker');
+      if (!ticker) return;
+      state.pinnedTicker = ticker;
+      state.previewTicker = '';
+      syncChartSelection();
+    });
     document.querySelector('#charts')?.addEventListener('click', handleChartSelection);
     document.querySelector('#charts')?.addEventListener('focusin', handleChartSelection);
     document.querySelector('#charts')?.addEventListener('pointerover', handleChartSelection);
+    document.querySelector('#charts')?.addEventListener('focusout', handleChartPreviewEnd);
+    document.querySelector('#charts')?.addEventListener('pointerout', handleChartPreviewEnd);
+    document.querySelector('#charts')?.addEventListener('keydown', handleChartKeyDown);
   }
 
   function initTheme() {
@@ -169,9 +180,10 @@
     state.selectedDate = snapshot.dataAsOf || '';
     state.rows = Array.isArray(snapshot.constituents) ? snapshot.constituents : [];
     state.filteredRows = [...state.rows];
-    const selectedStillExists = state.rows.some((row) => row.ticker === state.selectedTicker);
+    state.previewTicker = '';
+    const selectedStillExists = state.rows.some((row) => row.ticker === state.pinnedTicker);
     if (!selectedStillExists) {
-      state.selectedTicker = snapshot.leaders?.combined?.[0]?.ticker || state.rows[0]?.ticker || '';
+      state.pinnedTicker = snapshot.leaders?.combined?.[0]?.ticker || state.rows[0]?.ticker || '';
     }
     if (options.updateUrl && state.selectedDate) {
       const nextUrl = new URL(window.location.href);
@@ -253,15 +265,48 @@
     const max = Math.max(...valid.map((row) => Math.abs(row[key]) || 0), 0.00001);
     target.classList.remove('skeleton-box');
     target.innerHTML = valid.map((row) => {
-      const width = Math.max(4, Math.abs(row[key]) / max * 100);
+      const width = row[key] === 0 ? 0 : Math.abs(row[key]) / max * 100;
       const value = options.kind === 'score' ? formatScore(row[key]) : formatPercent(row[key]);
-      const selected = row.ticker === state.selectedTicker;
-      return `<button class="bar-row${selected ? ' is-active' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${selected}" aria-label="${escapeAttr(`${row.ticker} ${value}`)}">
+      const active = row.ticker === activeTicker();
+      const pinned = row.ticker === state.pinnedTicker;
+      return `<button class="bar-row${active ? ' is-active' : ''}${pinned ? ' is-pinned' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${pinned}" aria-label="${escapeAttr(`${row.ticker} ${value}`)}">
         <span class="bar-label">${escapeHtml(row.ticker)}</span>
         <span class="bar-track"><span class="bar-fill ${options.color || ''}" style="width:${width.toFixed(2)}%"></span></span>
         <span class="bar-value">${value}</span>
       </button>`;
     }).join('');
+  }
+
+  function layoutQuadrantRows(rows) {
+    const model = { width: 240, height: 190 };
+    const minimumDistance = 38;
+    const offsets = [];
+    for (let yIndex = -5; yIndex <= 5; yIndex += 1) {
+      for (let xIndex = -5; xIndex <= 5; xIndex += 1) {
+        offsets.push({ x: xIndex * minimumDistance, y: yIndex * minimumDistance });
+      }
+    }
+    offsets.sort((left, right) => Math.hypot(left.x, left.y) - Math.hypot(right.x, right.y) || left.y - right.y || left.x - right.x);
+    const occupied = [];
+    return rows.map((row) => {
+      const baseX = clamp(row.scores.priceMomentum, 0, 1) * model.width;
+      const baseY = (1 - clamp(row.scores.earningsMomentum, 0, 1)) * model.height;
+      const position = offsets
+        .map((offset) => ({
+          x: clamp(baseX + offset.x, 0, model.width),
+          y: clamp(baseY + offset.y, 0, model.height),
+        }))
+        .find((candidate) => occupied.every((point) =>
+          Math.abs(candidate.x - point.x) >= minimumDistance
+          || Math.abs(candidate.y - point.y) >= minimumDistance))
+        || { x: baseX, y: baseY };
+      occupied.push(position);
+      return {
+        row,
+        left: position.x / model.width * 100,
+        top: position.y / model.height * 100,
+      };
+    });
   }
 
   function renderQuadrant() {
@@ -276,38 +321,77 @@
       target.innerHTML = '<p class="muted">quadrant 데이터를 계산할 수 없습니다.</p>';
       return;
     }
-    target.innerHTML = '<span class="quad-axis y">earnings momentum ↑</span><span class="quad-axis x">price momentum →</span>' + rows.map((row) => {
-      const x = clamp(row.scores.priceMomentum, 0.03, 0.97) * 100;
-      const y = (1 - clamp(row.scores.earningsMomentum, 0.03, 0.97)) * 100;
-      const selected = row.ticker === state.selectedTicker;
-      return `<button class="quad-point${selected ? ' is-active' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${selected}" aria-label="${escapeAttr(`${row.ticker} · 가격 ${formatScore(row.scores.priceMomentum)} · 실적 ${formatScore(row.scores.earningsMomentum)} · ${row.scores.label || ''}`)}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%">${escapeHtml(row.ticker)}</button>`;
-    }).join('');
+    const positioned = layoutQuadrantRows(rows);
+    target.innerHTML = '<span class="quad-axis y">earnings momentum ↑</span><span class="quad-axis x">price momentum →</span><div class="quadrant-plot">' + positioned.map(({ row, left, top }) => {
+      const active = row.ticker === activeTicker();
+      const pinned = row.ticker === state.pinnedTicker;
+      return `<button class="quad-point${active ? ' is-active' : ''}${pinned ? ' is-pinned' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${pinned}" aria-label="${escapeAttr(`${row.ticker} · 가격 ${formatScore(row.scores.priceMomentum)} · 실적 ${formatScore(row.scores.earningsMomentum)} · ${row.scores.label || ''}`)}" style="left:${left.toFixed(2)}%;top:${top.toFixed(2)}%">${escapeHtml(row.ticker)}</button>`;
+    }).join('') + '</div>';
   }
 
   function handleChartSelection(event) {
     const target = event.target.closest?.('[data-chart-ticker]');
     if (!target) return;
     const ticker = target.getAttribute('data-chart-ticker');
-    if (!ticker || ticker === state.selectedTicker) return;
-    state.selectedTicker = ticker;
+    if (!ticker) return;
+    if (event.type === 'click') {
+      state.pinnedTicker = ticker;
+      state.previewTicker = '';
+    } else {
+      state.previewTicker = ticker;
+    }
     syncChartSelection();
   }
 
+  function handleChartPreviewEnd(event) {
+    const target = event.target.closest?.('[data-chart-ticker]');
+    if (!target || target.contains(event.relatedTarget)) return;
+    state.previewTicker = '';
+    syncChartSelection();
+  }
+
+  function handleChartKeyDown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const target = event.target.closest?.('[data-chart-ticker]');
+    const ticker = target?.getAttribute('data-chart-ticker');
+    if (!ticker) return;
+    event.preventDefault();
+    state.pinnedTicker = ticker;
+    state.previewTicker = '';
+    syncChartSelection();
+  }
+
+  function activeTicker() {
+    return state.previewTicker || state.pinnedTicker;
+  }
+
   function syncChartSelection() {
+    const active = activeTicker();
     document.querySelectorAll('[data-chart-ticker]').forEach((element) => {
-      const selected = element.getAttribute('data-chart-ticker') === state.selectedTicker;
+      const ticker = element.getAttribute('data-chart-ticker');
+      const selected = ticker === active;
+      const pinned = ticker === state.pinnedTicker;
       element.classList.toggle('is-active', selected);
-      element.setAttribute('aria-pressed', String(selected));
+      element.classList.toggle('is-pinned', pinned);
+      element.setAttribute('aria-pressed', String(pinned));
     });
     [els.weightChart, els.priceChart, els.earningsChart, els.quadrantChart].forEach((chart) => {
       chart?.classList.toggle('has-active', Boolean(chart.querySelector('.is-active')));
     });
+    els.tableBody?.querySelectorAll('tr').forEach((row) => {
+      const ticker = row.querySelector('[data-table-ticker]')?.getAttribute('data-table-ticker');
+      row.classList.toggle('is-selected', ticker === active);
+      const button = row.querySelector('[data-table-ticker]');
+      if (button) button.setAttribute('aria-pressed', String(ticker === state.pinnedTicker));
+    });
     if (!els.chartSelection) return;
-    const row = state.rows.find((item) => item.ticker === state.selectedTicker);
+    const row = state.rows.find((item) => item.ticker === active);
     if (!row) {
-      els.chartSelection.textContent = '차트 항목을 선택하면 종목별 값을 한곳에서 확인할 수 있습니다.';
+      els.chartSelection.textContent = '';
+      els.chartSelection.hidden = true;
       return;
     }
+    els.chartSelection.hidden = false;
     const scores = row.scores || {};
     els.chartSelection.innerHTML = `
       <strong>${escapeHtml(row.ticker)} <span>${escapeHtml(row.name || '')}</span></strong>
@@ -458,9 +542,11 @@
     els.tableBody.innerHTML = rows.map((row) => {
       const metrics = row.metrics || {};
       const scores = row.scores || {};
-      return `<tr>
+      const selected = row.ticker === activeTicker();
+      const pinned = row.ticker === state.pinnedTicker;
+      return `<tr class="${selected ? 'is-selected' : ''}">
         <td>${formatNumber(row.rank, { maximumFractionDigits: 0 })}</td>
-        <td><strong>${escapeHtml(row.ticker)}</strong></td>
+        <td><button class="ticker-select" type="button" data-table-ticker="${escapeAttr(row.ticker)}" aria-pressed="${pinned}">${escapeHtml(row.ticker)}</button></td>
         <td class="name-cell" title="${escapeAttr(row.name || '')}">${escapeHtml(row.name || '')}</td>
         <td>${formatPercent(row.proxyWeight)}</td>
         <td>${formatCurrency(row.price)}</td>

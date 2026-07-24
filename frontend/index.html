@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="SOX 필라델피아 반도체 지수 구성종목의 프록시 비중, 가격 모멘텀, 실적 모멘텀을 비교하는 정적 리서치 대시보드"
+    />
+    <link rel="icon" href="data:," />
+    <title>SOX Semiconductor Research Cockpit</title>
+    <script>
+      (() => {
+        const storedTheme =
+          localStorage.getItem("quant-research-theme") ||
+          localStorage.getItem("sox-theme");
+        document.documentElement.dataset.theme =
+          storedTheme === "dark" ? "dark" : "light";
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

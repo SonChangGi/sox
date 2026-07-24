@@ -43,7 +43,6 @@
       <div>
         <p class="eyebrow">SOX Semiconductor Index</p>
         <h1 id="page-title">SOX 반도체 리서치</h1>
-        <p class="hero-copy">SOX 구성종목의 프록시 비중과 가격·실적 모멘텀을 같은 기준일로 비교합니다.</p>
         <div class="hero-actions" aria-label="주요 섹션 바로가기">
           <a href="#charts">핵심 차트</a>
           <a href="#constituents">전체 종목</a>
@@ -55,12 +54,12 @@
         <div class="snapshot-control">
           <label for="snapshot-date-select">저장 기준일 선택</label>
           <select id="snapshot-date-select" disabled>
-            <option>snapshot loading</option>
+            <option>불러오는 중</option>
           </select>
           <p id="snapshot-summary" class="snapshot-summary">저장된 날짜 목록을 불러오는 중입니다.</p>
         </div>
         <div id="source-status" class="status-stack" aria-live="polite">
-          <span class="status-chip neutral">generated JSON loading</span>
+          <span class="status-chip neutral">데이터 불러오는 중</span>
         </div>
         <p id="status-message" class="status-message" hidden></p>
       </aside>
@@ -72,7 +71,6 @@
       <div class="section-heading">
         <p class="eyebrow">Research Cockpit</p>
         <h2 id="cockpit-title">핵심 결과</h2>
-        <p>선택한 기준일의 커버리지와 상위 종목을 먼저 확인합니다.</p>
       </div>
       <div class="metric-grid" id="metric-grid" aria-live="polite">
         <article class="metric-card skeleton">데이터를 불러오는 중...</article>
@@ -83,9 +81,8 @@
       <div class="section-heading">
         <p class="eyebrow">Charts</p>
         <h2 id="charts-title">비중·모멘텀 시각화</h2>
-        <p>상위 종목의 비중과 가격·실적 모멘텀을 비교합니다.</p>
       </div>
-      <div id="chart-selection" class="chart-readout" aria-live="polite">차트 항목을 선택하면 종목별 값을 한곳에서 확인할 수 있습니다.</div>
+      <div id="chart-selection" class="chart-readout" aria-live="polite" hidden></div>
       <div class="chart-grid">
         <article class="panel" aria-labelledby="weight-chart-title">
           <div class="panel-header compact"><div><p class="eyebrow">Proxy Weight</p><h3 id="weight-chart-title">상위 프록시 비중</h3></div></div>
@@ -110,7 +107,6 @@
       <div class="section-heading">
         <p class="eyebrow">Momentum Dossier</p>
         <h2 id="momentum-title">가격·실적 모멘텀 상위 종목</h2>
-        <p>종합, 가격, 실적, 프록시 비중 상위 종목을 같은 기준일로 비교합니다.</p>
       </div>
       <div class="leader-grid" id="leader-grid" aria-live="polite"></div>
     </section>
@@ -120,7 +116,6 @@
         <div>
           <p class="eyebrow">Constituents</p>
           <h2 id="constituents-title">SOX 구성종목 테이블</h2>
-          <p>검색과 정렬로 종목별 지표를 확인합니다.</p>
         </div>
         <div class="table-tools">
           <label for="search-input">검색</label>
@@ -179,7 +174,6 @@
       <details class="ops-details">
         <summary>
           <span>데이터 · 출처 · 운영 상세</span>
-          <small>산출 기준과 출처 확인</small>
         </summary>
         <div class="method-grid">
           <article>
@@ -202,7 +196,6 @@
           </article>
           <article>
             <h3>운영 상세</h3>
-            <p>브라우저는 저장된 <code>data/sox-analysis.json</code>과 <code>data/sox-history.json</code>을 조회합니다.</p>
             <p>개인 리서치용이며 투자 조언이 아닙니다. 데이터는 지연되거나 일부 누락될 수 있습니다.</p>
           </article>
         </div>

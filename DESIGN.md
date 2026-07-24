@@ -7,6 +7,8 @@
   - SOX dashboard shell: `index.html`
   - Styling contract: `assets/styles.css`
   - Client rendering: `assets/app.js`
+  - Independently buildable shared frontend: `frontend/`
+  - Shared compatibility seam: `frontend/src/shared-platform/`
   - Generated data: `data/sox-analysis.json`, `data/summary.json`
   - Refresh script: `scripts/fetch_sox_data.py`
 - Evidence reviewed:
@@ -36,7 +38,7 @@
 - Non-goals:
   - No trading strategy, backtest, portfolio optimizer, or investment advice.
   - No paid/login-only data dependency.
-  - No frontend framework migration.
+  - No browser-side analysis engine or public run-submission API.
 - Success signals:
   - Local static page renders without console-breaking JS syntax.
   - Data generation succeeds using free public sources or records partial failures explicitly.
@@ -161,14 +163,17 @@
 
 ## Implementation constraints
 - Framework/styling system:
-  - Vanilla HTML/CSS/JS.
+  - Current Pages rollback: vanilla HTML/CSS/JS.
+  - Independently buildable migration surface: strict TypeScript, React, Vite.
 - Design-token constraints:
-  - CSS variables in `assets/styles.css`; do not add external CSS framework.
+  - CSS variables in `assets/styles.css`; shared `--qr-*` names are aliases
+    only and do not replace the approved SOX palette.
 - Performance constraints:
   - Keep generated JSON and JS lightweight enough for GitHub Pages.
 - Compatibility constraints:
   - Static file paths must work under both local server and GitHub Pages project path.
   - No browser-side secrets or live external calls.
+  - No cross-repository `file:` dependency or cross-origin runtime CSS/JS import.
 - Test/screenshot expectations:
   - Verify generated JSON schema, syntax, static smoke, and key UI copy/caveats.
 
