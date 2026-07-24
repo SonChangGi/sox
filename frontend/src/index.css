@@ -1,0 +1,59 @@
+@import "../../assets/styles.css";
+@import "./shared-platform/token-aliases.css";
+
+#root {
+  min-height: 100vh;
+}
+
+.ticker-select {
+  min-height: auto;
+  border: 0;
+  border-radius: 7px;
+  padding: 4px 6px;
+  color: var(--accent-strong);
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+tbody tr.is-selected {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+@media (max-width: 640px) {
+  .leader-item > span {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    line-break: auto;
+  }
+}
+
+.load-state {
+  display: grid;
+  width: min(640px, calc(100% - 40px));
+  min-height: 70vh;
+  place-content: center;
+  gap: 12px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.load-state p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.load-state button {
+  justify-self: center;
+  min-height: 44px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  color: #fff;
+  background: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

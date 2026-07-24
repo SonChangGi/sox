@@ -1,0 +1,24 @@
+:root {
+  --qr-bg: var(--bg);
+  --qr-surface: var(--surface);
+  --qr-surface-raised: var(--surface-strong);
+  --qr-surface-soft: var(--surface-soft);
+  --qr-text: var(--ink);
+  --qr-text-strong: var(--ink);
+  --qr-text-muted: var(--muted);
+  --qr-text-muted-strong: var(--muted);
+  --qr-border: var(--line);
+  --qr-border-strong: var(--line-strong);
+  --qr-primary: var(--accent);
+  --qr-primary-strong: var(--accent-strong);
+  --qr-primary-soft: var(--accent-soft);
+  --qr-positive: var(--green);
+  --qr-warning: var(--amber);
+  --qr-negative: var(--rose);
+  --qr-chart-grid: var(--line-strong);
+  --qr-chart-axis: var(--faint);
+  --qr-chart-text: var(--muted);
+  --qr-chart-focal: var(--accent);
+  --qr-chart-alt: var(--cyan);
+  --qr-shadow: var(--shadow-soft);
+}
