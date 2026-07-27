@@ -62,8 +62,8 @@ describe("shared platform SOX seam", () => {
     ).toBe(false);
   });
 
-  it("keeps the canonical 11-project order and SOX public identity", () => {
-    expect(canonicalProjectRegistry).toHaveLength(11);
+  it("keeps the canonical 9-project order and SOX public identity", () => {
+    expect(canonicalProjectRegistry).toHaveLength(9);
     expect(canonicalProjectRegistry.map((project) => project.id)).toEqual([
       "hub",
       "fear-greed",
@@ -72,9 +72,7 @@ describe("shared platform SOX seam", () => {
       "best-factor",
       "etf",
       "sox",
-      "risk-score",
       "port",
-      "valuation",
       "kelly"
     ]);
     expect(
@@ -110,7 +108,7 @@ describe("shared platform SOX seam", () => {
       projectId: "sox",
       publicSummaryProjectId: "sox",
       contractVersion: SOX_STATIC_RESULT_CONTRACT,
-      dataAsOf: "2026-07-23",
+      dataAsOf: (analysis as { dataAsOf: string }).dataAsOf,
       snapshotCount: historyDatesBefore.length
     });
   });
