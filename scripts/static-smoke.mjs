@@ -39,10 +39,11 @@ async function fetchText(base, pathname) {
 const port = await listen();
 const base = `http://127.0.0.1:${port}`;
 try {
-  const [html, app, css, analysis, history, summary] = await Promise.all([
+  const [html, app, css, sharedNav, analysis, history, summary] = await Promise.all([
     fetchText(base, '/'),
     fetchText(base, '/assets/app.js'),
     fetchText(base, '/assets/styles.css'),
+    fetchText(base, '/assets/shared-nav.css'),
     fetchText(base, '/data/sox-analysis.json'),
     fetchText(base, '/data/sox-history.json'),
     fetchText(base, '/data/summary.json'),
@@ -56,6 +57,7 @@ try {
     ['app generated-json marker', app.includes('data/sox-analysis.json')],
     ['app history-json marker', app.includes('data/sox-history.json')],
     ['css dashboard marker', css.includes('--cyan')],
+    ['fixed shared navigation marker', sharedNav.includes('position: fixed !important')],
     ['analysis JSON marker', parsedAnalysis.projectId === 'sox'],
     ['history JSON marker', parsedHistory.projectId === 'sox' && parsedHistory.snapshots?.some((snapshot) => snapshot.dataAsOf === parsedAnalysis.dataAsOf)],
     ['summary JSON marker', parsedSummary.contract === 'quant-research-summary'],

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   assertDisplayStatePatch,
   getCanonicalNavigation
 } from "@/shared-platform";
 
 const projects = getCanonicalNavigation("sox");
+const navigationLinks = projects.filter((project) => project.id !== "hub");
 const THEME_STORAGE_KEY = "quant-research-theme";
 const LEGACY_THEME_STORAGE_KEY = "sox-theme";
 
@@ -27,6 +28,23 @@ function initialTheme(): Theme {
 
 export function SharedNav() {
   const [theme, setTheme] = useState<Theme>(initialTheme);
+  const linksRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let mobile = false;
+    try {
+      mobile = window.matchMedia("(max-width: 760px)").matches;
+    } catch {
+      // A visible link rail is an enhancement; navigation still works without matchMedia.
+    }
+    if (!mobile) return;
+    const frame = window.requestAnimationFrame(() => {
+      linksRef.current
+        ?.querySelector<HTMLElement>('[aria-current="page"]')
+        ?.scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   function toggleTheme() {
     const nextTheme: Theme = theme === "dark" ? "light" : "dark";
@@ -42,43 +60,42 @@ export function SharedNav() {
   }
 
   return (
-    <nav
-      className="site-nav"
-      aria-label="11개 퀀트 리서치 프로젝트"
-    >
-      <a
-        className="site-nav-brand"
-        href={projects[0].url}
-        aria-label="Quant Research Hub로 이동"
-      >
-        Quant Research Hub
-      </a>
-      <div className="site-nav-links" aria-label="프로젝트 목록">
-        {projects.map((project) => (
-          <a
-            key={project.id}
-            className={project.current ? "is-active" : undefined}
-            href={project.current ? "#top" : project.url}
-            aria-current={project.current ? "page" : undefined}
-          >
-            {project.label}
-          </a>
-        ))}
+    <nav className="quant-shared-nav" aria-label="연결 프로젝트 바로가기">
+      <div className="quant-shared-nav__inner">
+        <a
+          className="quant-shared-nav__brand"
+          href={projects[0].url}
+          aria-label="Quant Research Hub로 이동"
+        >
+          Quant Research Hub
+        </a>
+        <div ref={linksRef} className="quant-shared-nav__links" aria-label="프로젝트 목록">
+          {navigationLinks.map((project) => (
+            <a
+              key={project.id}
+              className={`quant-shared-nav__link${project.current ? " is-active" : ""}`}
+              href={project.url}
+              aria-current={project.current ? "page" : undefined}
+            >
+              {project.label}
+            </a>
+          ))}
+        </div>
+        <button
+          className="quant-shared-nav__theme"
+          type="button"
+          aria-pressed={theme === "dark"}
+          aria-label={
+            theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"
+          }
+          onClick={toggleTheme}
+        >
+          <span className="quant-shared-nav__theme-icon" aria-hidden="true" />
+          <span className="quant-shared-nav__theme-text">
+            {theme === "dark" ? "라이트 모드" : "다크 모드"}
+          </span>
+        </button>
       </div>
-      <button
-        className="theme-toggle"
-        type="button"
-        aria-pressed={theme === "dark"}
-        aria-label={
-          theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"
-        }
-        onClick={toggleTheme}
-      >
-        <span className="theme-toggle-icon" aria-hidden="true" />
-        <span className="theme-toggle-text">
-          {theme === "dark" ? "라이트 모드" : "다크 모드"}
-        </span>
-      </button>
     </nav>
   );
 }

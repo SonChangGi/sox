@@ -44,13 +44,14 @@
     opsDataStatus: document.querySelector('#ops-data-status'),
     opsPublicReadback: document.querySelector('#ops-public-readback'),
     themeToggle: document.querySelector('#theme-toggle'),
-    themeToggleText: document.querySelector('.theme-toggle-text'),
+    themeToggleText: document.querySelector('.quant-shared-nav__theme-text'),
   };
 
   document.addEventListener('DOMContentLoaded', init);
 
   async function init() {
     initTheme();
+    ensureActiveProjectVisible();
     bindControls();
     try {
       const [analysis, history] = await Promise.all([
@@ -66,6 +67,23 @@
     } catch (error) {
       renderError(error);
     }
+  }
+
+  function ensureActiveProjectVisible() {
+    let mobile = false;
+    try {
+      mobile = window.matchMedia?.('(max-width: 760px)').matches === true;
+    } catch {
+      // A visible link rail is an enhancement; navigation still works without matchMedia.
+    }
+    if (!mobile) return;
+    window.requestAnimationFrame?.(() => {
+      document.querySelector('.quant-shared-nav__links [aria-current="page"]')?.scrollIntoView?.({
+        behavior: 'auto',
+        block: 'nearest',
+        inline: 'center',
+      });
+    });
   }
 
   async function fetchJson(url) {

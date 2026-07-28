@@ -16,6 +16,7 @@ const summary = readJson('data/summary.json');
 const html = readText('index.html');
 const app = readText('assets/app.js');
 const css = readText('assets/styles.css');
+const sharedNav = readText('assets/shared-nav.css');
 const workflow = readText('.github/workflows/deploy-pages.yml');
 const freshnessScript = readText('scripts/check_sox_freshness.py');
 
@@ -63,6 +64,11 @@ check(html.includes('Quant Research Hub'), 'index links/copy includes Quant Rese
 check(html.includes('https://sonchanggi.github.io/quant-dashboard/'), 'index has quant-dashboard return link');
 check(html.includes('https://sonchanggi.github.io/kelly/'), 'shared project navigation includes Kelly');
 check(html.includes('class="skip-link"'), 'index includes a keyboard skip link');
+check(html.includes('class="has-quant-shared-nav"'), 'body reserves the fixed shared navigation height');
+check(html.includes('assets/shared-nav.css?v=20260728-shared-nav'), 'index loads the canonical shared navigation stylesheet');
+check((html.match(/class="quant-shared-nav__link(?:\s|")/g) || []).length === 8, 'shared navigation exposes eight project links plus the Hub brand');
+check((html.match(/aria-current="page"/g) || []).length === 1, 'shared navigation marks exactly one current project');
+check(html.includes('class="quant-shared-nav__link is-active" href="https://sonchanggi.github.io/sox/" aria-current="page"'), 'current SOX navigation item uses its canonical public URL');
 check(html.includes('<details class="ops-details">'), 'source and operations copy is consolidated in one closed details section');
 check(html.includes('투자 조언이 아닙니다'), 'research-only disclaimer is visible');
 check(html.includes('프록시 비중'), 'proxy-weight Korean copy is visible');
@@ -77,6 +83,7 @@ check(app.includes('applySnapshot') && app.includes('snapshot-date-select'), 'br
 check(app.includes('sortDirection') && app.includes('updateSortIndicators'), 'browser app manages two-way sort direction state');
 check(app.includes('rowSearchText'), 'browser app searches across table columns');
 check(app.includes("const THEME_STORAGE_KEY = 'quant-research-theme'"), 'browser app uses the shared theme storage key');
+check(app.includes('ensureActiveProjectVisible()') && app.includes("inline: 'center'"), 'mobile shared navigation reveals the current SOX link');
 check(app.includes('data-chart-ticker') && app.includes('aria-pressed'), 'chart marks expose selectable keyboard state');
 check(app.includes('syncChartSelection'), 'chart selection is synchronized across views');
 check(app.includes("pinnedTicker: ''") && app.includes("previewTicker: ''"), 'chart preview and pinned selection use separate state');
@@ -103,6 +110,9 @@ check(css.includes('.sort-indicator'), 'table sort indicator CSS exists');
 check(css.includes('.snapshot-control'), 'snapshot selector CSS exists');
 check(css.includes('.chart-readout'), 'chart values have an external readout surface');
 check(css.includes('.ops-details'), 'collapsed operations detail CSS exists');
+check(/\.quant-shared-nav\s*\{[\s\S]*?position:\s*fixed\s*!important;/.test(sharedNav), 'shared navigation stays fixed at the viewport top');
+check(/body\.has-quant-shared-nav\s*\{[^}]*padding-top:\s*var\(--quant-shared-nav-height\)/.test(sharedNav), 'shared navigation reserves body space');
+check(/@media \(max-width:\s*760px\)[\s\S]*?--quant-shared-nav-height:\s*101px/.test(sharedNav), 'shared navigation reserves two mobile rows');
 
 const failed = checks.filter((item) => !item.ok);
 if (failed.length) {
