@@ -108,6 +108,12 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
     expected = latest_expected_us_session_date(now_utc)
     generated_kst = parse_timestamp(payload.get("generatedAt"))
     data_as_of = parse_date(payload.get("dataAsOf"))
+    status = payload.get("status")
+    status_level = (
+        str(status.get("level") or "").strip().lower()
+        if isinstance(status, dict)
+        else ""
+    )
     local_today = now_utc.astimezone(KST).date()
     cutoff = dt.datetime.combine(local_today, CUTOFF_KST, tzinfo=KST)
 
@@ -118,6 +124,7 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
         "generated_kst": generated_kst.isoformat() if generated_kst else "unknown",
         "cutoff_kst": cutoff.isoformat(),
         "expected_calendar": "us_equity_regular_session",
+        "status_level": status_level or "unknown",
     }
     if event == "push":
         return {
@@ -140,12 +147,19 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
             "should_deploy": "true",
             "freshness_reason": "missing_generated_payload",
         }
-    if generated_kst >= cutoff and data_as_of >= expected:
+    if generated_kst >= cutoff and data_as_of >= expected and status_level == "ok":
         return {
             **base,
             "should_collect": "false",
             "should_deploy": "false",
             "freshness_reason": "fresh_for_kst_window_and_expected_us_session",
+        }
+    if generated_kst >= cutoff and data_as_of >= expected:
+        return {
+            **base,
+            "should_collect": "true",
+            "should_deploy": "true",
+            "freshness_reason": "current_date_but_status_not_ok",
         }
     return {
         **base,
