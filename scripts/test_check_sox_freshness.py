@@ -7,8 +7,14 @@ import unittest
 from check_sox_freshness import decide, latest_expected_us_session_date, us_equity_holiday_name
 
 
-def generated_payload(*, generated_at: str, data_as_of: str) -> dict[str, str]:
-    return {"generatedAt": generated_at, "dataAsOf": data_as_of}
+def generated_payload(
+    *, generated_at: str, data_as_of: str, status_level: str = "ok"
+) -> dict[str, object]:
+    return {
+        "generatedAt": generated_at,
+        "dataAsOf": data_as_of,
+        "status": {"level": status_level},
+    }
 
 
 class FreshnessDecisionTests(unittest.TestCase):
@@ -44,6 +50,21 @@ class FreshnessDecisionTests(unittest.TestCase):
         self.assertEqual(result["should_collect"], "true")
         self.assertEqual(result["should_deploy"], "true")
         self.assertEqual(result["freshness_reason"], "stale_or_before_kst_window")
+
+    def test_current_but_degraded_schedule_retries_collection(self) -> None:
+        result = decide(
+            payload=generated_payload(
+                generated_at="2026-07-08T23:38:21Z",
+                data_as_of="2026-07-08",
+                status_level="degraded",
+            ),
+            event_name="schedule",
+            now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC),
+        )
+        self.assertEqual(result["status_level"], "degraded")
+        self.assertEqual(result["should_collect"], "true")
+        self.assertEqual(result["should_deploy"], "true")
+        self.assertEqual(result["freshness_reason"], "current_date_but_status_not_ok")
 
     def test_missing_payload_collects_and_deploys(self) -> None:
         result = decide(payload={}, event_name="schedule", now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC))

@@ -24,7 +24,7 @@
 - 허브 요약: `data/summary.json`
 - refresh script: `scripts/fetch_sox_data.py`
 
-`scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 부분 provider 실패는 기본적으로 `status.level=degraded`와 failures 목록으로 저장하고 workflow 실패로 보지 않습니다. 엄격히 실패 처리해야 하는 수동 점검에는 `--fail-on-degraded`를 사용할 수 있습니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
+`scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 부분 provider 실패는 `status.level=degraded`와 failures 목록으로 명시합니다. 이 상태는 다음 예약 슬롯에서도 다시 수집되며, 마지막 13:30 KST 재시도와 수동 점검은 `--fail-on-degraded`로 실패를 드러내 last-good 공개 결과를 보호합니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
 
 ## 공통 프런트엔드 경계
 
@@ -77,6 +77,6 @@ npm run verify --prefix frontend
 
 ## 배포 메모
 
-`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 이미 06:30 KST 이후 저장됐다고 판단하면 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing 상태이거나 수동 실행이면 다시 수집하고, generated data 커밋은 push 전에 원격 branch 위로 rebase합니다.
+`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 06:30 KST 이후 저장됐고 `status.level=ok`인 경우에만 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing/degraded 상태이거나 수동 실행이면 다시 수집하고, 마지막 예약 재시도와 수동 실행은 건강한 결과를 만들지 못하면 실패 종료합니다. production workflow는 기본 브랜치에서만 실행됩니다. 수집을 시작한 뒤 원격 branch가 바뀌면 데이터 변경 유무와 관계없이 실패하고, 업로드한 artifact의 source SHA가 배포 직전 main과 다르면 배포도 거부합니다.
 
-GitHub Pages 배포 후 `https://sonchanggi.github.io/sox/`와 `https://sonchanggi.github.io/sox/data/summary.json`을 public readback으로 확인하세요.
+GitHub Pages 배포 후 workflow는 `sox-analysis.json`, `sox-history.json`, `summary.json`의 SHA-256을 실제 공개 URL에서 다시 읽어 업로드한 artifact와 byte-identical한지 확인합니다.
