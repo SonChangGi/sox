@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 29
+    "snapshotCount": 30
   },
-  "dataAsOf": "2026-08-06",
+  "dataAsOf": "2026-08-07",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-08-07T01:37:09Z",
+  "generatedAt": "2026-08-07T23:07:33Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.8131034482758621,
+        "priceMomentum": 0.7572413793103449,
         "rank": 1,
-        "score": 0.8948793103448276,
-        "weight": 0.06628197698181025
+        "score": 0.8641551724137932,
+        "weight": 0.06625877124967196
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "TER",
-      "label": "TER",
-      "metrics": {
-        "earningsMomentum": 0.8620689655172413,
-        "priceMomentum": 0.7489655172413793,
-        "rank": 2,
-        "score": 0.7998620689655173,
-        "weight": 0.004498989115063653
-      },
-      "name": "Teradyne",
-      "signals": [
-        "가격·실적 동반 강세"
-      ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "TER",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "CRDO",
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.903448275862069,
-        "priceMomentum": 0.7013793103448276,
-        "rank": 3,
-        "score": 0.7923103448275863,
-        "weight": 0.0027523988498734677
+        "priceMomentum": 0.7910344827586208,
+        "rank": 2,
+        "score": 0.8416206896551726,
+        "weight": 0.0027514352179277063
       },
       "name": "Credo Technology",
       "signals": [
@@ -110,21 +90,21 @@
       ]
     },
     {
-      "id": "AMD",
-      "label": "AMD",
+      "id": "TER",
+      "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.65,
-        "priceMomentum": 0.7924137931034483,
-        "rank": 4,
-        "score": 0.7283275862068966,
-        "weight": 0.05536381832884619
+        "earningsMomentum": 0.8620689655172413,
+        "priceMomentum": 0.7068965517241379,
+        "rank": 3,
+        "score": 0.7767241379310346,
+        "weight": 0.004497413991009554
       },
-      "name": "Advanced Micro Devices",
+      "name": "Teradyne",
       "signals": [
-        "중립/혼재"
+        "가격·실적 동반 강세"
       ],
-      "status": "중립/혼재",
-      "symbol": "AMD",
+      "status": "가격·실적 동반 강세",
+      "symbol": "TER",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
@@ -133,18 +113,38 @@
       "id": "ALAB",
       "label": "ALAB",
       "metrics": {
-        "earningsMomentum": 0.7637931034482758,
-        "priceMomentum": 0.6910344827586207,
-        "rank": 5,
-        "score": 0.7237758620689655,
-        "weight": 0.0038040570699954496
+        "earningsMomentum": 0.746551724137931,
+        "priceMomentum": 0.6448275862068965,
+        "rank": 4,
+        "score": 0.6906034482758621,
+        "weight": 0.003802725245969903
       },
       "name": "Astera Labs",
       "signals": [
-        "가격·실적 동반 강세"
+        "중립/혼재"
       ],
-      "status": "가격·실적 동반 강세",
+      "status": "중립/혼재",
       "symbol": "ALAB",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "AMD",
+      "label": "AMD",
+      "metrics": {
+        "earningsMomentum": 0.6327586206896552,
+        "priceMomentum": 0.7268965517241379,
+        "rank": 5,
+        "score": 0.6845344827586207,
+        "weight": 0.055344435111917625
+      },
+      "name": "Advanced Micro Devices",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "AMD",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
