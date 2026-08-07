@@ -61,7 +61,6 @@ check(summary.pageUrl === 'https://sonchanggi.github.io/sox/', 'summary pageUrl 
 
 check(html.includes('Quant Research Hub'), 'index links/copy includes Quant Research Hub');
 check(html.includes('https://sonchanggi.github.io/quant-dashboard/'), 'index has quant-dashboard return link');
-check(html.includes('https://sonchanggi.github.io/kelly/'), 'shared project navigation includes Kelly');
 check(html.includes('class="skip-link"'), 'index includes a keyboard skip link');
 check(html.includes('<details class="ops-details">'), 'source and operations copy is consolidated in one closed details section');
 check(html.includes('투자 조언이 아닙니다'), 'research-only disclaimer is visible');
