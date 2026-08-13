@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 33
+    "snapshotCount": 34
   },
-  "dataAsOf": "2026-08-12",
+  "dataAsOf": "2026-08-13",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-08-12T23:11:56Z",
+  "generatedAt": "2026-08-13T23:20:00Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,9 +54,9 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.7841379310344828,
+        "priceMomentum": 0.8586206896551725,
         "rank": 1,
-        "score": 0.878948275862069,
+        "score": 0.9199137931034483,
         "weight": 0.06630545367344436
       },
       "name": "Micron Technology",
@@ -74,9 +74,9 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.8982758620689656,
-        "priceMomentum": 0.8558620689655173,
+        "priceMomentum": 0.8365517241379311,
         "rank": 2,
-        "score": 0.874948275862069,
+        "score": 0.8643275862068966,
         "weight": 0.003024441906533171
       },
       "name": "Credo Technology",
@@ -94,9 +94,9 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8568965517241379,
-        "priceMomentum": 0.7448275862068966,
+        "priceMomentum": 0.76,
         "rank": 3,
-        "score": 0.7952586206896552,
+        "score": 0.803603448275862,
         "weight": 0.0038584093514990145
       },
       "name": "Teradyne",
@@ -114,9 +114,9 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7862068965517242,
-        "priceMomentum": 0.6013793103448276,
+        "priceMomentum": 0.6510344827586207,
         "rank": 4,
-        "score": 0.6845517241379311,
+        "score": 0.7118620689655173,
         "weight": 0.0036587028811968457
       },
       "name": "Astera Labs",
@@ -134,9 +134,9 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6775862068965517,
-        "priceMomentum": 0.6475862068965517,
+        "priceMomentum": 0.6655172413793103,
         "rank": 5,
-        "score": 0.6610862068965517,
+        "score": 0.6709482758620691,
         "weight": 0.051815765881222324
       },
       "name": "Advanced Micro Devices",
