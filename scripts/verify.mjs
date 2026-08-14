@@ -20,6 +20,8 @@ const sharedNav = readText('assets/shared-nav.css');
 const workflow = readText('.github/workflows/deploy-pages.yml');
 const freshnessScript = readText('scripts/check_sox_freshness.py');
 const readme = readText('README.md');
+const actionUses = [...workflow.matchAll(/uses:\s+([^@\s]+)@([^\s#]+)/g)];
+const mutableActionUses = actionUses.filter((match) => !/^[0-9a-f]{40}$/.test(match[2]));
 
 check(analysis.schemaVersion === 1, 'analysis schemaVersion is 1');
 check(analysis.projectId === 'sox', 'analysis projectId is sox');
@@ -93,6 +95,13 @@ check(app.includes("row[key] === 0 ? 0"), 'zero-value bars render at zero magnit
 check(app.includes('data-table-ticker'), 'static fallback coordinates chart selection with the table');
 check(!app.includes("metricCard('Stored dates'") && !app.includes("metricCard('Weight method'") && !app.includes("metricCard('Status'"), 'operational metrics are removed from the primary result grid');
 check(workflow.includes('30 22 * * 1-5'), 'workflow schedules SOX primary 07:30 KST slot');
+check(actionUses.length === 7, 'workflow has the expected seven first-party action references');
+check(mutableActionUses.length === 0, `workflow action references use immutable 40-character SHAs (${mutableActionUses.map((match) => match[0]).join(', ')})`);
+check(workflow.includes('actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4'), 'workflow pins checkout v4 to the reviewed commit');
+check(workflow.includes('actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4'), 'workflow pins setup-node v4 to the reviewed commit');
+check(workflow.includes('actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5'), 'workflow pins setup-python v5 to the reviewed commit');
+check(workflow.includes('actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3'), 'workflow pins upload-pages-artifact v3 to the reviewed commit');
+check(workflow.includes('actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4'), 'workflow pins deploy-pages v4 to the reviewed commit');
 check(workflow.includes('Require the production branch') && workflow.includes('if [[ "$GITHUB_REF_NAME" != "$DEFAULT_BRANCH" ]]'), 'workflow rejects non-production manual refs');
 check(workflow.includes('jobs:\n  freshness:'), 'workflow runs a lightweight freshness preflight job');
 check(workflow.includes('scripts/check_sox_freshness.py'), 'workflow uses freshness gate before retries');
