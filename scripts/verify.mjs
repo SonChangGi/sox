@@ -97,11 +97,11 @@ check(!app.includes("metricCard('Stored dates'") && !app.includes("metricCard('W
 check(workflow.includes('30 22 * * 1-5'), 'workflow schedules SOX primary 07:30 KST slot');
 check(actionUses.length === 7, 'workflow has the expected seven first-party action references');
 check(mutableActionUses.length === 0, `workflow action references use immutable 40-character SHAs (${mutableActionUses.map((match) => match[0]).join(', ')})`);
-check(workflow.includes('actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4'), 'workflow pins checkout v4 to the reviewed commit');
-check(workflow.includes('actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4'), 'workflow pins setup-node v4 to the reviewed commit');
-check(workflow.includes('actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5'), 'workflow pins setup-python v5 to the reviewed commit');
-check(workflow.includes('actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3'), 'workflow pins upload-pages-artifact v3 to the reviewed commit');
-check(workflow.includes('actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4'), 'workflow pins deploy-pages v4 to the reviewed commit');
+check(workflow.includes('actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6'), 'workflow pins Node24 checkout v6 to the reviewed commit');
+check(workflow.includes('actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6'), 'workflow pins Node24 setup-node v6 to the reviewed commit');
+check(workflow.includes('actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6'), 'workflow pins Node24 setup-python v6 to the reviewed commit');
+check(workflow.includes('actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5'), 'workflow pins Node24 upload-pages-artifact dependencies to the reviewed commit');
+check(workflow.includes('actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5'), 'workflow pins Node24 deploy-pages v5 to the reviewed commit');
 check(workflow.includes('Require the production branch') && workflow.includes('if [[ "$GITHUB_REF_NAME" != "$DEFAULT_BRANCH" ]]'), 'workflow rejects non-production manual refs');
 check(workflow.includes('jobs:\n  freshness:'), 'workflow runs a lightweight freshness preflight job');
 check(workflow.includes('scripts/check_sox_freshness.py'), 'workflow uses freshness gate before retries');
