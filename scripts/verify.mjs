@@ -110,6 +110,7 @@ check(workflow.includes("if: needs.freshness.outputs.should_collect == 'true'"),
 check(workflow.includes('--allow-degraded'), 'workflow explicitly records partial provider failures as degraded JSON instead of failing the run');
 check(workflow.includes("github.event.schedule == '30 4 * * 2-6'"), 'workflow makes the final scheduled retry strict');
 check(workflow.includes('--fail-on-degraded'), 'workflow fails loudly when the final retry still cannot produce healthy data');
+check(workflow.match(/continue-on-error: \$\{\{ github\.event_name == 'schedule' \|\| github\.event_name == 'push' \}\}/g)?.length === 3, 'automatic SOX jobs preserve strict data gates without making them notification gates');
 check(workflow.includes('base_sha="$(git rev-parse HEAD)"'), 'workflow binds generated data to its analysis source revision');
 check(workflow.includes('remote_sha="$(git rev-parse "origin/$branch")"'), 'workflow resolves the current remote revision before publication');
 check(workflow.includes('if [[ "$remote_sha" != "$base_sha" ]]'), 'workflow fails closed instead of rebasing old-code output onto new source');
@@ -120,6 +121,7 @@ check(workflow.includes('source_sha: ${{ steps.public_contract.outputs.source_sh
 check(workflow.includes('Verify live public data bytes'), 'workflow verifies live Pages data after deployment');
 check(workflow.includes('needs.build.outputs.analysis_sha256'), 'deploy job receives the exact build output hash');
 check(workflow.includes('sha256sum "$readback"'), 'public readback is compared by SHA-256');
+check(workflow.includes('public-site-health:') && workflow.includes('Fail only when the existing SOX page is unusable'), 'automatic failure mail is gated by live SOX page usability');
 check(freshnessScript.includes('push_uses_committed_generated_json'), 'push events deploy committed generated JSON without regenerating uncommitted data');
 check(freshnessScript.includes('us_equity_holidays'), 'freshness gate understands U.S. equity market holidays');
 check(freshnessScript.includes('current_date_but_status_not_ok'), 'freshness gate retries current-date degraded snapshots');

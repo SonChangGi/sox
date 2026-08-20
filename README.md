@@ -77,6 +77,6 @@ npm run verify --prefix frontend
 
 ## 배포 메모
 
-`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 06:30 KST 이후 저장됐고 `status.level=ok`인 경우에만 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing/degraded 상태이거나 수동 실행이면 다시 수집하고, 마지막 예약 재시도와 수동 실행은 건강한 결과를 만들지 못하면 실패 종료합니다. production workflow는 기본 브랜치에서만 실행됩니다. 수집을 시작한 뒤 원격 branch가 바뀌면 데이터 변경 유무와 관계없이 실패하고, 업로드한 artifact의 source SHA가 배포 직전 main과 다르면 배포도 거부합니다.
+`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 06:30 KST 이후 저장됐고 `status.level=ok`인 경우에만 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing/degraded 상태이거나 수동 실행이면 다시 수집하고, 마지막 예약 재시도와 수동 실행은 `--fail-on-degraded`로 건강하지 않은 후보를 계속 차단합니다. 자동 예약·push에서 이 차단이나 배포 오류가 발생해도 별도 health job이 기존 공개 `index.html`, `summary.json`, `sox-analysis.json`을 읽을 수 있으면 실패 메일을 만들지 않습니다. 해당 공개 파일이 반복 확인 후에도 사용할 수 없을 때만 자동 실패 신호를 냅니다. 수동 실행은 계속 엄격합니다. production workflow는 기본 브랜치에서만 실행됩니다. 수집을 시작한 뒤 원격 branch가 바뀌면 데이터 변경 유무와 관계없이 후보를 거부하고, 업로드한 artifact의 source SHA가 배포 직전 main과 다르면 배포도 거부합니다.
 
 GitHub Pages 배포 후 workflow는 `sox-analysis.json`, `sox-history.json`, `summary.json`의 SHA-256을 실제 공개 URL에서 다시 읽어 업로드한 artifact와 byte-identical한지 확인합니다.

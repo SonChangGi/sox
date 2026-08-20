@@ -24,6 +24,7 @@ concurrency:
 jobs:
   freshness:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     outputs:
       should_collect: ${{ steps.freshness.outputs.should_collect }}
       should_deploy: ${{ steps.freshness.outputs.should_deploy }}
@@ -49,6 +50,7 @@ jobs:
     needs: freshness
     if: needs.freshness.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     outputs:
       analysis_sha256: ${{ steps.public_contract.outputs.analysis_sha256 }}
       history_sha256: ${{ steps.public_contract.outputs.history_sha256 }}
@@ -132,6 +134,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     needs: [freshness, build]
     if: needs.freshness.outputs.should_deploy == 'true'
     steps:
@@ -188,3 +191,53 @@ jobs:
             [[ $attempt -lt 12 ]] || exit 1
             sleep 5
           done
+
+  public-site-health:
+    needs: [freshness, build, deploy]
+    if: ${{ always() && (github.event_name == 'schedule' || github.event_name == 'push') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - name: Fail only when the existing SOX page is unusable
+        env:
+          PAGE_URL: https://sonchanggi.github.io/sox/
+        shell: bash
+        run: |
+          set -u
+          required_paths=(index.html data/summary.json data/sox-analysis.json)
+          for attempt in {1..12}; do
+            usable=true
+            for relative_path in "${required_paths[@]}"; do
+              readback="$RUNNER_TEMP/sox-health-${relative_path//\//-}"
+              if ! curl --fail --silent --show-error --location \
+                --header "Cache-Control: no-cache" \
+                --connect-timeout 10 \
+                --max-time 120 \
+                --output "$readback" \
+                "${PAGE_URL%/}/${relative_path}?health=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}"; then
+                usable=false
+                break
+              fi
+              if [[ ! -s "$readback" ]]; then
+                usable=false
+                break
+              fi
+              if [[ "$relative_path" == "index.html" ]] && ! grep -Eiq '<!doctype html|<html' "$readback"; then
+                usable=false
+                break
+              fi
+              if [[ "$relative_path" == *.json ]] && ! jq -e 'type == "object" and length > 0' "$readback" >/dev/null; then
+                usable=false
+                break
+              fi
+            done
+            if [[ "$usable" == "true" ]]; then
+              echo "The existing SOX page remains usable; automatic refresh or deploy errors stay in run logs without failure mail."
+              exit 0
+            fi
+            [[ $attempt -lt 12 ]] && sleep 10
+          done
+          echo "::error::The public SOX page or its required JSON is unavailable or invalid."
+          exit 1
