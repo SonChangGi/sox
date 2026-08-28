@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 44
+    "snapshotCount": 45
   },
-  "dataAsOf": "2026-08-27",
+  "dataAsOf": "2026-08-28",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-08-28T06:15:01Z",
+  "generatedAt": "2026-08-28T16:46:08Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8662068965517241,
+        "priceMomentum": 0.8496551724137931,
         "rank": 1,
-        "score": 0.9233103448275862,
-        "weight": 0.07402735978027707
+        "score": 0.9142068965517242,
+        "weight": 0.07132842245646595
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "CRDO",
       "metrics": {
         "earningsMomentum": 0.896551724137931,
-        "priceMomentum": 0.8337931034482758,
+        "priceMomentum": 0.8165517241379311,
         "rank": 2,
-        "score": 0.8620344827586208,
-        "weight": 0.002973137808650778
+        "score": 0.8525517241379311,
+        "weight": 0.002873959705894711
       },
       "name": "Credo Technology",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "NVDA",
       "metrics": {
         "earningsMomentum": 0.85,
-        "priceMomentum": 0.6855172413793104,
+        "priceMomentum": 0.7172413793103448,
         "rank": 3,
-        "score": 0.7595344827586208,
-        "weight": 0.35470455262018663
+        "score": 0.7769827586206897,
+        "weight": 0.3716932531948953
       },
       "name": "NVIDIA",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.853448275862069,
-        "priceMomentum": 0.6310344827586207,
+        "priceMomentum": 0.6296551724137931,
         "rank": 4,
-        "score": 0.7311206896551725,
-        "weight": 0.003965131103727544
+        "score": 0.7303620689655173,
+        "weight": 0.0038328620313345533
       },
       "name": "Teradyne",
       "signals": [
@@ -134,10 +134,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6758620689655173,
-        "priceMomentum": 0.7379310344827585,
+        "priceMomentum": 0.716551724137931,
         "rank": 5,
-        "score": 0.71,
-        "weight": 0.054838747954367405
+        "score": 0.6982413793103448,
+        "weight": 0.05253988485836531
       },
       "name": "Advanced Micro Devices",
       "signals": [
