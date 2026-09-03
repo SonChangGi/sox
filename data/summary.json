@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 47
+    "snapshotCount": 48
   },
-  "dataAsOf": "2026-09-01",
+  "dataAsOf": "2026-09-02",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-03T00:32:21Z",
+  "generatedAt": "2026-09-03T04:53:13Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.906896551724138,
+        "priceMomentum": 0.9193103448275862,
         "rank": 1,
-        "score": 0.9456896551724139,
-        "weight": 0.07343148698425259
+        "score": 0.9525172413793104,
+        "weight": 0.07421036621309002
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "CRDO",
-      "label": "CRDO",
-      "metrics": {
-        "earningsMomentum": 0.9,
-        "priceMomentum": 0.6620689655172414,
-        "rank": 2,
-        "score": 0.7691379310344828,
-        "weight": 0.0027048989028426902
-      },
-      "name": "Credo Technology",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "CRDO",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "NVDA",
       "label": "NVDA",
       "metrics": {
         "earningsMomentum": 0.8517241379310344,
-        "priceMomentum": 0.6965517241379311,
-        "rank": 3,
-        "score": 0.7663793103448275,
-        "weight": 0.3657239376823188
+        "priceMomentum": 0.7317241379310345,
+        "rank": 2,
+        "score": 0.7857241379310345,
+        "weight": 0.37241792798673073
       },
       "name": "NVIDIA",
       "signals": [
@@ -114,10 +94,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6758620689655173,
-        "priceMomentum": 0.766896551724138,
-        "rank": 4,
-        "score": 0.7259310344827588,
-        "weight": 0.052262091410014866
+        "priceMomentum": 0.7413793103448276,
+        "rank": 3,
+        "score": 0.711896551724138,
+        "weight": 0.05156573486522774
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -134,10 +114,10 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8551724137931034,
-        "priceMomentum": 0.5344827586206896,
-        "rank": 5,
-        "score": 0.6787931034482759,
-        "weight": 0.0036531179882396104
+        "priceMomentum": 0.5551724137931034,
+        "rank": 4,
+        "score": 0.6901724137931035,
+        "weight": 0.0036044426950900756
       },
       "name": "Teradyne",
       "signals": [
@@ -145,6 +125,26 @@
       ],
       "status": "중립/혼재",
       "symbol": "TER",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "TSM",
+      "label": "TSM",
+      "metrics": {
+        "earningsMomentum": 0.6327586206896552,
+        "priceMomentum": 0.7089655172413794,
+        "rank": 5,
+        "score": 0.6746724137931035,
+        "weight": 0.13710441301829288
+      },
+      "name": "Taiwan Semiconductor Manufacturing",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "TSM",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
