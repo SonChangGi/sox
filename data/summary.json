@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-02T00:26:10Z",
+  "generatedAt": "2026-09-03T00:32:21Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8958620689655172,
+        "priceMomentum": 0.906896551724138,
         "rank": 1,
-        "score": 0.9396206896551724,
-        "weight": 0.07234271089126136
+        "score": 0.9456896551724139,
+        "weight": 0.07343148698425259
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "NVDA",
-      "label": "NVDA",
-      "metrics": {
-        "earningsMomentum": 0.8517241379310344,
-        "priceMomentum": 0.713793103448276,
-        "rank": 2,
-        "score": 0.7758620689655173,
-        "weight": 0.36507308664484206
-      },
-      "name": "NVIDIA",
-      "signals": [
-        "가격·실적 동반 강세"
-      ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "NVDA",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "CRDO",
       "label": "CRDO",
       "metrics": {
-        "earningsMomentum": 0.896551724137931,
-        "priceMomentum": 0.6655172413793103,
-        "rank": 3,
-        "score": 0.7694827586206897,
-        "weight": 0.0030917838354902693
+        "earningsMomentum": 0.9,
+        "priceMomentum": 0.6620689655172414,
+        "rank": 2,
+        "score": 0.7691379310344828,
+        "weight": 0.0027048989028426902
       },
       "name": "Credo Technology",
       "signals": [
@@ -110,14 +90,34 @@
       ]
     },
     {
+      "id": "NVDA",
+      "label": "NVDA",
+      "metrics": {
+        "earningsMomentum": 0.8517241379310344,
+        "priceMomentum": 0.6965517241379311,
+        "rank": 3,
+        "score": 0.7663793103448275,
+        "weight": 0.3657239376823188
+      },
+      "name": "NVIDIA",
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "NVDA",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "AMD",
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6758620689655173,
-        "priceMomentum": 0.7655172413793103,
+        "priceMomentum": 0.766896551724138,
         "rank": 4,
-        "score": 0.7251724137931035,
-        "weight": 0.05328700074488092
+        "score": 0.7259310344827588,
+        "weight": 0.052262091410014866
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -133,11 +133,11 @@
       "id": "TER",
       "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.8517241379310344,
-        "priceMomentum": 0.5413793103448276,
+        "earningsMomentum": 0.8551724137931034,
+        "priceMomentum": 0.5344827586206896,
         "rank": 5,
-        "score": 0.6810344827586207,
-        "weight": 0.003983291406846111
+        "score": 0.6787931034482759,
+        "weight": 0.0036531179882396104
       },
       "name": "Teradyne",
       "signals": [
