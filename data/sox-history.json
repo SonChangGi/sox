@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T04:53:13Z",
+  "generatedAt": "2026-09-04T00:17:35Z",
   "latestDataAsOf": "2026-09-02",
   "projectId": "sox",
   "schemaVersion": 1,
@@ -21,7 +21,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "MICRON TECHNOLOGY",
@@ -29,8 +29,8 @@
           "marketCap": 1079790203808.0,
           "metrics": {
             "drawdown52w": -0.21204799216897863,
-            "ma200": 598.9083494567872,
-            "ma200Gap": 0.5963711608913336,
+            "ma200": 598.9083493041992,
+            "ma200Gap": 0.5963711612980518,
             "ma50": 944.0023181152344,
             "ma50Gap": 0.012794141224910627,
             "netMargin": 0.5590646254735583,
@@ -43,8 +43,8 @@
             "quarterlyRevenueDate": "2026-05-31",
             "quarterlyRevenueLatest": 41456000000.0,
             "quarterlyRevenueYoY": 3.457155144608107,
-            "range52wPosition": 0.7649953070432566,
-            "return12m": 7.0824997863526935,
+            "range52wPosition": 0.7649953086808818,
+            "return12m": 7.082499265053315,
             "return1m": 0.07103412839419909,
             "return3m": -0.11425186630397799,
             "return6m": 1.386977208278282,
@@ -57,7 +57,7 @@
           "name": "Micron Technology",
           "officialWeight": null,
           "price": 956.0800170898438,
-          "proxyWeight": 0.07421036621309002,
+          "proxyWeight": 0.07441756139485221,
           "rank": 1,
           "scores": {
             "combined": 0.9525172413793104,
@@ -81,7 +81,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "NVIDIA CORPORATION",
@@ -89,8 +89,8 @@
           "marketCap": 5418828270000.0,
           "metrics": {
             "drawdown52w": -0.04695196932606305,
-            "ma200": 196.11282012939452,
-            "ma200Gap": 0.1442903299949716,
+            "ma200": 196.11282020568848,
+            "ma200Gap": 0.14429032954980725,
             "ma50": 209.28499969482422,
             "ma50Gap": 0.07226989028998809,
             "netMargin": 0.6366306895072119,
@@ -104,7 +104,7 @@
             "quarterlyRevenueLatest": 81615000000.0,
             "quarterlyRevenueYoY": 0.8522763378875222,
             "range52wPosition": 0.8431563470615384,
-            "return12m": 0.3157799195891764,
+            "return12m": 0.3157798018707829,
             "return1m": 0.05883741189514535,
             "return3m": 0.046200483273237225,
             "return6m": 0.22751157323169768,
@@ -117,7 +117,7 @@
           "name": "NVIDIA",
           "officialWeight": null,
           "price": 224.41000366210938,
-          "proxyWeight": 0.37241792798673073,
+          "proxyWeight": 0.37345771803518757,
           "rank": 2,
           "scores": {
             "combined": 0.7857241379310345,
@@ -141,7 +141,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "ADV MICRO DEVICES",
@@ -177,7 +177,7 @@
           "name": "Advanced Micro Devices",
           "officialWeight": null,
           "price": 457.05999755859375,
-          "proxyWeight": 0.05156573486522774,
+          "proxyWeight": 0.051709706285304316,
           "rank": 3,
           "scores": {
             "combined": 0.711896551724138,
@@ -201,7 +201,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "TERADYNE INC CMN",
@@ -209,8 +209,8 @@
           "marketCap": 52446067995.0,
           "metrics": {
             "drawdown52w": -0.29394015025038056,
-            "ma200": 314.4005007171631,
-            "ma200Gap": 0.08657586211833435,
+            "ma200": 314.400500793457,
+            "ma200Gap": 0.08657586185466082,
             "ma50": 376.00219787597655,
             "ma50Gap": -0.09144149410033486,
             "netMargin": 0.2576639812761157,
@@ -224,7 +224,7 @@
             "quarterlyRevenueLatest": 1328990000.0,
             "quarterlyRevenueYoY": 1.0389630513794939,
             "range52wPosition": 0.6174557178868437,
-            "return12m": 1.8396858011131116,
+            "return12m": 1.8396859812021997,
             "return1m": -0.15348399944524493,
             "return3m": -0.1661093467426824,
             "return6m": 0.11975431073546128,
@@ -237,7 +237,7 @@
           "name": "Teradyne",
           "officialWeight": null,
           "price": 341.6199951171875,
-          "proxyWeight": 0.0036044426950900756,
+          "proxyWeight": 0.0036145062912892392,
           "rank": 4,
           "scores": {
             "combined": 0.6901724137931035,
@@ -261,16 +261,16 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NYQ",
           "indexName": "TAIWAN SEMICOND ADS",
           "lastTradeDate": "2026-09-02",
-          "marketCap": 1994923480783.0,
+          "marketCap": 1950755483671.0,
           "metrics": {
             "drawdown52w": -0.1299704888755292,
-            "ma200": 370.4120538330078,
-            "ma200Gap": 0.12172375520835277,
+            "ma200": 370.41205154418947,
+            "ma200Gap": 0.12172376213961167,
             "ma50": 421.00519958496096,
             "ma50Gap": -0.013076322074853541,
             "netMargin": 0.49922581368321417,
@@ -284,20 +284,20 @@
             "quarterlyRevenueLatest": 1270381000000.0,
             "quarterlyRevenueYoY": 0.36045393406668724,
             "range52wPosition": 0.7504332640797942,
-            "return12m": 0.8393765702637157,
+            "return12m": 0.8393764460154567,
             "return1m": -0.004003196236499584,
             "return3m": -0.046295936978540064,
             "return6m": 0.16843824810264318,
             "rsi14": 40.047808577664426,
             "trailingNetIncome": 2216808460000.0,
-            "trailingPe": 30.659923,
+            "trailingPe": 30.831276,
             "trailingRevenue": 4440492457000.0,
             "volatility63d": 0.47218345165314507
           },
           "name": "Taiwan Semiconductor Manufacturing",
           "officialWeight": null,
           "price": 415.5,
-          "proxyWeight": 0.13710441301829288,
+          "proxyWeight": 0.13444321448784355,
           "rank": 5,
           "scores": {
             "combined": 0.6746724137931035,
@@ -321,7 +321,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "INTEL CORP",
@@ -357,7 +357,7 @@
           "name": "Intel",
           "officialWeight": null,
           "price": 90.05000305175781,
-          "proxyWeight": 0.032322473583672316,
+          "proxyWeight": 0.03241271785992265,
           "rank": 6,
           "scores": {
             "combined": 0.6521551724137932,
@@ -381,7 +381,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "ASTERA LABS, INC.",
@@ -417,7 +417,7 @@
           "name": "Astera Labs",
           "officialWeight": null,
           "price": 274.1300048828125,
-          "proxyWeight": 0.003337381057879955,
+          "proxyWeight": 0.003346699018566358,
           "rank": 7,
           "scores": {
             "combined": 0.6322068965517241,
@@ -441,12 +441,12 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "QORVO, INC. CMN",
           "lastTradeDate": "2026-09-02",
-          "marketCap": 8505447637.0,
+          "marketCap": 8877742928.0,
           "metrics": {
             "drawdown52w": -0.07022088023458184,
             "ma200": 87.65177494049072,
@@ -470,14 +470,14 @@
             "return6m": 0.2664233376901983,
             "rsi14": 57.05994361824109,
             "trailingNetIncome": 399197000.0,
-            "trailingPe": 22.36891,
+            "trailingPe": 23.348028,
             "trailingRevenue": 3644534000.0,
             "volatility63d": 0.3619113767794607
           },
           "name": "Qorvo",
           "officialWeight": null,
           "price": 100.62999725341797,
-          "proxyWeight": 0.0005845509449169488,
+          "proxyWeight": 0.0006118410567740514,
           "rank": 8,
           "scores": {
             "combined": 0.6145517241379311,
@@ -501,7 +501,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "CREDO TCH GP HLD ORD",
@@ -537,7 +537,7 @@
           "name": "Credo Technology",
           "officialWeight": null,
           "price": 165.22000122070312,
-          "proxyWeight": 0.002668857979045655,
+          "proxyWeight": 0.002676309424743659,
           "rank": 9,
           "scores": {
             "combined": 0.6026206896551725,
@@ -561,7 +561,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "LAM RESEARCH CORP",
@@ -569,8 +569,8 @@
           "marketCap": 363133354200.0,
           "metrics": {
             "drawdown52w": -0.3346409981804106,
-            "ma200": 259.1515598297119,
-            "ma200Gap": 0.11255362504348176,
+            "ma200": 259.1515602111816,
+            "ma200Gap": 0.11255362340580888,
             "ma50": 325.4099993896484,
             "ma50Gap": -0.11397926349834697,
             "netMargin": 0.3127229778385542,
@@ -597,7 +597,7 @@
           "name": "Lam Research",
           "officialWeight": null,
           "price": 288.32000732421875,
-          "proxyWeight": 0.0249569398799264,
+          "proxyWeight": 0.025026619602026158,
           "rank": 10,
           "scores": {
             "combined": 0.5940344827586208,
@@ -621,16 +621,16 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "ASML HLDG NY REG",
           "lastTradeDate": "2026-09-02",
-          "marketCap": 640493889405.0,
+          "marketCap": 643735305811.0,
           "metrics": {
             "drawdown52w": -0.15329148716900165,
-            "ma200": 1470.2638510131835,
-            "ma200Gap": 0.14421642596247186,
+            "ma200": 1470.2638418579102,
+            "ma200Gap": 0.14421643308746113,
             "ma50": 1755.267236328125,
             "ma50Gap": -0.0415704150284496,
             "netMargin": 0.2777977496284764,
@@ -644,7 +644,7 @@
             "quarterlyRevenueLatest": 9326500000.0,
             "quarterlyRevenueYoY": 0.212540790722467,
             "range52wPosition": 0.7572896802880259,
-            "return12m": 1.3329624898472283,
+            "return12m": 1.3329622923813425,
             "return1m": -0.01728496899164944,
             "return3m": -0.024261555129207024,
             "return6m": 0.20636788901844216,
@@ -657,7 +657,7 @@
           "name": "ASML Holding",
           "officialWeight": null,
           "price": 1682.300048828125,
-          "proxyWeight": 0.04401900102665043,
+          "proxyWeight": 0.04436529565954665,
           "rank": 11,
           "scores": {
             "combined": 0.5841034482758621,
@@ -681,7 +681,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "ANALOG DEVICES CMN",
@@ -689,8 +689,8 @@
           "marketCap": 171788148651.0,
           "metrics": {
             "drawdown52w": -0.19908021281167398,
-            "ma200": 344.98836349487306,
-            "ma200Gap": 0.031078230731003798,
+            "ma200": 344.98836387634276,
+            "ma200Gap": 0.03107822959089246,
             "ma50": 378.5020721435547,
             "ma50Gap": -0.060216528166937455,
             "netMargin": 0.2978735236725299,
@@ -717,7 +717,7 @@
           "name": "Analog Devices",
           "officialWeight": null,
           "price": 355.7099914550781,
-          "proxyWeight": 0.011806424412353985,
+          "proxyWeight": 0.011839387923746114,
           "rank": 12,
           "scores": {
             "combined": 0.5634655172413794,
@@ -741,7 +741,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "MARVELL TECH INC CMN",
@@ -763,11 +763,11 @@
             "quarterlyRevenueDate": "2026-04-30",
             "quarterlyRevenueLatest": 2417800000.0,
             "quarterlyRevenueYoY": 0.27568195008705754,
-            "range52wPosition": 0.5677300697211308,
-            "return12m": 2.2030948549391787,
+            "range52wPosition": 0.5677300632335429,
+            "return12m": 2.203094475841051,
             "return1m": -0.055400525244678867,
             "return3m": -0.31532922034533595,
-            "return6m": 1.6461050589048423,
+            "return6m": 1.6461048001870986,
             "rsi14": 44.47105316921878,
             "trailingNetIncome": 2526700000.0,
             "trailingPe": 69.665563,
@@ -777,7 +777,7 @@
           "name": "Marvell Technology",
           "officialWeight": null,
           "price": 206.47999572753906,
-          "proxyWeight": 0.012994729876240351,
+          "proxyWeight": 0.01303101113391434,
           "rank": 13,
           "scores": {
             "combined": 0.5416551724137931,
@@ -801,7 +801,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "BROADCOM INC.",
@@ -809,8 +809,8 @@
           "marketCap": 1758782247596.0,
           "metrics": {
             "drawdown52w": -0.23620408335026433,
-            "ma200": 368.8612814331055,
-            "ma200Gap": -0.0043953954517302884,
+            "ma200": 368.8612808227539,
+            "ma200Gap": -0.0043953938043118645,
             "ma50": 384.58,
             "ma50Gap": -0.0450881735025872,
             "netMargin": 0.38848472801961176,
@@ -824,10 +824,10 @@
             "quarterlyRevenueLatest": 22187000000.0,
             "quarterlyRevenueYoY": 0.47873900293255134,
             "range52wPosition": 0.39546775159055114,
-            "return12m": 0.24037959343587478,
+            "return12m": 0.24037946558335888,
             "return1m": -0.12177160173568358,
             "return3m": -0.23247459354616917,
-            "return6m": 0.160812437130039,
+            "return6m": 0.1608125491058574,
             "rsi14": 24.0668545120443,
             "trailingNetIncome": 29317000000.0,
             "trailingPe": 61.510815,
@@ -837,7 +837,7 @@
           "name": "Broadcom",
           "officialWeight": null,
           "price": 367.239990234375,
-          "proxyWeight": 0.12087521652158716,
+          "proxyWeight": 0.12121269986435655,
           "rank": 14,
           "scores": {
             "combined": 0.5248620689655172,
@@ -861,7 +861,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "TEXAS INSTRUMENTS",
@@ -869,8 +869,8 @@
           "marketCap": 231362168771.0,
           "metrics": {
             "drawdown52w": -0.2292506466770433,
-            "ma200": 236.46032768249512,
-            "ma200Gap": 0.07755920643858749,
+            "ma200": 236.4603286743164,
+            "ma200Gap": 0.07755920191881804,
             "ma50": 281.30741119384766,
             "ma50Gap": -0.09422932737390166,
             "netMargin": 0.31110882640209736,
@@ -897,11 +897,11 @@
           "name": "Texas Instruments",
           "officialWeight": null,
           "price": 254.8000030517578,
-          "proxyWeight": 0.015900747396855985,
+          "proxyWeight": 0.015945142249154463,
           "rank": 15,
           "scores": {
-            "combined": 0.5201379310344828,
-            "earningsMomentum": 0.503448275862069,
+            "combined": 0.523241379310345,
+            "earningsMomentum": 0.5103448275862069,
             "label": "중립/혼재",
             "priceMomentum": 0.5337931034482759
           },
@@ -921,7 +921,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "MONOLITHIC POWER SYS",
@@ -929,8 +929,8 @@
           "marketCap": 60247352280.0,
           "metrics": {
             "drawdown52w": -0.2773372637400734,
-            "ma200": 1244.8231369018554,
-            "ma200Gap": -0.020455236407049937,
+            "ma200": 1244.823134765625,
+            "ma200Gap": -0.020455234726061367,
             "ma50": 1337.082041015625,
             "ma50Gap": -0.08804400332431572,
             "netMargin": 0.24500680993706994,
@@ -943,7 +943,7 @@
             "quarterlyRevenueDate": "2026-06-30",
             "quarterlyRevenueLatest": 980642000.0,
             "quarterlyRevenueYoY": 0.4755948923671405,
-            "range52wPosition": 0.45932727518007366,
+            "range52wPosition": 0.45932731330811083,
             "return12m": 0.49079372290436085,
             "return1m": -0.08664227875550701,
             "return3m": -0.2773372637400734,
@@ -957,7 +957,7 @@
           "name": "Monolithic Power Systems",
           "officialWeight": null,
           "price": 1219.3599853515625,
-          "proxyWeight": 0.004140598849943668,
+          "proxyWeight": 0.0041521593929661205,
           "rank": 16,
           "scores": {
             "combined": 0.517948275862069,
@@ -981,7 +981,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "MACOM TECHNOLOGY S",
@@ -1017,7 +1017,7 @@
           "name": "MACOM Technology",
           "officialWeight": null,
           "price": 257.55999755859375,
-          "proxyWeight": 0.0013752167192890227,
+          "proxyWeight": 0.001379056321391205,
           "rank": 17,
           "scores": {
             "combined": 0.5039827586206896,
@@ -1041,12 +1041,12 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "ARM HOLDINGS PLC ADS",
           "lastTradeDate": "2026-09-02",
-          "marketCap": 250787423972.0,
+          "marketCap": 250830143915.0,
           "metrics": {
             "drawdown52w": -0.46557137128065706,
             "ma200": 200.69922496795655,
@@ -1077,7 +1077,7 @@
           "name": "Arm Holdings",
           "officialWeight": null,
           "price": 234.86000061035156,
-          "proxyWeight": 0.017235780162633205,
+          "proxyWeight": 0.0172868466195061,
           "rank": 18,
           "scores": {
             "combined": 0.4762586206896552,
@@ -1101,67 +1101,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
-          },
-          "exchange": "NMS",
-          "indexName": "ENTEGRIS INC",
-          "lastTradeDate": "2026-09-02",
-          "marketCap": 19789128000.0,
-          "metrics": {
-            "drawdown52w": -0.2857541961110579,
-            "ma200": 125.43035678863525,
-            "ma200Gap": 0.04687573981684823,
-            "ma50": 143.29729873657226,
-            "ma50Gap": -0.08365336460399808,
-            "netMargin": 0.09184931300923004,
-            "quarterlyEpsDate": "2026-06-30",
-            "quarterlyEpsLatest": 0.61,
-            "quarterlyEpsYoY": 0.7428571428571429,
-            "quarterlyNetIncomeDate": "2026-06-30",
-            "quarterlyNetIncomeLatest": 93600000.0,
-            "quarterlyNetIncomeYoY": 0.7727272727272727,
-            "quarterlyRevenueDate": "2026-06-30",
-            "quarterlyRevenueLatest": 883200000.0,
-            "quarterlyRevenueYoY": 0.1145885916203937,
-            "range52wPosition": 0.5440012322837686,
-            "return12m": 0.6080679095269657,
-            "return1m": -0.09165744482410809,
-            "return3m": -0.06348453196274972,
-            "return6m": 0.019473645303389908,
-            "rsi14": 20.084687391500253,
-            "trailingNetIncome": 305500000.0,
-            "trailingPe": 64.755,
-            "trailingRevenue": 3326100000.0,
-            "volatility63d": 0.915705875612322
-          },
-          "name": "Entegris",
-          "officialWeight": null,
-          "price": 131.30999755859375,
-          "proxyWeight": 0.0013600405252230288,
-          "rank": 19,
-          "scores": {
-            "combined": 0.4499310344827586,
-            "earningsMomentum": 0.3482758620689655,
-            "label": "중립/혼재",
-            "priceMomentum": 0.5331034482758621
-          },
-          "ticker": "ENTG"
-        },
-        {
-          "currency": "USD",
-          "dataQuality": {
-            "failures": [],
-            "fundamentalTypes": [
-              "quarterlyDilutedEPS",
-              "quarterlyNetIncome",
-              "quarterlyTotalRevenue",
-              "trailingMarketCap",
-              "trailingNetIncome",
-              "trailingPeRatio",
-              "trailingTotalRevenue"
-            ],
-            "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "APPLIED MATERIALS",
@@ -1169,8 +1109,8 @@
           "marketCap": 350651030189.0,
           "metrics": {
             "drawdown52w": -0.3929061735003502,
-            "ma200": 404.0889320373535,
-            "ma200Gap": 0.08505815599657995,
+            "ma200": 404.08893257141114,
+            "ma200Gap": 0.08505815456253041,
             "ma50": 540.568203125,
             "ma50Gap": -0.18889052496916936,
             "netMargin": 0.30051561435937346,
@@ -1197,11 +1137,11 @@
           "name": "Applied Materials",
           "officialWeight": null,
           "price": 438.4599914550781,
-          "proxyWeight": 0.024099071534038473,
-          "rank": 20,
+          "proxyWeight": 0.02416635608957425,
+          "rank": 19,
           "scores": {
-            "combined": 0.4369310344827587,
-            "earningsMomentum": 0.33793103448275863,
+            "combined": 0.44236206896551733,
+            "earningsMomentum": 0.35,
             "label": "중립/혼재",
             "priceMomentum": 0.5179310344827587
           },
@@ -1221,7 +1161,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "SKYWORKS SOLUTIONS",
@@ -1229,8 +1169,8 @@
           "marketCap": 10143370234.0,
           "metrics": {
             "drawdown52w": -0.14085351543886948,
-            "ma200": 63.20917951583862,
-            "ma200Gap": 0.13385427113456871,
+            "ma200": 63.20917947769165,
+            "ma200Gap": 0.133854271818854,
             "ma50": 64.7930005645752,
             "ma50Gap": 0.1061379708370851,
             "netMargin": 0.07227024737799258,
@@ -1257,8 +1197,8 @@
           "name": "Skyworks Solutions",
           "officialWeight": null,
           "price": 71.66999816894531,
-          "proxyWeight": 0.0006971198822192164,
-          "rank": 21,
+          "proxyWeight": 0.0006990662394207386,
+          "rank": 20,
           "scores": {
             "combined": 0.4324827586206897,
             "earningsMomentum": 0.12068965517241381,
@@ -1281,7 +1221,67 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
+          },
+          "exchange": "NMS",
+          "indexName": "ENTEGRIS INC",
+          "lastTradeDate": "2026-09-02",
+          "marketCap": 19789128000.0,
+          "metrics": {
+            "drawdown52w": -0.2857541961110579,
+            "ma200": 125.43035678863525,
+            "ma200Gap": 0.04687573981684823,
+            "ma50": 143.29729873657226,
+            "ma50Gap": -0.08365336460399808,
+            "netMargin": 0.09184931300923004,
+            "quarterlyEpsDate": "2026-06-30",
+            "quarterlyEpsLatest": 0.61,
+            "quarterlyEpsYoY": 0.7428571428571429,
+            "quarterlyNetIncomeDate": "2026-03-31",
+            "quarterlyNetIncomeLatest": 92000000.0,
+            "quarterlyNetIncomeYoY": 0.4626391096979332,
+            "quarterlyRevenueDate": "2026-03-31",
+            "quarterlyRevenueLatest": 811900000.0,
+            "quarterlyRevenueYoY": 0.05005173305742372,
+            "range52wPosition": 0.5440012322837686,
+            "return12m": 0.6080679095269657,
+            "return1m": -0.09165744482410809,
+            "return3m": -0.06348453196274972,
+            "return6m": 0.019473645303389908,
+            "rsi14": 20.084687391500253,
+            "trailingNetIncome": 305500000.0,
+            "trailingPe": 64.755,
+            "trailingRevenue": 3326100000.0,
+            "volatility63d": 0.915705875612322
+          },
+          "name": "Entegris",
+          "officialWeight": null,
+          "price": 131.30999755859375,
+          "proxyWeight": 0.0013638377554242432,
+          "rank": 21,
+          "scores": {
+            "combined": 0.42743103448275865,
+            "earningsMomentum": 0.2982758620689655,
+            "label": "중립/혼재",
+            "priceMomentum": 0.5331034482758621
+          },
+          "ticker": "ENTG"
+        },
+        {
+          "currency": "USD",
+          "dataQuality": {
+            "failures": [],
+            "fundamentalTypes": [
+              "quarterlyDilutedEPS",
+              "quarterlyNetIncome",
+              "quarterlyTotalRevenue",
+              "trailingMarketCap",
+              "trailingNetIncome",
+              "trailingPeRatio",
+              "trailingTotalRevenue"
+            ],
+            "ok": true,
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "KLA CP CMN STK",
@@ -1289,8 +1289,8 @@
           "marketCap": 223275779746.0,
           "metrics": {
             "drawdown52w": -0.42840905328066436,
-            "ma200": 170.50694522857665,
-            "ma200Gap": 0.010281395141465977,
+            "ma200": 170.506944770813,
+            "ma200Gap": 0.01028139785379012,
             "ma50": 208.3943600463867,
             "ma50Gap": -0.17339416254599016,
             "netMargin": 0.3557406044239115,
@@ -1304,7 +1304,7 @@
             "quarterlyRevenueLatest": 3657556000.0,
             "quarterlyRevenueYoY": 0.15208012244148428,
             "range52wPosition": 0.4062085592440985,
-            "return12m": 1.046307893703649,
+            "return12m": 1.046307708244798,
             "return1m": -0.11765314137660177,
             "return3m": -0.1884905456662228,
             "return6m": 0.16995481946439983,
@@ -1317,7 +1317,7 @@
           "name": "KLA",
           "officialWeight": null,
           "price": 172.25999450683594,
-          "proxyWeight": 0.015344996947583093,
+          "proxyWeight": 0.015387840145830698,
           "rank": 22,
           "scores": {
             "combined": 0.398448275862069,
@@ -1341,7 +1341,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NYQ",
           "indexName": "COHERENT CORP. CM",
@@ -1377,7 +1377,7 @@
           "name": "Coherent",
           "officialWeight": null,
           "price": 268.6400146484375,
-          "proxyWeight": 0.0036612231355057936,
+          "proxyWeight": 0.003671445262571638,
           "rank": 23,
           "scores": {
             "combined": 0.3370689655172414,
@@ -1401,7 +1401,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "QUALCOMM INC",
@@ -1437,7 +1437,7 @@
           "name": "Qualcomm",
           "officialWeight": null,
           "price": 169.9600067138672,
-          "proxyWeight": 0.012229877434243452,
+          "proxyWeight": 0.012264023225555696,
           "rank": 24,
           "scores": {
             "combined": 0.3352931034482759,
@@ -1461,7 +1461,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "MICROCHIP TECHNOLOGY",
@@ -1469,8 +1469,8 @@
           "marketCap": 38776250624.0,
           "metrics": {
             "drawdown52w": -0.28733552774151816,
-            "ma200": 76.34727312088013,
-            "ma200Gap": -0.04698623589306139,
+            "ma200": 76.34727323532104,
+            "ma200Gap": -0.04698623732158347,
             "ma50": 80.23797607421875,
             "ma50Gap": -0.09319743971447236,
             "netMargin": 0.093395544970033,
@@ -1497,7 +1497,7 @@
           "name": "Microchip Technology",
           "officialWeight": null,
           "price": 72.76000213623047,
-          "proxyWeight": 0.0026649619055900166,
+          "proxyWeight": 0.0026724024734593697,
           "rank": 25,
           "scores": {
             "combined": 0.3092758620689655,
@@ -1521,7 +1521,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "NXP SEMICONDUCTORS",
@@ -1529,8 +1529,8 @@
           "marketCap": 56081312297.0,
           "metrics": {
             "drawdown52w": -0.3108032443431238,
-            "ma200": 242.18807502746583,
-            "ma200Gap": -0.05651836914725672,
+            "ma200": 242.18807518005372,
+            "ma200Gap": -0.05651836974168678,
             "ma50": 253.07080017089845,
             "ma50Gap": -0.09709061714866285,
             "netMargin": 0.22563519150549868,
@@ -1543,8 +1543,8 @@
             "quarterlyRevenueDate": "2026-06-30",
             "quarterlyRevenueLatest": 3496000000.0,
             "quarterlyRevenueYoY": 0.19480519480519476,
-            "range52wPosition": 0.3118278452242364,
-            "return12m": -0.00042399445496421606,
+            "range52wPosition": 0.31182791535130633,
+            "return12m": -0.00042386101203595317,
             "return1m": -0.0382996880040104,
             "return3m": -0.2877000852478099,
             "return6m": 0.0651429680215474,
@@ -1557,11 +1557,11 @@
           "name": "NXP Semiconductors",
           "officialWeight": null,
           "price": 228.5,
-          "proxyWeight": 0.0038542808673332437,
+          "proxyWeight": 0.0038650420111682785,
           "rank": 26,
           "scores": {
-            "combined": 0.3016206896551724,
-            "earningsMomentum": 0.3103448275862069,
+            "combined": 0.3047241379310345,
+            "earningsMomentum": 0.3172413793103448,
             "label": "동반 약세",
             "priceMomentum": 0.2944827586206897
           },
@@ -1581,7 +1581,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "ON SEMICONDUCTOR",
@@ -1617,11 +1617,11 @@
           "name": "ON Semiconductor",
           "officialWeight": null,
           "price": 72.33999633789062,
-          "proxyWeight": 0.0019438644519119818,
+          "proxyWeight": 0.0019492917172522239,
           "rank": 27,
           "scores": {
-            "combined": 0.2863103448275862,
-            "earningsMomentum": 0.29655172413793107,
+            "combined": 0.29174137931034483,
+            "earningsMomentum": 0.3086206896551724,
             "label": "동반 약세",
             "priceMomentum": 0.27793103448275863
           },
@@ -1641,7 +1641,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "NOVA LTD ORD SHS",
@@ -1677,7 +1677,7 @@
           "name": "Nova",
           "officialWeight": null,
           "price": 349.6000061035156,
-          "proxyWeight": 0.0007377079862479401,
+          "proxyWeight": 0.0007397676653480157,
           "rank": 28,
           "scores": {
             "combined": 0.2225172413793104,
@@ -1701,7 +1701,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "RAMBUS INC.",
@@ -1737,7 +1737,7 @@
           "name": "Rambus",
           "officialWeight": null,
           "price": 84.72000122070312,
-          "proxyWeight": 0.0006292838095875473,
+          "proxyWeight": 0.0006310407686211829,
           "rank": 29,
           "scores": {
             "combined": 0.20970689655172414,
@@ -1761,7 +1761,7 @@
               "trailingTotalRevenue"
             ],
             "ok": true,
-            "pricePoints": 379
+            "pricePoints": 378
           },
           "exchange": "NMS",
           "indexName": "GLOBALFOUNDRIES ORD",
@@ -1797,11 +1797,11 @@
           "name": "GlobalFoundries",
           "officialWeight": null,
           "price": 43.970001220703125,
-          "proxyWeight": 0.001656768331089735,
+          "proxyWeight": 0.0016613940246823565,
           "rank": 30,
           "scores": {
-            "combined": 0.13744827586206898,
-            "earningsMomentum": 0.16551724137931034,
+            "combined": 0.1428793103448276,
+            "earningsMomentum": 0.17758620689655175,
             "label": "동반 약세",
             "priceMomentum": 0.11448275862068963
           },
@@ -1823,7 +1823,7 @@
         }
       },
       "dataAsOf": "2026-09-02",
-      "generatedAt": "2026-09-03T04:53:13Z",
+      "generatedAt": "2026-09-04T00:17:35Z",
       "index": {
         "constituentCount": 30,
         "constituentSource": {
@@ -1831,6 +1831,7 @@
           "override": false,
           "recordCount": 30,
           "requestedTradeDates": [
+            "2026-09-04",
             "2026-09-03",
             "2026-09-02",
             "2026-09-01",
@@ -1838,12 +1839,11 @@
             "2026-08-28",
             "2026-08-27",
             "2026-08-26",
-            "2026-08-25",
-            "2026-08-24"
+            "2026-08-25"
           ],
           "source": "Nasdaq Global Index Watch /Index/WeightingData",
           "timeOfDay": "SOD",
-          "tradeDate": "2026-09-03"
+          "tradeDate": "2026-09-04"
         },
         "description": "Modified market capitalization-weighted semiconductor index. Free dashboard metrics use generated public-source data.",
         "name": "PHLX Semiconductor Sector Index",
@@ -1861,11 +1861,11 @@
             "name": "Micron Technology",
             "price": 956.0800170898438,
             "priceMomentum": 0.9193103448275862,
-            "proxyWeight": 0.07421036621309002,
+            "proxyWeight": 0.07441756139485221,
             "quarterlyEpsYoY": 13.68452380952381,
             "quarterlyRevenueYoY": 3.457155144608107,
             "rank": 1,
-            "return12m": 7.0824997863526935,
+            "return12m": 7.082499265053315,
             "return3m": -0.11425186630397799,
             "ticker": "MU"
           },
@@ -1877,11 +1877,11 @@
             "name": "NVIDIA",
             "price": 224.41000366210938,
             "priceMomentum": 0.7317241379310345,
-            "proxyWeight": 0.37241792798673073,
+            "proxyWeight": 0.37345771803518757,
             "quarterlyEpsYoY": 2.1447368421052633,
             "quarterlyRevenueYoY": 0.8522763378875222,
             "rank": 2,
-            "return12m": 0.3157799195891764,
+            "return12m": 0.3157798018707829,
             "return3m": 0.046200483273237225,
             "ticker": "NVDA"
           },
@@ -1893,7 +1893,7 @@
             "name": "Advanced Micro Devices",
             "price": 457.05999755859375,
             "priceMomentum": 0.7413793103448276,
-            "proxyWeight": 0.05156573486522774,
+            "proxyWeight": 0.051709706285304316,
             "quarterlyEpsYoY": 1.5555555555555554,
             "quarterlyRevenueYoY": 0.5011060507482108,
             "rank": 3,
@@ -1909,11 +1909,11 @@
             "name": "Teradyne",
             "price": 341.6199951171875,
             "priceMomentum": 0.5551724137931034,
-            "proxyWeight": 0.0036044426950900756,
+            "proxyWeight": 0.0036145062912892392,
             "quarterlyEpsYoY": 3.8571428571428568,
             "quarterlyRevenueYoY": 1.0389630513794939,
             "rank": 4,
-            "return12m": 1.8396858011131116,
+            "return12m": 1.8396859812021997,
             "return3m": -0.1661093467426824,
             "ticker": "TER"
           },
@@ -1921,15 +1921,15 @@
             "combined": 0.6746724137931035,
             "earningsMomentum": 0.6327586206896552,
             "label": "중립/혼재",
-            "marketCap": 1994923480783.0,
+            "marketCap": 1950755483671.0,
             "name": "Taiwan Semiconductor Manufacturing",
             "price": 415.5,
             "priceMomentum": 0.7089655172413794,
-            "proxyWeight": 0.13710441301829288,
+            "proxyWeight": 0.13444321448784355,
             "quarterlyEpsYoY": 0.7738751432291666,
             "quarterlyRevenueYoY": 0.36045393406668724,
             "rank": 5,
-            "return12m": 0.8393765702637157,
+            "return12m": 0.8393764460154567,
             "return3m": -0.046295936978540064,
             "ticker": "TSM"
           },
@@ -1941,7 +1941,7 @@
             "name": "Intel",
             "price": 90.05000305175781,
             "priceMomentum": 0.6793103448275862,
-            "proxyWeight": 0.032322473583672316,
+            "proxyWeight": 0.03241271785992265,
             "quarterlyEpsYoY": 2.2238805970149254,
             "quarterlyRevenueYoY": 0.25421883505715837,
             "rank": 6,
@@ -1957,7 +1957,7 @@
             "name": "Astera Labs",
             "price": 274.1300048828125,
             "priceMomentum": 0.5062068965517241,
-            "proxyWeight": 0.003337381057879955,
+            "proxyWeight": 0.003346699018566358,
             "quarterlyEpsYoY": 1.8620689655172415,
             "quarterlyRevenueYoY": 1.044548651817116,
             "rank": 7,
@@ -1969,11 +1969,11 @@
             "combined": 0.6145517241379311,
             "earningsMomentum": 0.5,
             "label": "중립/혼재",
-            "marketCap": 8505447637.0,
+            "marketCap": 8877742928.0,
             "name": "Qorvo",
             "price": 100.62999725341797,
             "priceMomentum": 0.7082758620689655,
-            "proxyWeight": 0.0005845509449169488,
+            "proxyWeight": 0.0006118410567740514,
             "quarterlyEpsYoY": 2.5555555555555554,
             "quarterlyRevenueYoY": -0.04150453480674854,
             "rank": 8,
@@ -1989,7 +1989,7 @@
             "name": "Credo Technology",
             "price": 165.22000122070312,
             "priceMomentum": 0.3593103448275862,
-            "proxyWeight": 0.002668857979045655,
+            "proxyWeight": 0.002676309424743659,
             "quarterlyEpsYoY": 4.125,
             "quarterlyRevenueYoY": 1.5702279076606382,
             "rank": 9,
@@ -2005,7 +2005,7 @@
             "name": "Lam Research",
             "price": 288.32000732421875,
             "priceMomentum": 0.6737931034482759,
-            "proxyWeight": 0.0249569398799264,
+            "proxyWeight": 0.025026619602026158,
             "quarterlyEpsYoY": 0.3407407407407408,
             "quarterlyRevenueYoY": 0.29988921747003183,
             "rank": 10,
@@ -2023,11 +2023,11 @@
             "name": "Micron Technology",
             "price": 956.0800170898438,
             "priceMomentum": 0.9193103448275862,
-            "proxyWeight": 0.07421036621309002,
+            "proxyWeight": 0.07441756139485221,
             "quarterlyEpsYoY": 13.68452380952381,
             "quarterlyRevenueYoY": 3.457155144608107,
             "rank": 1,
-            "return12m": 7.0824997863526935,
+            "return12m": 7.082499265053315,
             "return3m": -0.11425186630397799,
             "ticker": "MU"
           },
@@ -2039,7 +2039,7 @@
             "name": "Credo Technology",
             "price": 165.22000122070312,
             "priceMomentum": 0.3593103448275862,
-            "proxyWeight": 0.002668857979045655,
+            "proxyWeight": 0.002676309424743659,
             "quarterlyEpsYoY": 4.125,
             "quarterlyRevenueYoY": 1.5702279076606382,
             "rank": 9,
@@ -2055,11 +2055,11 @@
             "name": "Teradyne",
             "price": 341.6199951171875,
             "priceMomentum": 0.5551724137931034,
-            "proxyWeight": 0.0036044426950900756,
+            "proxyWeight": 0.0036145062912892392,
             "quarterlyEpsYoY": 3.8571428571428568,
             "quarterlyRevenueYoY": 1.0389630513794939,
             "rank": 4,
-            "return12m": 1.8396858011131116,
+            "return12m": 1.8396859812021997,
             "return3m": -0.1661093467426824,
             "ticker": "TER"
           },
@@ -2071,11 +2071,11 @@
             "name": "NVIDIA",
             "price": 224.41000366210938,
             "priceMomentum": 0.7317241379310345,
-            "proxyWeight": 0.37241792798673073,
+            "proxyWeight": 0.37345771803518757,
             "quarterlyEpsYoY": 2.1447368421052633,
             "quarterlyRevenueYoY": 0.8522763378875222,
             "rank": 2,
-            "return12m": 0.3157799195891764,
+            "return12m": 0.3157798018707829,
             "return3m": 0.046200483273237225,
             "ticker": "NVDA"
           },
@@ -2087,7 +2087,7 @@
             "name": "Astera Labs",
             "price": 274.1300048828125,
             "priceMomentum": 0.5062068965517241,
-            "proxyWeight": 0.003337381057879955,
+            "proxyWeight": 0.003346699018566358,
             "quarterlyEpsYoY": 1.8620689655172415,
             "quarterlyRevenueYoY": 1.044548651817116,
             "rank": 7,
@@ -2103,7 +2103,7 @@
             "name": "Advanced Micro Devices",
             "price": 457.05999755859375,
             "priceMomentum": 0.7413793103448276,
-            "proxyWeight": 0.05156573486522774,
+            "proxyWeight": 0.051709706285304316,
             "quarterlyEpsYoY": 1.5555555555555554,
             "quarterlyRevenueYoY": 0.5011060507482108,
             "rank": 3,
@@ -2119,11 +2119,11 @@
             "name": "Broadcom",
             "price": 367.239990234375,
             "priceMomentum": 0.40413793103448276,
-            "proxyWeight": 0.12087521652158716,
+            "proxyWeight": 0.12121269986435655,
             "quarterlyEpsYoY": 0.8543689320388348,
             "quarterlyRevenueYoY": 0.47873900293255134,
             "rank": 14,
-            "return12m": 0.24037959343587478,
+            "return12m": 0.24037946558335888,
             "return3m": -0.23247459354616917,
             "ticker": "AVGO"
           },
@@ -2135,7 +2135,7 @@
             "name": "Analog Devices",
             "price": 355.7099914550781,
             "priceMomentum": 0.4813793103448276,
-            "proxyWeight": 0.011806424412353985,
+            "proxyWeight": 0.011839387923746114,
             "quarterlyEpsYoY": 1.1052631578947367,
             "quarterlyRevenueYoY": 0.37248926921579284,
             "rank": 12,
@@ -2153,11 +2153,11 @@
             "name": "Micron Technology",
             "price": 956.0800170898438,
             "priceMomentum": 0.9193103448275862,
-            "proxyWeight": 0.07421036621309002,
+            "proxyWeight": 0.07441756139485221,
             "quarterlyEpsYoY": 13.68452380952381,
             "quarterlyRevenueYoY": 3.457155144608107,
             "rank": 1,
-            "return12m": 7.0824997863526935,
+            "return12m": 7.082499265053315,
             "return3m": -0.11425186630397799,
             "ticker": "MU"
           },
@@ -2165,15 +2165,15 @@
             "combined": 0.5841034482758621,
             "earningsMomentum": 0.37586206896551727,
             "label": "가격 선행 / 실적 확인",
-            "marketCap": 640493889405.0,
+            "marketCap": 643735305811.0,
             "name": "ASML Holding",
             "price": 1682.300048828125,
             "priceMomentum": 0.7544827586206897,
-            "proxyWeight": 0.04401900102665043,
+            "proxyWeight": 0.04436529565954665,
             "quarterlyEpsYoY": 0.28474576271186436,
             "quarterlyRevenueYoY": 0.212540790722467,
             "rank": 11,
-            "return12m": 1.3329624898472283,
+            "return12m": 1.3329622923813425,
             "return3m": -0.024261555129207024,
             "ticker": "ASML"
           },
@@ -2185,7 +2185,7 @@
             "name": "Advanced Micro Devices",
             "price": 457.05999755859375,
             "priceMomentum": 0.7413793103448276,
-            "proxyWeight": 0.05156573486522774,
+            "proxyWeight": 0.051709706285304316,
             "quarterlyEpsYoY": 1.5555555555555554,
             "quarterlyRevenueYoY": 0.5011060507482108,
             "rank": 3,
@@ -2201,11 +2201,11 @@
             "name": "Marvell Technology",
             "price": 206.47999572753906,
             "priceMomentum": 0.736551724137931,
-            "proxyWeight": 0.012994729876240351,
+            "proxyWeight": 0.01303101113391434,
             "quarterlyEpsYoY": -0.8,
             "quarterlyRevenueYoY": 0.27568195008705754,
             "rank": 13,
-            "return12m": 2.2030948549391787,
+            "return12m": 2.203094475841051,
             "return3m": -0.31532922034533595,
             "ticker": "MRVL"
           },
@@ -2217,11 +2217,11 @@
             "name": "NVIDIA",
             "price": 224.41000366210938,
             "priceMomentum": 0.7317241379310345,
-            "proxyWeight": 0.37241792798673073,
+            "proxyWeight": 0.37345771803518757,
             "quarterlyEpsYoY": 2.1447368421052633,
             "quarterlyRevenueYoY": 0.8522763378875222,
             "rank": 2,
-            "return12m": 0.3157799195891764,
+            "return12m": 0.3157798018707829,
             "return3m": 0.046200483273237225,
             "ticker": "NVDA"
           },
@@ -2229,15 +2229,15 @@
             "combined": 0.6746724137931035,
             "earningsMomentum": 0.6327586206896552,
             "label": "중립/혼재",
-            "marketCap": 1994923480783.0,
+            "marketCap": 1950755483671.0,
             "name": "Taiwan Semiconductor Manufacturing",
             "price": 415.5,
             "priceMomentum": 0.7089655172413794,
-            "proxyWeight": 0.13710441301829288,
+            "proxyWeight": 0.13444321448784355,
             "quarterlyEpsYoY": 0.7738751432291666,
             "quarterlyRevenueYoY": 0.36045393406668724,
             "rank": 5,
-            "return12m": 0.8393765702637157,
+            "return12m": 0.8393764460154567,
             "return3m": -0.046295936978540064,
             "ticker": "TSM"
           },
@@ -2245,11 +2245,11 @@
             "combined": 0.6145517241379311,
             "earningsMomentum": 0.5,
             "label": "중립/혼재",
-            "marketCap": 8505447637.0,
+            "marketCap": 8877742928.0,
             "name": "Qorvo",
             "price": 100.62999725341797,
             "priceMomentum": 0.7082758620689655,
-            "proxyWeight": 0.0005845509449169488,
+            "proxyWeight": 0.0006118410567740514,
             "quarterlyEpsYoY": 2.5555555555555554,
             "quarterlyRevenueYoY": -0.04150453480674854,
             "rank": 8,
@@ -2265,10 +2265,10 @@
             "name": "Skyworks Solutions",
             "price": 71.66999816894531,
             "priceMomentum": 0.6875862068965517,
-            "proxyWeight": 0.0006971198822192164,
+            "proxyWeight": 0.0006990662394207386,
             "quarterlyEpsYoY": -0.6857142857142857,
             "quarterlyRevenueYoY": -0.0312953367875648,
-            "rank": 21,
+            "rank": 20,
             "return12m": 0.012638237629826854,
             "return3m": -0.11145555523185757,
             "ticker": "SWKS"
@@ -2283,11 +2283,11 @@
             "name": "NVIDIA",
             "price": 224.41000366210938,
             "priceMomentum": 0.7317241379310345,
-            "proxyWeight": 0.37241792798673073,
+            "proxyWeight": 0.37345771803518757,
             "quarterlyEpsYoY": 2.1447368421052633,
             "quarterlyRevenueYoY": 0.8522763378875222,
             "rank": 2,
-            "return12m": 0.3157799195891764,
+            "return12m": 0.3157798018707829,
             "return3m": 0.046200483273237225,
             "ticker": "NVDA"
           },
@@ -2295,15 +2295,15 @@
             "combined": 0.6746724137931035,
             "earningsMomentum": 0.6327586206896552,
             "label": "중립/혼재",
-            "marketCap": 1994923480783.0,
+            "marketCap": 1950755483671.0,
             "name": "Taiwan Semiconductor Manufacturing",
             "price": 415.5,
             "priceMomentum": 0.7089655172413794,
-            "proxyWeight": 0.13710441301829288,
+            "proxyWeight": 0.13444321448784355,
             "quarterlyEpsYoY": 0.7738751432291666,
             "quarterlyRevenueYoY": 0.36045393406668724,
             "rank": 5,
-            "return12m": 0.8393765702637157,
+            "return12m": 0.8393764460154567,
             "return3m": -0.046295936978540064,
             "ticker": "TSM"
           },
@@ -2315,11 +2315,11 @@
             "name": "Broadcom",
             "price": 367.239990234375,
             "priceMomentum": 0.40413793103448276,
-            "proxyWeight": 0.12087521652158716,
+            "proxyWeight": 0.12121269986435655,
             "quarterlyEpsYoY": 0.8543689320388348,
             "quarterlyRevenueYoY": 0.47873900293255134,
             "rank": 14,
-            "return12m": 0.24037959343587478,
+            "return12m": 0.24037946558335888,
             "return3m": -0.23247459354616917,
             "ticker": "AVGO"
           },
@@ -2331,11 +2331,11 @@
             "name": "Micron Technology",
             "price": 956.0800170898438,
             "priceMomentum": 0.9193103448275862,
-            "proxyWeight": 0.07421036621309002,
+            "proxyWeight": 0.07441756139485221,
             "quarterlyEpsYoY": 13.68452380952381,
             "quarterlyRevenueYoY": 3.457155144608107,
             "rank": 1,
-            "return12m": 7.0824997863526935,
+            "return12m": 7.082499265053315,
             "return3m": -0.11425186630397799,
             "ticker": "MU"
           },
@@ -2347,7 +2347,7 @@
             "name": "Advanced Micro Devices",
             "price": 457.05999755859375,
             "priceMomentum": 0.7413793103448276,
-            "proxyWeight": 0.05156573486522774,
+            "proxyWeight": 0.051709706285304316,
             "quarterlyEpsYoY": 1.5555555555555554,
             "quarterlyRevenueYoY": 0.5011060507482108,
             "rank": 3,
@@ -2359,15 +2359,15 @@
             "combined": 0.5841034482758621,
             "earningsMomentum": 0.37586206896551727,
             "label": "가격 선행 / 실적 확인",
-            "marketCap": 640493889405.0,
+            "marketCap": 643735305811.0,
             "name": "ASML Holding",
             "price": 1682.300048828125,
             "priceMomentum": 0.7544827586206897,
-            "proxyWeight": 0.04401900102665043,
+            "proxyWeight": 0.04436529565954665,
             "quarterlyEpsYoY": 0.28474576271186436,
             "quarterlyRevenueYoY": 0.212540790722467,
             "rank": 11,
-            "return12m": 1.3329624898472283,
+            "return12m": 1.3329622923813425,
             "return3m": -0.024261555129207024,
             "ticker": "ASML"
           },
@@ -2379,7 +2379,7 @@
             "name": "Intel",
             "price": 90.05000305175781,
             "priceMomentum": 0.6793103448275862,
-            "proxyWeight": 0.032322473583672316,
+            "proxyWeight": 0.03241271785992265,
             "quarterlyEpsYoY": 2.2238805970149254,
             "quarterlyRevenueYoY": 0.25421883505715837,
             "rank": 6,
@@ -2395,7 +2395,7 @@
             "name": "Lam Research",
             "price": 288.32000732421875,
             "priceMomentum": 0.6737931034482759,
-            "proxyWeight": 0.0249569398799264,
+            "proxyWeight": 0.025026619602026158,
             "quarterlyEpsYoY": 0.3407407407407408,
             "quarterlyRevenueYoY": 0.29988921747003183,
             "rank": 10,
@@ -2435,7 +2435,7 @@
       },
       "summaryCards": [
         {
-          "detail": "2026-09-03",
+          "detail": "2026-09-04",
           "label": "Constituents",
           "value": 30
         },
@@ -2450,7 +2450,7 @@
           "value": 30
         },
         {
-          "detail": 0.37241792798673073,
+          "detail": 0.37345771803518757,
           "label": "Top proxy weight",
           "value": "NVDA"
         }
