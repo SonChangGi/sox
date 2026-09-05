@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-04T08:55:16Z",
+  "generatedAt": "2026-09-05T00:18:11Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.9544827586206897,
         "rank": 1,
         "score": 0.9718620689655173,
-        "weight": 0.07441756139485221
+        "weight": 0.07437540989944258
       },
       "name": "Micron Technology",
       "signals": [
@@ -77,7 +77,7 @@
         "priceMomentum": 0.7406896551724138,
         "rank": 2,
         "score": 0.7906551724137931,
-        "weight": 0.37345771803518757
+        "weight": 0.3732461846149519
       },
       "name": "NVIDIA",
       "signals": [
@@ -97,7 +97,7 @@
         "priceMomentum": 0.7731034482758621,
         "rank": 3,
         "score": 0.7293448275862069,
-        "weight": 0.051709706285304316
+        "weight": 0.05139368457574957
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -117,7 +117,7 @@
         "priceMomentum": 0.6965517241379311,
         "rank": 4,
         "score": 0.667844827586207,
-        "weight": 0.13444321448784355
+        "weight": 0.13436706334244025
       },
       "name": "Taiwan Semiconductor Manufacturing",
       "signals": [
@@ -137,7 +137,7 @@
         "priceMomentum": 0.5041379310344827,
         "rank": 5,
         "score": 0.6621034482758621,
-        "weight": 0.0036145062912892392
+        "weight": 0.004006592390866953
       },
       "name": "Teradyne",
       "signals": [
