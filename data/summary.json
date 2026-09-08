@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-05T04:50:23Z",
+  "generatedAt": "2026-09-08T00:37:31Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.98,
         "rank": 1,
         "score": 0.985896551724138,
-        "weight": 0.07444299220424817
+        "weight": 0.07425132912656704
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "NVDA",
-      "label": "NVDA",
-      "metrics": {
-        "earningsMomentum": 0.8517241379310344,
-        "priceMomentum": 0.6896551724137931,
-        "rank": 2,
-        "score": 0.7625862068965517,
-        "weight": 0.37358534022364404
-      },
-      "name": "NVIDIA",
-      "signals": [
-        "가격·실적 동반 강세"
-      ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "NVDA",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6775862068965517,
+        "earningsMomentum": 0.6793103448275861,
         "priceMomentum": 0.7993103448275862,
-        "rank": 3,
-        "score": 0.7445344827586208,
-        "weight": 0.05144038419946629
+        "rank": 2,
+        "score": 0.7453103448275862,
+        "weight": 0.05109575210167013
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -110,14 +90,34 @@
       ]
     },
     {
+      "id": "NVDA",
+      "label": "NVDA",
+      "metrics": {
+        "earningsMomentum": 0.8034482758620689,
+        "priceMomentum": 0.6896551724137931,
+        "rank": 3,
+        "score": 0.7408620689655172,
+        "weight": 0.3785082852789915
+      },
+      "name": "NVIDIA",
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "NVDA",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "TER",
       "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.8551724137931034,
+        "earningsMomentum": 0.8482758620689654,
         "priceMomentum": 0.616551724137931,
         "rank": 4,
-        "score": 0.7239310344827586,
-        "weight": 0.003649478054330868
+        "score": 0.7208275862068965,
+        "weight": 0.0036321800129139005
       },
       "name": "Teradyne",
       "signals": [
@@ -137,7 +137,7 @@
         "priceMomentum": 0.646896551724138,
         "rank": 5,
         "score": 0.7103620689655172,
-        "weight": 0.003637045777977428
+        "weight": 0.003366614228304943
       },
       "name": "Astera Labs",
       "signals": [
