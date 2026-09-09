@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-08T00:37:31Z",
+  "generatedAt": "2026-09-09T00:28:38Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.98,
         "rank": 1,
         "score": 0.985896551724138,
-        "weight": 0.07425132912656704
+        "weight": 0.07734361248975839
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,11 +73,11 @@
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6793103448275861,
+        "earningsMomentum": 0.6862068965517241,
         "priceMomentum": 0.7993103448275862,
         "rank": 2,
-        "score": 0.7453103448275862,
-        "weight": 0.05109575210167013
+        "score": 0.7484137931034482,
+        "weight": 0.052519073687925466
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "NVDA",
       "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.8034482758620689,
+        "earningsMomentum": 0.8103448275862069,
         "priceMomentum": 0.6896551724137931,
         "rank": 3,
-        "score": 0.7408620689655172,
-        "weight": 0.3785082852789915
+        "score": 0.7439655172413793,
+        "weight": 0.3747172807005831
       },
       "name": "NVIDIA",
       "signals": [
@@ -113,11 +113,11 @@
       "id": "TER",
       "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.8482758620689654,
+        "earningsMomentum": 0.8568965517241379,
         "priceMomentum": 0.616551724137931,
         "rank": 4,
-        "score": 0.7208275862068965,
-        "weight": 0.0036321800129139005
+        "score": 0.7247068965517242,
+        "weight": 0.0037601950271145095
       },
       "name": "Teradyne",
       "signals": [
@@ -133,11 +133,11 @@
       "id": "ALAB",
       "label": "ALAB",
       "metrics": {
-        "earningsMomentum": 0.7879310344827586,
+        "earningsMomentum": 0.7948275862068965,
         "priceMomentum": 0.646896551724138,
         "rank": 5,
-        "score": 0.7103620689655172,
-        "weight": 0.003366614228304943
+        "score": 0.7134655172413793,
+        "weight": 0.003627583126617231
       },
       "name": "Astera Labs",
       "signals": [
