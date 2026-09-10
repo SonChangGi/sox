@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-09T05:01:26Z",
+  "generatedAt": "2026-09-10T00:28:19Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.9641379310344828,
         "rank": 1,
         "score": 0.9771724137931035,
-        "weight": 0.07734361248975839
+        "weight": 0.07524709546867964
       },
       "name": "Micron Technology",
       "signals": [
@@ -77,7 +77,7 @@
         "priceMomentum": 0.8882758620689656,
         "rank": 2,
         "score": 0.797344827586207,
-        "weight": 0.052519073687925466
+        "weight": 0.0549927634202079
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -97,7 +97,7 @@
         "priceMomentum": 0.6448275862068966,
         "rank": 3,
         "score": 0.7402586206896553,
-        "weight": 0.0037601950271145095
+        "weight": 0.0038745106770535355
       },
       "name": "Teradyne",
       "signals": [
@@ -117,7 +117,7 @@
         "priceMomentum": 0.7993103448275862,
         "rank": 4,
         "score": 0.7189310344827586,
-        "weight": 0.03411416815439515
+        "weight": 0.03678401160481421
       },
       "name": "Intel",
       "signals": [
@@ -137,7 +137,7 @@
         "priceMomentum": 0.6337931034482759,
         "rank": 5,
         "score": 0.7132413793103449,
-        "weight": 0.3747172807005831
+        "weight": 0.36306480659406226
       },
       "name": "NVIDIA",
       "signals": [
