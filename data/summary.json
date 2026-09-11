@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-10T05:04:29Z",
+  "generatedAt": "2026-09-11T00:25:54Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.9655172413793104,
         "rank": 1,
         "score": 0.9779310344827588,
-        "weight": 0.07524709546867964
+        "weight": 0.0773597679575176
       },
       "name": "Micron Technology",
       "signals": [
@@ -77,7 +77,7 @@
         "priceMomentum": 0.9165517241379311,
         "rank": 2,
         "score": 0.812896551724138,
-        "weight": 0.0549927634202079
+        "weight": 0.05669405599617169
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "TER",
       "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.8568965517241379,
+        "earningsMomentum": 0.8551724137931034,
         "priceMomentum": 0.7262068965517241,
         "rank": 3,
-        "score": 0.7850172413793104,
-        "weight": 0.0038745106770535355
+        "score": 0.7842413793103449,
+        "weight": 0.00399785228434448
       },
       "name": "Teradyne",
       "signals": [
@@ -113,11 +113,11 @@
       "id": "INTC",
       "label": "INTC",
       "metrics": {
-        "earningsMomentum": 0.6206896551724137,
+        "earningsMomentum": 0.6224137931034482,
         "priceMomentum": 0.8358620689655173,
         "rank": 4,
-        "score": 0.7390344827586207,
-        "weight": 0.03678401160481421
+        "score": 0.7398103448275863,
+        "weight": 0.03742811377186704
       },
       "name": "Intel",
       "signals": [
@@ -137,7 +137,7 @@
         "priceMomentum": 0.5972413793103448,
         "rank": 5,
         "score": 0.6931379310344827,
-        "weight": 0.36306480659406226
+        "weight": 0.35995233222510387
       },
       "name": "NVIDIA",
       "signals": [
