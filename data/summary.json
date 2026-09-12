@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-11T05:01:21Z",
+  "generatedAt": "2026-09-12T00:31:05Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.9317241379310345,
         "rank": 1,
         "score": 0.9593448275862069,
-        "weight": 0.07743137340920193
+        "weight": 0.07531550149711426
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,17 +73,17 @@
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6862068965517241,
+        "earningsMomentum": 0.6672413793103448,
         "priceMomentum": 0.896551724137931,
         "rank": 2,
-        "score": 0.8018965517241379,
-        "weight": 0.0567465329308188
+        "score": 0.7933620689655172,
+        "weight": 0.056091198057196805
       },
       "name": "Advanced Micro Devices",
       "signals": [
-        "가격·실적 동반 강세"
+        "중립/혼재"
       ],
-      "status": "가격·실적 동반 강세",
+      "status": "중립/혼재",
       "symbol": "AMD",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
@@ -97,7 +97,7 @@
         "priceMomentum": 0.7172413793103448,
         "rank": 3,
         "score": 0.7793103448275862,
-        "weight": 0.004001552761041164
+        "weight": 0.0039487470861035824
       },
       "name": "Teradyne",
       "signals": [
@@ -113,11 +113,11 @@
       "id": "INTC",
       "label": "INTC",
       "metrics": {
-        "earningsMomentum": 0.6224137931034482,
+        "earningsMomentum": 0.6206896551724137,
         "priceMomentum": 0.7986206896551724,
         "rank": 4,
-        "score": 0.7193275862068966,
-        "weight": 0.03746275783897178
+        "score": 0.718551724137931,
+        "weight": 0.03618143395344116
       },
       "name": "Intel",
       "signals": [
@@ -133,11 +133,11 @@
       "id": "NVDA",
       "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.8103448275862069,
+        "earningsMomentum": 0.8034482758620689,
         "priceMomentum": 0.5889655172413794,
         "rank": 5,
-        "score": 0.6885862068965518,
-        "weight": 0.36028550992217195
+        "score": 0.6854827586206897,
+        "weight": 0.3597482684393944
       },
       "name": "NVIDIA",
       "signals": [
