@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 53
+    "snapshotCount": 54
   },
-  "dataAsOf": "2026-09-10",
+  "dataAsOf": "2026-09-11",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-12T00:31:05Z",
+  "generatedAt": "2026-09-12T04:53:16Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.9317241379310345,
+        "priceMomentum": 0.8889655172413793,
         "rank": 1,
-        "score": 0.9593448275862069,
-        "weight": 0.07531550149711426
+        "score": 0.9358275862068965,
+        "weight": 0.07522891834471858
       },
       "name": "Micron Technology",
       "signals": [
@@ -77,7 +77,7 @@
         "priceMomentum": 0.896551724137931,
         "rank": 2,
         "score": 0.7933620689655172,
-        "weight": 0.056091198057196805
+        "weight": 0.056026715279376776
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8551724137931034,
-        "priceMomentum": 0.7172413793103448,
+        "priceMomentum": 0.7144827586206897,
         "rank": 3,
-        "score": 0.7793103448275862,
-        "weight": 0.0039487470861035824
+        "score": 0.7777931034482759,
+        "weight": 0.003944207582761881
       },
       "name": "Teradyne",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "INTC",
       "metrics": {
         "earningsMomentum": 0.6206896551724137,
-        "priceMomentum": 0.7986206896551724,
+        "priceMomentum": 0.7758620689655172,
         "rank": 4,
-        "score": 0.718551724137931,
-        "weight": 0.03618143395344116
+        "score": 0.7060344827586207,
+        "weight": 0.036139839559888524
       },
       "name": "Intel",
       "signals": [
@@ -130,21 +130,21 @@
       ]
     },
     {
-      "id": "NVDA",
-      "label": "NVDA",
+      "id": "MRVL",
+      "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.8034482758620689,
-        "priceMomentum": 0.5889655172413794,
+        "earningsMomentum": 0.5155172413793103,
+        "priceMomentum": 0.8393103448275862,
         "rank": 5,
-        "score": 0.6854827586206897,
-        "weight": 0.3597482684393944
+        "score": 0.6936034482758621,
+        "weight": 0.01390046035513989
       },
-      "name": "NVIDIA",
+      "name": "Marvell Technology",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "NVDA",
+      "symbol": "MRVL",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
