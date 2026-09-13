@@ -1212,4 +1212,4 @@ td.name-cell {
   -webkit-font-smoothing: antialiased;
 }
 .quant-shared-nav__link { border: 1px solid transparent; }
-.quant-shared-nav__theme { margin: 0; gap: 0; font-size: .88rem; font-weight: 650; }
+.quant-shared-nav__theme { margin: 0; gap: 0; font-family: inherit; font-size: .88rem; font-weight: 650; line-height: 1.55; }
