@@ -3,6 +3,7 @@ import type {
   SortKey,
   SoxConstituent
 } from "@/types";
+import { formatEarningsGrowth } from "@/lib/format";
 
 export function defaultDirectionFor(key: SortKey): SortDirection {
   return ["rank", "ticker", "name", "label"].includes(key)
@@ -79,6 +80,7 @@ export function rowSearchText(row: SoxConstituent): string {
     metrics.return12m,
     metrics.quarterlyRevenueYoY,
     metrics.quarterlyEpsYoY,
+    formatEarningsGrowth(metrics.quarterlyEpsYoY, metrics.quarterlyEpsGrowth),
     metrics.trailingPe,
     scores.priceMomentum,
     scores.earningsMomentum,

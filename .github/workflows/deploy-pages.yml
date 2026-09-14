@@ -31,6 +31,7 @@ jobs:
       freshness_reason: ${{ steps.freshness.outputs.freshness_reason }}
       expected_data_as_of: ${{ steps.freshness.outputs.expected_data_as_of }}
       actual_data_as_of: ${{ steps.freshness.outputs.actual_data_as_of }}
+      preflight_outcome: ${{ steps.freshness.outcome }}
     steps:
       - name: Require the production branch
         env:
@@ -56,6 +57,11 @@ jobs:
       history_sha256: ${{ steps.public_contract.outputs.history_sha256 }}
       summary_sha256: ${{ steps.public_contract.outputs.summary_sha256 }}
       source_sha: ${{ steps.public_contract.outputs.source_sha }}
+      refresh_outcome: ${{ steps.refresh.outcome }}
+      verification_outcome: ${{ steps.static_verify.outcome }}
+      collected_data_status: ${{ steps.refresh.outputs.status_level }}
+      collected_data_as_of: ${{ steps.refresh.outputs.actual_data_as_of }}
+      retry_needed: ${{ steps.refresh.outputs.should_collect }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
@@ -67,6 +73,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Refresh generated SOX data
+        id: refresh
         if: needs.freshness.outputs.should_collect == 'true'
         env:
           STRICT_REFRESH: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '30 4 * * 2-6' }}
@@ -78,7 +85,9 @@ jobs:
             # recover; the final scheduled retry is strict and fails loudly.
             python3 scripts/fetch_sox_data.py --offline-ok --allow-degraded
           fi
+          python3 scripts/check_sox_freshness.py --event-name schedule >> "$GITHUB_OUTPUT"
       - name: Verify static dashboard
+        id: static_verify
         run: npm test
       - name: Commit generated SOX data
         if: needs.freshness.outputs.should_collect == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
@@ -136,6 +145,9 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     needs: [freshness, build]
+    outputs:
+      deployment_outcome: ${{ steps.deployment.outcome }}
+      readback_outcome: ${{ steps.public_readback.outcome }}
     if: needs.freshness.outputs.should_deploy == 'true'
     steps:
       - name: Check out the current production revision
@@ -154,6 +166,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
       - name: Verify live public data bytes
+        id: public_readback
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_ANALYSIS_SHA256: ${{ needs.build.outputs.analysis_sha256 }}
@@ -200,6 +213,38 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Report collection and delivery outcomes separately
+        env:
+          PREFLIGHT: ${{ needs.freshness.outputs.preflight_outcome }}
+          REASON: ${{ needs.freshness.outputs.freshness_reason }}
+          EXPECTED_DATE: ${{ needs.freshness.outputs.expected_data_as_of }}
+          STORED_DATE: ${{ needs.freshness.outputs.actual_data_as_of }}
+          REFRESH: ${{ needs.build.outputs.refresh_outcome }}
+          VERIFICATION: ${{ needs.build.outputs.verification_outcome }}
+          DEPLOYMENT: ${{ needs.deploy.outputs.deployment_outcome }}
+          READBACK: ${{ needs.deploy.outputs.readback_outcome }}
+          DATA_STATUS: ${{ needs.build.outputs.collected_data_status }}
+          DATA_DATE: ${{ needs.build.outputs.collected_data_as_of }}
+          RETRY_NEEDED: ${{ needs.build.outputs.retry_needed }}
+        run: |
+          {
+            echo '## SOX collection and delivery'
+            echo
+            echo '| Check | Outcome |'
+            echo '| --- | --- |'
+            printf '| Freshness preflight | %s |\n' "${PREFLIGHT:-not_run}"
+            printf '| Data refresh process | %s |\n' "${REFRESH:-not_run}"
+            printf '| Refreshed data status | %s |\n' "${DATA_STATUS:-not_run}"
+            printf '| Refreshed data date | %s |\n' "${DATA_DATE:-not_run}"
+            printf '| Further collection needed | %s |\n' "${RETRY_NEEDED:-not_run}"
+            printf '| Static verification | %s |\n' "${VERIFICATION:-not_run}"
+            printf '| Pages deployment | %s |\n' "${DEPLOYMENT:-not_run}"
+            printf '| Published data hash comparison | %s |\n' "${READBACK:-not_run}"
+            echo
+            printf 'Expected session: %s. Stored date before this run: %s. Decision: %s.\n' "$EXPECTED_DATE" "$STORED_DATE" "$REASON"
+            echo
+            echo 'Automatic failure mail follows public-page availability. A successful overall run alone does not establish successful collection or fresh data; inspect the outcomes above.'
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Fail only when the existing SOX page is unusable
         env:
           PAGE_URL: https://sonchanggi.github.io/sox/

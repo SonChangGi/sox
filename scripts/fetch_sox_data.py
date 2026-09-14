@@ -17,6 +17,7 @@ import os
 import statistics
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -25,6 +26,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from earnings_growth import earnings_growth
+from sox_data_quality import collect_data_quality_failures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
@@ -405,6 +409,8 @@ def analyze_symbol(row: dict[str, Any]) -> dict[str, Any]:
     latest_q_rev = latest(fundamentals.get("quarterlyTotalRevenue"))
     latest_q_eps = latest(fundamentals.get("quarterlyDilutedEPS"))
     latest_q_income = latest(fundamentals.get("quarterlyNetIncome"))
+    eps_growth = earnings_growth(fundamentals.get("quarterlyDilutedEPS"))
+    income_growth = earnings_growth(fundamentals.get("quarterlyNetIncome"))
 
     return {
         "ticker": symbol,
@@ -439,10 +445,12 @@ def analyze_symbol(row: dict[str, Any]) -> dict[str, Any]:
             "quarterlyRevenueYoY": yoy(fundamentals.get("quarterlyTotalRevenue")),
             "quarterlyEpsLatest": None if latest_q_eps is None else latest_q_eps.get("raw"),
             "quarterlyEpsDate": None if latest_q_eps is None else latest_q_eps.get("asOfDate"),
-            "quarterlyEpsYoY": yoy(fundamentals.get("quarterlyDilutedEPS")),
+            "quarterlyEpsYoY": eps_growth["yoy"],
+            "quarterlyEpsGrowth": eps_growth,
             "quarterlyNetIncomeLatest": None if latest_q_income is None else latest_q_income.get("raw"),
             "quarterlyNetIncomeDate": None if latest_q_income is None else latest_q_income.get("asOfDate"),
-            "quarterlyNetIncomeYoY": yoy(fundamentals.get("quarterlyNetIncome")),
+            "quarterlyNetIncomeYoY": income_growth["yoy"],
+            "quarterlyNetIncomeGrowth": income_growth,
         },
         "chart": {
             "prices": prices[-260:],
@@ -472,8 +480,8 @@ def enrich_scores(rows: list[dict[str, Any]]) -> None:
         "drawdown52w": {r["ticker"]: r["metrics"].get("drawdown52w") for r in rows},
         "range52wPosition": {r["ticker"]: r["metrics"].get("range52wPosition") for r in rows},
         "quarterlyRevenueYoY": {r["ticker"]: r["metrics"].get("quarterlyRevenueYoY") for r in rows},
-        "quarterlyEpsYoY": {r["ticker"]: r["metrics"].get("quarterlyEpsYoY") for r in rows},
-        "quarterlyNetIncomeYoY": {r["ticker"]: r["metrics"].get("quarterlyNetIncomeYoY") for r in rows},
+        "quarterlyEpsYoY": {r["ticker"]: r["metrics"].get("quarterlyEpsGrowth", {}).get("changeSignal", r["metrics"].get("quarterlyEpsYoY")) for r in rows},
+        "quarterlyNetIncomeYoY": {r["ticker"]: r["metrics"].get("quarterlyNetIncomeGrowth", {}).get("changeSignal", r["metrics"].get("quarterlyNetIncomeYoY")) for r in rows},
         "netMargin": {r["ticker"]: r["metrics"].get("netMargin") for r in rows},
         "trailingPe": {r["ticker"]: r["metrics"].get("trailingPe") for r in rows},
     }
@@ -538,6 +546,7 @@ def compact_row(row: dict[str, Any]) -> dict[str, Any]:
         "return12m": metrics.get("return12m"),
         "quarterlyRevenueYoY": metrics.get("quarterlyRevenueYoY"),
         "quarterlyEpsYoY": metrics.get("quarterlyEpsYoY"),
+        "quarterlyEpsGrowth": metrics.get("quarterlyEpsGrowth"),
         "priceMomentum": scores.get("priceMomentum"),
         "earningsMomentum": scores.get("earningsMomentum"),
         "combined": scores.get("combined"),
@@ -566,6 +575,7 @@ def git_remote_status() -> dict[str, Any]:
 
 
 def build_payload(rows: list[dict[str, Any]], constituent_meta: dict[str, Any], failures: list[str]) -> dict[str, Any]:
+    failures = list(dict.fromkeys([*failures, *collect_data_quality_failures(rows, constituent_meta)]))
     dates = [r.get("lastTradeDate") for r in rows if r.get("lastTradeDate")]
     max_date = max(dates) if dates else None
     cap_coverage = sum(1 for r in rows if r.get("marketCap"))
@@ -632,7 +642,9 @@ def build_payload(rows: list[dict[str, Any]], constituent_meta: dict[str, Any], 
         "constituents": rows,
         "methodology": {
             "priceMomentum": "Composite rank of 1M/3M/6M/12M returns, moving-average gaps, 52-week drawdown resilience, and 52-week range position.",
-            "earningsMomentum": "Composite rank of latest quarterly revenue/EPS/net-income YoY growth, TTM net margin, and lower trailing PE as a small valuation context input.",
+            "earningsMomentum": "Composite rank of quarterly revenue YoY, EPS/net-income change relative to the absolute prior-year base, TTM net margin, and lower trailing PE as a small valuation context input.",
+            "earningsGrowthVersion": "absolute_prior_base_change_v1",
+            "earningsGrowth": "EPS·순이익 YoY는 전년 값이 양수일 때만 표시합니다. 전년 적자·0 기저는 흑자전환·적자축소 등 상태로 구분합니다. 점수는 (현재−전년)/|전년|의 개선 방향을 사용하며, 전년 값이 0이거나 비교 불가인 항목은 제외하고 나머지 가중치를 재정규화합니다.",
             "combined": "55% price momentum + 45% earnings/fundamental momentum when both are available.",
             "weightCaveat": "Proxy weights are normalized by Yahoo trailing market cap and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
         },
@@ -668,24 +680,45 @@ def compact_history_snapshot(analysis: dict[str, Any]) -> dict[str, Any]:
 def _load_json_object(path: Path) -> dict[str, Any]:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
+    except FileNotFoundError:
         return {}
-    return payload if isinstance(payload, dict) else {}
+    if not isinstance(payload, dict) or not payload:
+        raise ValueError(f"Saved JSON must be a non-empty object: {path}")
+    return payload
 
 
-def build_history(analysis: dict[str, Any]) -> dict[str, Any]:
+def validate_saved_snapshot(snapshot: Any) -> str:
+    if not isinstance(snapshot, dict):
+        raise ValueError("Saved snapshot must be an object")
+    date = snapshot.get("dataAsOf")
+    if not isinstance(date, str) or dt.date.fromisoformat(date).isoformat() != date:
+        raise ValueError("Saved snapshot has an invalid dataAsOf")
+    if not isinstance(snapshot.get("constituents"), list) or not snapshot["constituents"]:
+        raise ValueError(f"Saved snapshot has no constituents: {date}")
+    return date
+
+
+def build_history(analysis: dict[str, Any], *, source_dir: Path | None = None) -> dict[str, Any]:
     """Merge the latest generated analysis into stored per-date snapshots."""
 
     snapshots_by_date: dict[str, dict[str, Any]] = {}
 
-    existing_history = _load_json_object(HISTORY_PATH)
-    for snapshot in existing_history.get("snapshots") or []:
-        if isinstance(snapshot, dict) and snapshot.get("dataAsOf"):
-            snapshots_by_date[str(snapshot["dataAsOf"])] = snapshot
+    existing_history = _load_json_object(source_dir / HISTORY_PATH.name if source_dir else HISTORY_PATH)
+    saved = existing_history.get("snapshots", [])
+    if not isinstance(saved, list) or (existing_history and "snapshots" not in existing_history):
+        raise ValueError("Saved history has an invalid snapshots list")
+    if existing_history.get("snapshotCount", len(saved)) != len(saved):
+        raise ValueError("Saved history snapshotCount does not match its records")
+    for snapshot in saved:
+        date = validate_saved_snapshot(snapshot)
+        if date in snapshots_by_date:
+            raise ValueError(f"Saved history has duplicate date {date}")
+        snapshots_by_date[date] = snapshot
 
-    existing_analysis = _load_json_object(ANALYSIS_PATH)
-    if existing_analysis.get("dataAsOf"):
-        snapshots_by_date[str(existing_analysis["dataAsOf"])] = compact_history_snapshot(existing_analysis)
+    existing_analysis = _load_json_object(source_dir / ANALYSIS_PATH.name if source_dir else ANALYSIS_PATH)
+    if existing_analysis:
+        date = validate_saved_snapshot(existing_analysis)
+        snapshots_by_date[date] = compact_history_snapshot(existing_analysis)
 
     if analysis.get("dataAsOf"):
         snapshots_by_date[str(analysis["dataAsOf"])] = compact_history_snapshot(analysis)
@@ -779,10 +812,41 @@ def build_summary(analysis: dict[str, Any], history: dict[str, Any] | None = Non
     }
 
 
+def write_publication(output_dir: Path, payloads: dict[str, dict[str, Any]]) -> None:
+    """Stage complete JSON and restore the previous set if replacement fails."""
+    serialized = {name: (json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False) + "\n").encode("utf-8") for name, payload in payloads.items()}
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".sox-publication-", dir=output_dir) as staging:
+        stage = Path(staging)
+        previous: dict[str, Path | None] = {}
+        for name, content in serialized.items():
+            (stage / name).write_bytes(content)
+            target = output_dir / name
+            backup = stage / f"{name}.previous" if target.exists() else None
+            if backup:
+                backup.write_bytes(target.read_bytes())
+            previous[name] = backup
+        replaced: list[str] = []
+        try:
+            for name in serialized:
+                (stage / name).replace(output_dir / name)
+                replaced.append(name)
+        except OSError:
+            for name in reversed(replaced):
+                backup = previous[name]
+                if backup:
+                    backup.replace(output_dir / name)
+                else:
+                    (output_dir / name).unlink()
+            raise
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--offline-ok", action="store_true", help="Use existing generated JSON if live refresh fails.")
     parser.add_argument("--max-workers", type=int, default=8)
+    parser.add_argument("--output-dir", type=Path, default=DATA_DIR, help="Write candidate JSON here; existing snapshots are read from --history-source-dir.")
+    parser.add_argument("--history-source-dir", type=Path, default=DATA_DIR, help="Read saved analysis/history without modifying them when staging a candidate.")
     degraded_policy = parser.add_mutually_exclusive_group()
     degraded_policy.add_argument(
         "--allow-degraded",
@@ -792,11 +856,13 @@ def main() -> int:
     degraded_policy.add_argument(
         "--fail-on-degraded",
         action="store_true",
-        help="Exit non-zero after writing JSON if generated status is degraded.",
+        help="Exit non-zero without replacing JSON if generated status is degraded.",
     )
     args = parser.parse_args()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    output_dir = args.output_dir.resolve()
     failures: list[str] = []
+    publication_started = False
+    collection_complete = False
     try:
         constituents, meta, source_failures = fetch_constituents()
         failures.extend(source_failures)
@@ -815,22 +881,24 @@ def main() -> int:
                         "metrics": {}, "chart": {"prices": []},
                         "dataQuality": {"ok": False, "failures": [str(exc)], "pricePoints": 0, "fundamentalTypes": []},
                     })
+        collection_complete = True
         enrich_scores(rows)
         analysis = build_payload(rows, meta, failures)
-        history = build_history(analysis)
-        summary = build_summary(analysis, history)
-        ANALYSIS_PATH.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
-        HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
-        SUMMARY_PATH.write_text(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
-        print(f"wrote {ANALYSIS_PATH} ({len(rows)} constituents, status={analysis['status']['level']})")
-        print(f"wrote {HISTORY_PATH} ({history['snapshotCount']} stored snapshots)")
-        print(f"wrote {SUMMARY_PATH}")
         if args.fail_on_degraded and analysis["status"]["level"] != "ok":
-            print("refresh degraded; generated JSON was written but strict mode failed the run", file=sys.stderr)
+            print("refresh degraded; existing JSON preserved", file=sys.stderr)
+            for failure in analysis["status"]["failures"]:
+                print(f"  {failure}", file=sys.stderr)
             return 2
+        history = build_history(analysis, source_dir=args.history_source_dir)
+        summary = build_summary(analysis, history)
+        publication_started = True
+        write_publication(output_dir, {ANALYSIS_PATH.name: analysis, HISTORY_PATH.name: history, SUMMARY_PATH.name: summary})
+        print(f"wrote {output_dir / ANALYSIS_PATH.name} ({len(rows)} constituents, status={analysis['status']['level']})")
+        print(f"wrote {output_dir / HISTORY_PATH.name} ({history['snapshotCount']} stored snapshots)")
+        print(f"wrote {output_dir / SUMMARY_PATH.name}")
         return 0
     except Exception as exc:  # noqa: BLE001
-        if args.offline_ok and ANALYSIS_PATH.exists() and SUMMARY_PATH.exists():
+        if args.offline_ok and not collection_complete and not publication_started and all((output_dir / p.name).exists() for p in (ANALYSIS_PATH, HISTORY_PATH, SUMMARY_PATH)):
             print(f"live refresh failed, keeping existing JSON: {type(exc).__name__}: {exc}", file=sys.stderr)
             return 0
         print(f"refresh failed: {type(exc).__name__}: {exc}", file=sys.stderr)

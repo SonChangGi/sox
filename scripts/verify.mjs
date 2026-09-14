@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const readJson = (file) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+const dataRoot = process.env.SOX_DATA_DIR || path.join(root, 'data');
 const readText = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const checks = [];
 function check(condition, message) {
@@ -10,9 +10,9 @@ function check(condition, message) {
   if (!condition) console.error(`FAIL ${message}`);
 }
 
-const analysis = readJson('data/sox-analysis.json');
-const history = readJson('data/sox-history.json');
-const summary = readJson('data/summary.json');
+const analysis = JSON.parse(fs.readFileSync(path.join(dataRoot, 'sox-analysis.json'), 'utf8'));
+const history = JSON.parse(fs.readFileSync(path.join(dataRoot, 'sox-history.json'), 'utf8'));
+const summary = JSON.parse(fs.readFileSync(path.join(dataRoot, 'summary.json'), 'utf8'));
 const html = readText('index.html');
 const app = readText('assets/app.js');
 const css = readText('assets/styles.css');
@@ -35,6 +35,13 @@ check(analysis.coverage?.price?.count >= 20, 'price coverage has at least 20 tic
 check(analysis.coverage?.marketCap?.count >= 20, 'market-cap coverage has at least 20 tickers');
 check(analysis.coverage?.fundamentals?.count >= 15, 'fundamental coverage has at least 15 tickers');
 check(analysis.history?.url === 'data/sox-history.json', 'analysis points to history JSON');
+if (analysis.status?.level === 'ok') {
+  check(analysis.constituents.every((row) => row.lastTradeDate === analysis.dataAsOf), 'healthy analysis uses a common price date for all constituents');
+  check(analysis.constituents.every((row) => row.dataQuality?.ok === true && row.dataQuality?.failures?.length === 0), 'healthy analysis contains no row provider failures');
+  check(analysis.status.failures?.length === 0, 'healthy analysis contains no source failures');
+}
+check(history.generatedAt === analysis.generatedAt && summary.generatedAt === analysis.generatedAt, 'publication files share one generation');
+check(history.latestDataAsOf === analysis.dataAsOf && summary.dataAsOf === analysis.dataAsOf, 'publication files share the latest data date');
 
 const proxySum = analysis.constituents.reduce((sum, row) => sum + (Number.isFinite(row.proxyWeight) ? row.proxyWeight : 0), 0);
 check(proxySum > 0.98 && proxySum < 1.02, `proxy weights sum near 1 (${proxySum})`);
@@ -122,6 +129,7 @@ check(workflow.includes('Verify live public data bytes'), 'workflow verifies liv
 check(workflow.includes('needs.build.outputs.analysis_sha256'), 'deploy job receives the exact build output hash');
 check(workflow.includes('sha256sum "$readback"'), 'public readback is compared by SHA-256');
 check(workflow.includes('public-site-health:') && workflow.includes('Fail only when the existing SOX page is unusable'), 'automatic failure mail is gated by live SOX page usability');
+check(workflow.includes('Report collection and delivery outcomes separately') && workflow.includes('GITHUB_STEP_SUMMARY'), 'automation reports actual collection, validation and deployment outcomes separately');
 check(freshnessScript.includes('push_uses_committed_generated_json'), 'push events deploy committed generated JSON without regenerating uncommitted data');
 check(freshnessScript.includes('us_equity_holidays'), 'freshness gate understands U.S. equity market holidays');
 check(freshnessScript.includes('current_date_but_status_not_ok'), 'freshness gate retries current-date degraded snapshots');

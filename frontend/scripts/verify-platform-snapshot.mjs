@@ -1,8 +1,15 @@
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
+
+const args = process.argv.slice(2);
+if (args.length > 1 || (args.length === 1 && args[0] !== "--update")) {
+  throw new Error("Usage: verify-platform-snapshot.mjs [--update]");
+}
+const update = args[0] === "--update";
+const manifestUrl = new URL("../platform-snapshot.json", import.meta.url);
 
 const manifest = JSON.parse(
-  await readFile(new URL("../platform-snapshot.json", import.meta.url), "utf8")
+  await readFile(manifestUrl, "utf8")
 );
 
 if (
@@ -20,23 +27,35 @@ const fingerprintLines = [];
 for (const [path, expected] of entries) {
   const bytes = await readFile(new URL(`../${path}`, import.meta.url));
   const actual = createHash("sha256").update(bytes).digest("hex");
-  if (actual !== expected) {
+  if (!update && actual !== expected) {
     throw new Error(
       `Shared platform snapshot drift: ${path} expected ${expected}, received ${actual}`
     );
   }
+  manifest.files[path] = actual;
   fingerprintLines.push(`${actual}  ${path}`);
 }
 
 const aggregate = createHash("sha256")
   .update(`${fingerprintLines.join("\n")}\n`)
   .digest("hex");
-if (aggregate !== manifest.aggregateFingerprint) {
+if (!update && aggregate !== manifest.aggregateFingerprint) {
   throw new Error(
     `Shared platform aggregate drift: expected ${manifest.aggregateFingerprint}, received ${aggregate}`
   );
 }
 
+if (update) {
+  const now = new Date();
+  manifest.snapshotDate = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0")
+  ].join("-");
+  manifest.aggregateFingerprint = aggregate;
+  await writeFile(manifestUrl, `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
 console.log(
-  `Verified ${entries.length} vendored platform files (${manifest.sharedVersion}, ${aggregate.slice(0, 12)}).`
+  `${update ? "Updated" : "Verified"} ${entries.length} vendored platform files (${manifest.sharedVersion}, ${aggregate.slice(0, 12)}).`
 );

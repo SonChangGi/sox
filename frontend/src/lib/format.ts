@@ -1,3 +1,5 @@
+import type { EarningsGrowthState, SoxEarningsGrowth } from "@/types";
+
 export function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -36,6 +38,42 @@ export function formatPercent(value: unknown): string {
     style: "percent",
     maximumFractionDigits: 1
   }).format(value);
+}
+
+const growthStatePresentation: Partial<
+  Record<EarningsGrowthState, { label: string; className: string }>
+> = {
+  turnaround: { label: "흑자전환", className: "positive" },
+  loss_narrowing: { label: "적자축소", className: "positive" },
+  loss_widening: { label: "적자확대", className: "negative" },
+  unchanged_loss: { label: "적자유지", className: "" },
+  loss_to_breakeven: { label: "손익분기", className: "positive" },
+  profit_from_zero: { label: "흑자발생", className: "positive" },
+  loss_from_zero: { label: "적자발생", className: "negative" },
+  unchanged_zero: { label: "0 유지", className: "" }
+};
+
+function earningsStatePresentation(growth: SoxEarningsGrowth | undefined) {
+  const state = growth?.state;
+  return state && Object.hasOwn(growthStatePresentation, state)
+    ? growthStatePresentation[state]
+    : undefined;
+}
+
+export function formatEarningsGrowth(
+  value: unknown,
+  growth?: SoxEarningsGrowth
+): string {
+  if (isFiniteNumber(value)) return formatPercent(value);
+  return earningsStatePresentation(growth)?.label || "-";
+}
+
+export function earningsGrowthClass(
+  value: unknown,
+  growth?: SoxEarningsGrowth
+): string {
+  if (isFiniteNumber(value)) return numberClass(value);
+  return earningsStatePresentation(growth)?.className || "";
 }
 
 export function formatScore(value: unknown): string {

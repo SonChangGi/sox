@@ -26,6 +26,12 @@
 
 `scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 부분 provider 실패는 `status.level=degraded`와 failures 목록으로 명시합니다. 이 상태는 다음 예약 슬롯에서도 다시 수집되며, 마지막 13:30 KST 재시도와 수동 점검은 `--fail-on-degraded`로 실패를 드러내 last-good 공개 결과를 보호합니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
 
+## 수집 품질과 실적 계산
+
+수집과 예약 생략 판정은 종목별 provider 오류, 가격 기준일 일치, 구성종목 수와 핵심 재무정보를 함께 확인합니다. 전체 `status.level=ok`만으로 부분 실패를 숨기거나 혼합 기준일을 최신으로 인정하지 않습니다. 엄격 모드는 실패 시 기존 JSON을 교체하지 않으며, 저장 이력의 손상·읽기 실패도 새 이력으로 덮어쓰지 않습니다.
+
+EPS·순이익의 전년 값이 0 이하이면 일반 YoY는 `null`이고 화면에는 흑자전환·적자축소 등 상태를 표시합니다. 순위 입력은 별도의 `(현재−전년)/|전년|` 변화 신호이며 전년 값이 0인 항목은 점수에서 제외합니다. 양수 기저의 기존 YoY와 가격 계산은 유지합니다. 새 산출물은 `absolute_prior_base_change_v1` 방법론과 비교한 분기 값·날짜를 기록하며, 과거 날짜의 저장 결과는 재계산하지 않습니다.
+
 ## 공통 프런트엔드 경계
 
 `frontend/`는 분석 코드를 복제하지 않는 독립 build입니다. 저장 기준일은
@@ -56,6 +62,13 @@ npm ci --prefix frontend
 npm run dev --prefix frontend
 ```
 
+기존 파일을 보존한 수집 후보 검증:
+
+```bash
+python3 scripts/fetch_sox_data.py --fail-on-degraded --output-dir /tmp/sox-candidate --history-source-dir data
+SOX_DATA_DIR=/tmp/sox-candidate npm run verify
+```
+
 ## 검증
 
 ```bash
@@ -80,3 +93,5 @@ npm run verify --prefix frontend
 `.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 06:30 KST 이후 저장됐고 `status.level=ok`인 경우에만 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing/degraded 상태이거나 수동 실행이면 다시 수집하고, 마지막 예약 재시도와 수동 실행은 `--fail-on-degraded`로 건강하지 않은 후보를 계속 차단합니다. 자동 예약·push에서 이 차단이나 배포 오류가 발생해도 별도 health job이 기존 공개 `index.html`, `summary.json`, `sox-analysis.json`을 읽을 수 있으면 실패 메일을 만들지 않습니다. 해당 공개 파일이 반복 확인 후에도 사용할 수 없을 때만 자동 실패 신호를 냅니다. 수동 실행은 계속 엄격합니다. production workflow는 기본 브랜치에서만 실행됩니다. 수집을 시작한 뒤 원격 branch가 바뀌면 데이터 변경 유무와 관계없이 후보를 거부하고, 업로드한 artifact의 source SHA가 배포 직전 main과 다르면 배포도 거부합니다.
 
 GitHub Pages 배포 후 workflow는 `sox-analysis.json`, `sox-history.json`, `summary.json`의 SHA-256을 실제 공개 URL에서 다시 읽어 업로드한 artifact와 byte-identical한지 확인합니다.
+
+추가 프론트 검증은 `.github/workflows/verify-frontend.yml`에서 별도로 실행합니다. 운영 배포 경로는 저장소 루트로 유지합니다. 자동 실행의 성공 표시·실패 알림은 기존 페이지 가용성 정책을 따르며, 수집·검증·배포·공개 해시 비교의 실제 결과는 Actions 실행 요약 표에서 각각 확인합니다.

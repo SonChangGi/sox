@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { SharedNav } from "@/components/SharedNav";
 import {
+  earningsGrowthClass,
   formatCompact,
   formatCurrency,
   formatDate,
   formatDateTime,
+  formatEarningsGrowth,
   formatNumber,
   formatPercent,
   formatScore,
@@ -456,8 +458,16 @@ function ConstituentsTable({
                   <td className={numberClass(metrics.quarterlyRevenueYoY)}>
                     {formatPercent(metrics.quarterlyRevenueYoY)}
                   </td>
-                  <td className={numberClass(metrics.quarterlyEpsYoY)}>
-                    {formatPercent(metrics.quarterlyEpsYoY)}
+                  <td
+                    className={earningsGrowthClass(
+                      metrics.quarterlyEpsYoY,
+                      metrics.quarterlyEpsGrowth
+                    )}
+                  >
+                    {formatEarningsGrowth(
+                      metrics.quarterlyEpsYoY,
+                      metrics.quarterlyEpsGrowth
+                    )}
                   </td>
                   <td>
                     {formatNumber(metrics.trailingPe, {
@@ -953,7 +963,13 @@ function Dashboard({
                 </ul>
               </article>
               <article>
-                <h3>운영 상세</h3>
+                <h3>분석 · 운영 상세</h3>
+                {analysis.methodology?.earningsMomentum && (
+                  <p>{analysis.methodology.earningsMomentum}</p>
+                )}
+                {analysis.methodology?.earningsGrowth && (
+                  <p>{analysis.methodology.earningsGrowth}</p>
+                )}
                 <p>
                   개인 리서치용이며 투자 조언이 아닙니다. 데이터는 지연되거나
                   일부 누락될 수 있습니다.

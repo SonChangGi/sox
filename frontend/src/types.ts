@@ -4,6 +4,34 @@ export interface SourceRecord {
   usage: string;
 }
 
+export type EarningsGrowthState =
+  | "profit_growth"
+  | "profit_decline"
+  | "unchanged_profit"
+  | "profit_to_loss"
+  | "profit_to_breakeven"
+  | "turnaround"
+  | "loss_narrowing"
+  | "loss_widening"
+  | "unchanged_loss"
+  | "loss_to_breakeven"
+  | "profit_from_zero"
+  | "loss_from_zero"
+  | "unchanged_zero"
+  | "unavailable";
+
+export interface SoxEarningsGrowth {
+  yoy: number | null;
+  state: EarningsGrowthState;
+  changeSignal: number | null;
+  current: number | null;
+  previous: number | null;
+  currentDate: string | null;
+  previousDate: string | null;
+  methodology: "absolute_prior_base_change_v1";
+  reason: string | null;
+}
+
 export interface SoxMetrics {
   return1m?: number | null;
   return3m?: number | null;
@@ -12,6 +40,8 @@ export interface SoxMetrics {
   quarterlyRevenueYoY?: number | null;
   quarterlyEpsYoY?: number | null;
   quarterlyNetIncomeYoY?: number | null;
+  quarterlyEpsGrowth?: SoxEarningsGrowth;
+  quarterlyNetIncomeGrowth?: SoxEarningsGrowth;
   netMargin?: number | null;
   trailingPe?: number | null;
   [key: string]: unknown;
@@ -93,6 +123,8 @@ export interface SoxAnalysis {
   };
   methodology?: {
     weightCaveat?: string;
+    earningsMomentum?: string;
+    earningsGrowth?: string;
     [key: string]: unknown;
   };
   sources?: Record<string, SourceRecord>;

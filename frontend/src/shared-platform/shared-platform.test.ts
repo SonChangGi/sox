@@ -62,8 +62,8 @@ describe("shared platform SOX seam", () => {
     ).toBe(false);
   });
 
-  it("keeps the canonical 8-destination order and SOX public identity", () => {
-    expect(canonicalProjectRegistry).toHaveLength(8);
+  it("keeps the canonical 9-destination order and SOX public identity", () => {
+    expect(canonicalProjectRegistry).toHaveLength(9);
     expect(canonicalProjectRegistry.map((project) => project.id)).toEqual([
       "hub",
       "fear-greed",
@@ -72,7 +72,8 @@ describe("shared platform SOX seam", () => {
       "best-factor",
       "etf",
       "sox",
-      "regime"
+      "regime",
+      "news"
     ]);
     expect(
       getCanonicalNavigation("sox").filter((project) => project.current)

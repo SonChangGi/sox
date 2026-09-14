@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-12T04:53:16Z",
+  "generatedAt": "2026-09-13T23:47:18Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.8889655172413793,
         "rank": 1,
         "score": 0.9358275862068965,
-        "weight": 0.07522891834471858
+        "weight": 0.07485982656355954
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,11 +73,11 @@
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6672413793103448,
+        "earningsMomentum": 0.6603448275862069,
         "priceMomentum": 0.896551724137931,
         "rank": 2,
-        "score": 0.7933620689655172,
-        "weight": 0.056026715279376776
+        "score": 0.7902586206896552,
+        "weight": 0.057264952946501635
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "TER",
       "label": "TER",
       "metrics": {
-        "earningsMomentum": 0.8551724137931034,
+        "earningsMomentum": 0.8362068965517241,
         "priceMomentum": 0.7144827586206897,
         "rank": 3,
-        "score": 0.7777931034482759,
-        "weight": 0.003944207582761881
+        "score": 0.7692586206896552,
+        "weight": 0.00403477125393605
       },
       "name": "Teradyne",
       "signals": [
@@ -110,34 +110,14 @@
       ]
     },
     {
-      "id": "INTC",
-      "label": "INTC",
-      "metrics": {
-        "earningsMomentum": 0.6206896551724137,
-        "priceMomentum": 0.7758620689655172,
-        "rank": 4,
-        "score": 0.7060344827586207,
-        "weight": 0.036139839559888524
-      },
-      "name": "Intel",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "INTC",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "MRVL",
       "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.5155172413793103,
+        "earningsMomentum": 0.4982758620689655,
         "priceMomentum": 0.8393103448275862,
-        "rank": 5,
-        "score": 0.6936034482758621,
-        "weight": 0.01390046035513989
+        "rank": 4,
+        "score": 0.6858448275862069,
+        "weight": 0.014421027756711797
       },
       "name": "Marvell Technology",
       "signals": [
@@ -145,6 +125,26 @@
       ],
       "status": "중립/혼재",
       "symbol": "MRVL",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "QRVO",
+      "label": "QRVO",
+      "metrics": {
+        "earningsMomentum": 0.506896551724138,
+        "priceMomentum": 0.7910344827586208,
+        "rank": 5,
+        "score": 0.6631724137931035,
+        "weight": 0.0006994281223437069
+      },
+      "name": "Qorvo",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "QRVO",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]

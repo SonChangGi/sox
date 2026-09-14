@@ -16,6 +16,8 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from sox_data_quality import collect_data_quality_failures
+
 KST = ZoneInfo("Asia/Seoul")
 CUTOFF_KST = dt.time(hour=6, minute=30)
 
@@ -147,12 +149,29 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
             "should_deploy": "true",
             "freshness_reason": "missing_generated_payload",
         }
-    if generated_kst >= cutoff and data_as_of >= expected and status_level == "ok":
+    index = payload.get("index")
+    index = index if isinstance(index, dict) else {}
+    quality_failures = collect_data_quality_failures(
+        payload.get("constituents"),
+        index.get("constituentSource", {}),
+        data_as_of=payload.get("dataAsOf"),
+    )
+    if isinstance(status, dict) and status.get("failures"):
+        quality_failures.append("Payload status records source failures")
+    base["quality_failure_count"] = str(len(quality_failures))
+    if generated_kst >= cutoff and data_as_of >= expected and status_level == "ok" and not quality_failures:
         return {
             **base,
             "should_collect": "false",
             "should_deploy": "false",
             "freshness_reason": "fresh_for_kst_window_and_expected_us_session",
+        }
+    if generated_kst >= cutoff and data_as_of >= expected and status_level == "ok":
+        return {
+            **base,
+            "should_collect": "true",
+            "should_deploy": "true",
+            "freshness_reason": "current_date_but_data_quality_not_ok",
         }
     if generated_kst >= cutoff and data_as_of >= expected:
         return {

@@ -29,7 +29,8 @@ cross-origin runtime import:
 
 - `contracts.ts` mirrors the shared control-kind and manifest surface.
 - `control-manifest.ts` rejects public `analysis` and `operation` controls.
-- `project-registry.ts` pins the canonical 11-project order, labels, URLs, and
+- `project-registry.ts` pins the canonical 9-project order (Hub, Fear & Greed,
+  Momentum, DRAM, Best Factor, ETF, SOX, Regime, News), labels, URLs, and
   protected public summary identity mapping.
 - `token-aliases.css` exposes the shared `--qr-*` semantic token names while
   retaining the approved SOX palette and component CSS.
@@ -61,12 +62,27 @@ objects through without recalculation, normalization, row cloning, or value
 replacement. It creates only a separate sorted snapshot index for the date
 selector.
 
+New snapshots may include `metrics.quarterlyEpsGrowth` and
+`metrics.quarterlyNetIncomeGrowth` with the collector's comparison state and
+`absolute_prior_base_change_v1` signal. The EPS column displays the conventional
+`quarterlyEpsYoY` percentage when available; otherwise it displays the saved
+state, such as 흑자전환 or 적자축소. It never presents `changeSignal` as EPS YoY.
+Numeric EPS sorting continues to place unavailable percentages last in either
+direction, and state labels are searchable. Older snapshots without the new
+fields retain their existing percentage or missing-value presentation. The
+collapsed detail uses the selected snapshot's own earnings methodology text.
+
 ## Protected delivery boundary
 
 This worktree keeps the current root static page and Pages workflow as the
 rollback path. The independently built preview is produced under
 `frontend/dist` with the same `/sox/` base URL and byte-identical copies of all
 three public JSON files.
+
+`.github/workflows/verify-frontend.yml` runs the full frontend verifier for
+relevant pull requests, main-branch changes, and manual runs. This separate CI
+job checks the additional frontend without changing the Pages artifact path or
+the collector schedule.
 
 Before changing the Pages artifact path in a release change:
 
@@ -80,12 +96,27 @@ Before changing the Pages artifact path in a release change:
 
 ## Snapshot sync procedure
 
+For every intentional change to a pinned shared file, including navigation:
+
+1. review the shared-file diff and update the navigation contract test when
+   destinations, order, labels, or URLs change;
+2. run `npm run sync:platform --prefix frontend` to update the local snapshot
+   date, per-file hashes, and aggregate fingerprint;
+3. review the resulting manifest diff and run
+   `npm run verify --prefix frontend`;
+4. commit the shared-file changes, tests, and manifest together.
+
+`sync:platform` does not change the shared version or upstream source hashes.
+Those fields describe the imported foundation, not the local file contents.
+`snapshotDate` records the latest local hash sync date.
+The ordinary verifier never updates the manifest and still fails on drift.
+
 When the shared frontend packages publish a new version:
 
 1. compare contracts, registry, and design tokens with the source hashes in
    `frontend/platform-snapshot.json`;
 2. update only the compatible files under `frontend/src/shared-platform/`;
-3. update the shared version, source hashes, file hashes, and aggregate
-   fingerprint;
-4. run `npm run verify --prefix frontend`;
+3. update the shared version and source hashes from the reviewed upstream
+   version, then run `npm run sync:platform --prefix frontend`;
+4. review the manifest diff and run `npm run verify --prefix frontend`;
 5. repeat browser QA before release.

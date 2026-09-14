@@ -42,6 +42,7 @@
     opsGeneratedAt: document.querySelector('#ops-generated-at'),
     opsWeightMethod: document.querySelector('#ops-weight-method'),
     opsDataStatus: document.querySelector('#ops-data-status'),
+    opsEarningsMethod: document.querySelector('#ops-earnings-method'),
     opsPublicReadback: document.querySelector('#ops-public-readback'),
     themeToggle: document.querySelector('#theme-toggle'),
     themeToggleText: document.querySelector('.quant-shared-nav__theme-text'),
@@ -456,7 +457,8 @@
     if (els.opsSelectedDate) els.opsSelectedDate.textContent = formatDate(state.selectedDate || analysis.dataAsOf);
     if (els.opsGeneratedAt) els.opsGeneratedAt.textContent = formatDateTime(analysis.generatedAt);
     if (els.opsWeightMethod) els.opsWeightMethod.textContent = analysis.index?.weightMethodLabel || '-';
-    if (els.opsDataStatus) els.opsDataStatus.textContent = `${analysis.status?.level || 'unknown'} · ${analysis.status?.message || '-'}`;
+    if (els.opsDataStatus) els.opsDataStatus.textContent = `${analysis.status?.level || 'unknown'} · ${analysis.status?.message || '-'}${analysis.status?.failures?.length ? ` · ${analysis.status.failures.join('; ')}` : ''}`;
+    if (els.opsEarningsMethod) els.opsEarningsMethod.textContent = analysis.methodology?.earningsGrowth || analysis.methodology?.earningsMomentum || '';
     if (els.opsPublicReadback) {
       els.opsPublicReadback.textContent = analysis.status?.publicPagesReadback || '';
       els.opsPublicReadback.hidden = !analysis.status?.publicPagesReadback;
@@ -518,6 +520,7 @@
       metrics.return12m,
       metrics.quarterlyRevenueYoY,
       metrics.quarterlyEpsYoY,
+      formatEarningsGrowth(metrics.quarterlyEpsYoY, metrics.quarterlyEpsGrowth),
       metrics.trailingPe,
       scores.priceMomentum,
       scores.earningsMomentum,
@@ -572,7 +575,7 @@
         <td class="${numberClass(metrics.return3m)}">${formatPercent(metrics.return3m)}</td>
         <td class="${numberClass(metrics.return12m)}">${formatPercent(metrics.return12m)}</td>
         <td class="${numberClass(metrics.quarterlyRevenueYoY)}">${formatPercent(metrics.quarterlyRevenueYoY)}</td>
-        <td class="${numberClass(metrics.quarterlyEpsYoY)}">${formatPercent(metrics.quarterlyEpsYoY)}</td>
+        <td class="${numberClass(metrics.quarterlyEpsGrowth?.changeSignal ?? metrics.quarterlyEpsYoY)}">${escapeHtml(formatEarningsGrowth(metrics.quarterlyEpsYoY, metrics.quarterlyEpsGrowth))}</td>
         <td>${formatNumber(metrics.trailingPe, { maximumFractionDigits: 1 })}</td>
         <td><span class="score-pill ${scoreClass(scores.priceMomentum)}">${formatScore(scores.priceMomentum)}</span></td>
         <td><span class="score-pill ${scoreClass(scores.earningsMomentum)}">${formatScore(scores.earningsMomentum)}</span></td>
@@ -631,6 +634,20 @@
   function formatPercent(value) {
     if (!isFiniteNumber(value)) return '-';
     return new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 }).format(value);
+  }
+
+  function formatEarningsGrowth(yoy, growth) {
+    if (isFiniteNumber(yoy)) return formatPercent(yoy);
+    return ({
+      turnaround: '흑자전환',
+      loss_narrowing: '적자축소',
+      loss_widening: '적자확대',
+      unchanged_loss: '적자유지',
+      loss_to_breakeven: '손익분기',
+      profit_from_zero: '흑자발생',
+      loss_from_zero: '적자발생',
+      unchanged_zero: '0 유지',
+    })[growth?.state] || '-';
   }
 
   function formatScore(value) {
