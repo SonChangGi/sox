@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-15T05:10:10Z",
+  "generatedAt": "2026-09-16T00:43:06Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.8958620689655172,
         "rank": 1,
         "score": 0.9396206896551724,
-        "weight": 0.07485982656355954
+        "weight": 0.07409150857880498
       },
       "name": "Micron Technology",
       "signals": [
@@ -77,7 +77,7 @@
         "priceMomentum": 0.9117241379310345,
         "rank": 2,
         "score": 0.7986034482758622,
-        "weight": 0.057264952946501635
+        "weight": 0.05718626254926826
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -97,7 +97,7 @@
         "priceMomentum": 0.5937931034482758,
         "rank": 3,
         "score": 0.6850344827586208,
-        "weight": 0.35824511552718724
+        "weight": 0.3616600310747182
       },
       "name": "NVIDIA",
       "signals": [
@@ -117,7 +117,7 @@
         "priceMomentum": 0.7379310344827587,
         "rank": 4,
         "score": 0.6805172413793104,
-        "weight": 0.13414145587180076
+        "weight": 0.1382013193894108
       },
       "name": "Taiwan Semiconductor Manufacturing",
       "signals": [
@@ -133,11 +133,11 @@
       "id": "MRVL",
       "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.49137931034482757,
+        "earningsMomentum": 0.4982758620689655,
         "priceMomentum": 0.8248275862068966,
         "rank": 5,
-        "score": 0.6747758620689656,
-        "weight": 0.014421027756711797
+        "score": 0.6778793103448276,
+        "weight": 0.013961793199047261
       },
       "name": "Marvell Technology",
       "signals": [
