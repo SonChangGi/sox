@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-16T05:05:41Z",
+  "generatedAt": "2026-09-17T00:49:51Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -53,11 +53,11 @@
       "id": "MU",
       "label": "MU",
       "metrics": {
-        "earningsMomentum": 0.993103448275862,
+        "earningsMomentum": 0.9948275862068966,
         "priceMomentum": 0.8675862068965517,
         "rank": 1,
-        "score": 0.9240689655172414,
-        "weight": 0.07438381377471567
+        "score": 0.9248448275862069,
+        "weight": 0.07421286342484856
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,11 +73,11 @@
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6603448275862069,
+        "earningsMomentum": 0.6586206896551724,
         "priceMomentum": 0.9131034482758621,
         "rank": 2,
-        "score": 0.7993620689655174,
-        "weight": 0.05719091558369599
+        "score": 0.7985862068965518,
+        "weight": 0.058307267697903176
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "NVDA",
       "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.796551724137931,
+        "earningsMomentum": 0.7982758620689655,
         "priceMomentum": 0.5951724137931035,
         "rank": 3,
-        "score": 0.6857931034482758,
-        "weight": 0.3616894580122502
+        "score": 0.6865689655172413,
+        "weight": 0.3629279850301077
       },
       "name": "NVIDIA",
       "signals": [
@@ -110,34 +110,14 @@
       ]
     },
     {
-      "id": "QRVO",
-      "label": "QRVO",
-      "metrics": {
-        "earningsMomentum": 0.506896551724138,
-        "priceMomentum": 0.806896551724138,
-        "rank": 4,
-        "score": 0.671896551724138,
-        "weight": 0.0006763803270696077
-      },
-      "name": "Qorvo",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "QRVO",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "TSM",
       "label": "TSM",
       "metrics": {
         "earningsMomentum": 0.6103448275862069,
         "priceMomentum": 0.7220689655172414,
-        "rank": 5,
+        "rank": 4,
         "score": 0.6717931034482759,
-        "weight": 0.1382125643190217
+        "weight": 0.13800441903038774
       },
       "name": "Taiwan Semiconductor Manufacturing",
       "signals": [
@@ -145,6 +125,26 @@
       ],
       "status": "중립/혼재",
       "symbol": "TSM",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "QRVO",
+      "label": "QRVO",
+      "metrics": {
+        "earningsMomentum": 0.5051724137931034,
+        "priceMomentum": 0.806896551724138,
+        "rank": 5,
+        "score": 0.6711206896551725,
+        "weight": 0.0007378212688191379
+      },
+      "name": "Qorvo",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "QRVO",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
