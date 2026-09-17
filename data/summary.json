@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 56
+    "snapshotCount": 57
   },
-  "dataAsOf": "2026-09-15",
+  "dataAsOf": "2026-09-16",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-17T00:49:51Z",
+  "generatedAt": "2026-09-17T05:08:25Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9948275862068966,
-        "priceMomentum": 0.8675862068965517,
+        "priceMomentum": 0.8455172413793103,
         "rank": 1,
-        "score": 0.9248448275862069,
-        "weight": 0.07421286342484856
+        "score": 0.9127068965517242,
+        "weight": 0.0742226349091625
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6586206896551724,
-        "priceMomentum": 0.9131034482758621,
+        "priceMomentum": 0.9172413793103449,
         "rank": 2,
-        "score": 0.7985862068965518,
-        "weight": 0.058307267697903176
+        "score": 0.8008620689655173,
+        "weight": 0.058314944918878155
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -94,10 +94,10 @@
       "label": "NVDA",
       "metrics": {
         "earningsMomentum": 0.7982758620689655,
-        "priceMomentum": 0.5951724137931035,
+        "priceMomentum": 0.6448275862068965,
         "rank": 3,
-        "score": 0.6865689655172413,
-        "weight": 0.3629279850301077
+        "score": 0.7138793103448275,
+        "weight": 0.36297577115436097
       },
       "name": "NVIDIA",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "TSM",
       "metrics": {
         "earningsMomentum": 0.6103448275862069,
-        "priceMomentum": 0.7220689655172414,
+        "priceMomentum": 0.7379310344827587,
         "rank": 4,
-        "score": 0.6717931034482759,
-        "weight": 0.13800441903038774
+        "score": 0.6805172413793104,
+        "weight": 0.1380225898427453
       },
       "name": "Taiwan Semiconductor Manufacturing",
       "signals": [
@@ -130,21 +130,21 @@
       ]
     },
     {
-      "id": "QRVO",
-      "label": "QRVO",
+      "id": "MRVL",
+      "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.5051724137931034,
-        "priceMomentum": 0.806896551724138,
+        "earningsMomentum": 0.49137931034482757,
+        "priceMomentum": 0.8282758620689655,
         "rank": 5,
-        "score": 0.6711206896551725,
-        "weight": 0.0007378212688191379
+        "score": 0.6766724137931035,
+        "weight": 0.014116048508995494
       },
-      "name": "Qorvo",
+      "name": "Marvell Technology",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "QRVO",
+      "symbol": "MRVL",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
