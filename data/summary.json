@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-17T05:08:25Z",
+  "generatedAt": "2026-09-18T00:42:42Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -57,7 +57,7 @@
         "priceMomentum": 0.8455172413793103,
         "rank": 1,
         "score": 0.9127068965517242,
-        "weight": 0.0742226349091625
+        "weight": 0.07372603583665617
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,11 +73,11 @@
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6586206896551724,
+        "earningsMomentum": 0.6603448275862069,
         "priceMomentum": 0.9172413793103449,
         "rank": 2,
-        "score": 0.8008620689655173,
-        "weight": 0.058314944918878155
+        "score": 0.8016379310344828,
+        "weight": 0.058945043557640346
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "NVDA",
       "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.7982758620689655,
+        "earningsMomentum": 0.796551724137931,
         "priceMomentum": 0.6448275862068965,
         "rank": 3,
-        "score": 0.7138793103448275,
-        "weight": 0.36297577115436097
+        "score": 0.713103448275862,
+        "weight": 0.36389898111484664
       },
       "name": "NVIDIA",
       "signals": [
@@ -117,7 +117,7 @@
         "priceMomentum": 0.7379310344827587,
         "rank": 4,
         "score": 0.6805172413793104,
-        "weight": 0.1380225898427453
+        "weight": 0.1367264346417144
       },
       "name": "Taiwan Semiconductor Manufacturing",
       "signals": [
@@ -137,7 +137,7 @@
         "priceMomentum": 0.8282758620689655,
         "rank": 5,
         "score": 0.6766724137931035,
-        "weight": 0.014116048508995494
+        "weight": 0.014544665764476352
       },
       "name": "Marvell Technology",
       "signals": [
