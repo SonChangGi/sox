@@ -39,7 +39,7 @@
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-18T03:51:14Z",
+  "generatedAt": "2026-09-18T03:54:20Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -113,10 +113,10 @@
       "id": "MRVL",
       "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.49137931034482757,
+        "earningsMomentum": 0.4982758620689655,
         "priceMomentum": 0.8262068965517241,
         "rank": 4,
-        "score": 0.6755344827586207,
+        "score": 0.6786379310344828,
         "weight": 0.014353631643437267
       },
       "name": "Marvell Technology",
