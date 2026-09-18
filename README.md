@@ -24,7 +24,7 @@
 - 허브 요약: `data/summary.json`
 - refresh script: `scripts/fetch_sox_data.py`
 
-`scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 부분 provider 실패는 `status.level=degraded`와 failures 목록으로 명시합니다. 이 상태는 다음 예약 슬롯에서도 다시 수집되며, 마지막 13:30 KST 재시도와 수동 점검은 `--fail-on-degraded`로 실패를 드러내 last-good 공개 결과를 보호합니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
+`scripts/fetch_sox_data.py`는 `SOX_NASDAQ_TRADE_DATE`가 없으면 최근 영업일 후보를 최신순으로 시도해 Nasdaq SOX 구성종목을 가져오고, 성공한 refresh마다 `dataAsOf` 기준 snapshot을 `data/sox-history.json`에 append/replace 합니다. 부분 provider 실패는 `status.level=degraded`와 failures 목록으로 명시합니다. 운영 자동화는 모든 실행에서 `--fail-on-degraded --require-current`를 적용하므로 최신 예상 거래일 미달이나 부분 실패 후보를 공개하지 않습니다. 따라서 브라우저는 최신값뿐 아니라 저장된 원하는 기준일도 선택해서 볼 수 있습니다.
 
 ## 수집 품질과 실적 계산
 
@@ -50,7 +50,7 @@ Pages origin의 runtime import는 사용하지 않습니다. 자세한 계약은
 ## 로컬 실행
 
 ```bash
-npm run refresh
+python3 scripts/refresh_sox_pipeline.py
 python3 -m http.server 8080
 # http://localhost:8080 열기
 ```
@@ -65,14 +65,13 @@ npm run dev --prefix frontend
 기존 파일을 보존한 수집 후보 검증:
 
 ```bash
-python3 scripts/fetch_sox_data.py --fail-on-degraded --output-dir /tmp/sox-candidate --history-source-dir data
+python3 scripts/fetch_sox_data.py --fail-on-degraded --require-current --output-dir /tmp/sox-candidate --history-source-dir data
 SOX_DATA_DIR=/tmp/sox-candidate npm run verify
 ```
 
 ## 검증
 
 ```bash
-npm run refresh
 npm test
 npm run verify --prefix frontend
 ```
@@ -90,8 +89,21 @@ npm run verify --prefix frontend
 
 ## 배포 메모
 
-`.github/workflows/deploy-pages.yml`는 07:30 KST Tue-Sat에 1차 실행되고 09:30/11:30/13:30 KST Tue-Sat에 2시간 간격 retry를 수행합니다. 예약 run은 먼저 lightweight freshness preflight만 실행합니다. `scripts/check_sox_freshness.py`가 미국 주식시장 full-day 휴장일을 반영한 최신 예상 정규장 기준일이 06:30 KST 이후 저장됐고 `status.level=ok`인 경우에만 수집, 검증, Pages artifact upload, 배포를 모두 skip합니다. stale/missing/degraded 상태이거나 수동 실행이면 다시 수집하고, 마지막 예약 재시도와 수동 실행은 `--fail-on-degraded`로 건강하지 않은 후보를 계속 차단합니다. 자동 예약·push에서 이 차단이나 배포 오류가 발생해도 별도 health job이 기존 공개 `index.html`, `summary.json`, `sox-analysis.json`을 읽을 수 있으면 실패 메일을 만들지 않습니다. 해당 공개 파일이 반복 확인 후에도 사용할 수 없을 때만 자동 실패 신호를 냅니다. 수동 실행은 계속 엄격합니다. production workflow는 기본 브랜치에서만 실행됩니다. 수집을 시작한 뒤 원격 branch가 바뀌면 데이터 변경 유무와 관계없이 후보를 거부하고, 업로드한 artifact의 source SHA가 배포 직전 main과 다르면 배포도 거부합니다.
+`.github/workflows/deploy-pages.yml`는 화~토 07:30 KST에 1차 수집하고 09:30/11:30/13:30 KST에 재시도합니다. GitHub 예약 실행은 지연될 수 있습니다. 최신 예상 거래일은 06:30 KST 수집 창과 미국 주식시장 휴장일을 반영합니다. 금요일 정상 결과는 주말과 월요일에도 최신으로 인정하며, 미래 거래일·미래 생성 시점은 거부합니다.
 
-GitHub Pages 배포 후 workflow는 `sox-analysis.json`, `sox-history.json`, `summary.json`의 SHA-256을 실제 공개 URL에서 다시 읽어 업로드한 artifact와 byte-identical한지 확인합니다.
+운영 경로는 다음 순서로 실행됩니다.
 
-추가 프론트 검증은 `.github/workflows/verify-frontend.yml`에서 별도로 실행합니다. 운영 배포 경로는 저장소 루트로 유지합니다. 자동 실행의 성공 표시·실패 알림은 기존 페이지 가용성 정책을 따르며, 수집·검증·배포·공개 해시 비교의 실제 결과는 Actions 실행 요약 표에서 각각 확인합니다.
+1. 최신 거래일·종목별 품질·`status.level=ok`인 경우에만 수집을 생략합니다. 공개 파일 7개까지 현재 커밋과 일치해야 배포도 생략합니다. 저장 데이터만 최신이고 공개 결과가 오래됐거나 누락되면 재수집 없이 검증·배포를 복구합니다.
+2. `scripts/refresh_sox_pipeline.py`가 임시 디렉터리에 수집하고 최신성·품질 및 `npm test` 전체 검증을 통과한 JSON 묶음만 교체합니다. 수집은 최대 3회, 30초 간격으로 시도하며 실패한 검증 후보는 기존 데이터를 덮어쓰지 않습니다. 개별 HTTP 요청은 429·5xx·timeout 등 일시적 오류에만 최대 3회 재시도합니다.
+3. source SHA와 원격 main이 수집 도중 달라지면 커밋·push를 거부합니다. 기본 브랜치만 운영 가능하며 push 이벤트는 커밋된 데이터의 최신성·품질을 검증합니다.
+4. 검증된 `index.html`, `assets/`, `data/`만 Pages artifact에 포함합니다. 배포 직전에도 main SHA와 데이터 최신성을 확인합니다.
+5. `scripts/verify_publication.py`가 공개 HTML·JS·CSS와 JSON 등 7개 파일의 SHA-256 및 실제 거래일·품질을 확인합니다. 재수집·검증·배포·공개 확인 중 필요한 단계가 실패하면 전체 자동화도 실패합니다. 기존 페이지가 열린다는 이유로 성공 처리하지 않습니다.
+
+수동 재수집·배포도 동일한 경로입니다.
+
+```bash
+gh workflow run deploy-pages.yml --ref main --repo SonChangGi/sox
+python3 scripts/verify_publication.py --attempts 6 --retry-delay 5
+```
+
+추가 프런트엔드 검증은 `.github/workflows/verify-frontend.yml`에서 별도로 실행합니다. 공개 화면은 기존 루트 정적 앱을 유지합니다. 수집·검증·배포·공개 확인 결과는 Actions 실행 요약에서 각각 확인할 수 있습니다.

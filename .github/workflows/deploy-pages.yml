@@ -5,9 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # 07:30 KST Tue-Sat: SOX latest-date collection after the prior U.S. regular session.
+    # 07:30 KST Tue-Sat, then 09:30/11:30/13:30 provider recovery slots.
     - cron: "30 22 * * 1-5"
-    # 09:30/11:30/13:30 KST Tue-Sat: 2-hour retries when providers lag or the primary run fails.
     - cron: "30 0 * * 2-6"
     - cron: "30 2 * * 2-6"
     - cron: "30 4 * * 2-6"
@@ -24,14 +23,15 @@ concurrency:
 jobs:
   freshness:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
+    timeout-minutes: 5
     outputs:
       should_collect: ${{ steps.freshness.outputs.should_collect }}
-      should_deploy: ${{ steps.freshness.outputs.should_deploy }}
+      should_deploy: ${{ steps.delivery.outputs.should_deploy }}
       freshness_reason: ${{ steps.freshness.outputs.freshness_reason }}
       expected_data_as_of: ${{ steps.freshness.outputs.expected_data_as_of }}
       actual_data_as_of: ${{ steps.freshness.outputs.actual_data_as_of }}
-      preflight_outcome: ${{ steps.freshness.outcome }}
+      source_sha: ${{ steps.freshness.outputs.source_sha }}
+      delivery_reason: ${{ steps.delivery.outputs.delivery_reason }}
     steps:
       - name: Require the production branch
         env:
@@ -42,29 +42,51 @@ jobs:
             exit 1
           fi
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
       - name: Decide whether SOX collection is needed
         id: freshness
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
         run: |
-          python3 scripts/check_sox_freshness.py --event-name "${{ github.event_name }}" | tee /tmp/sox-freshness.env
-          cat /tmp/sox-freshness.env >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          python3 scripts/check_sox_freshness.py --event-name "$EVENT_NAME" | tee "$RUNNER_TEMP/sox-freshness.env"
+          cat "$RUNNER_TEMP/sox-freshness.env" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Recover an unpublished or mismatched current snapshot
+        id: delivery
+        env:
+          SHOULD_DEPLOY: ${{ steps.freshness.outputs.should_deploy }}
+        run: |
+          should_deploy="$SHOULD_DEPLOY"
+          reason=collection_or_push
+          if [[ "$should_deploy" == "false" ]]; then
+            if python3 scripts/verify_publication.py --attempts 1; then
+              reason=current_data_already_published
+            else
+              should_deploy=true
+              reason=current_data_requires_publication_repair
+            fi
+          fi
+          echo "should_deploy=$should_deploy" >> "$GITHUB_OUTPUT"
+          echo "delivery_reason=$reason" >> "$GITHUB_OUTPUT"
+
   build:
     needs: freshness
     if: needs.freshness.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
-    continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
+    timeout-minutes: 20
     outputs:
-      analysis_sha256: ${{ steps.public_contract.outputs.analysis_sha256 }}
-      history_sha256: ${{ steps.public_contract.outputs.history_sha256 }}
-      summary_sha256: ${{ steps.public_contract.outputs.summary_sha256 }}
       source_sha: ${{ steps.public_contract.outputs.source_sha }}
       refresh_outcome: ${{ steps.refresh.outcome }}
       verification_outcome: ${{ steps.static_verify.outcome }}
-      collected_data_status: ${{ steps.refresh.outputs.status_level }}
-      collected_data_as_of: ${{ steps.refresh.outputs.actual_data_as_of }}
-      retry_needed: ${{ steps.refresh.outputs.should_collect }}
+      collected_data_status: ${{ steps.static_verify.outputs.status_level }}
+      collected_data_as_of: ${{ steps.static_verify.outputs.actual_data_as_of }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
+          ref: ${{ needs.freshness.outputs.source_sha }}
           fetch-depth: 0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
@@ -72,23 +94,23 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           python-version: '3.12'
-      - name: Refresh generated SOX data
+      - name: Collect and verify a current candidate before promotion
         id: refresh
         if: needs.freshness.outputs.should_collect == 'true'
-        env:
-          STRICT_REFRESH: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '30 4 * * 2-6' }}
-        run: |
-          if [[ "$STRICT_REFRESH" == "true" ]]; then
-            python3 scripts/fetch_sox_data.py --fail-on-degraded
-          else
-            # Preserve and publish explicit degraded diagnostics while providers
-            # recover; the final scheduled retry is strict and fails loudly.
-            python3 scripts/fetch_sox_data.py --offline-ok --allow-degraded
-          fi
-          python3 scripts/check_sox_freshness.py --event-name schedule >> "$GITHUB_OUTPUT"
-      - name: Verify static dashboard
+        run: python3 scripts/refresh_sox_pipeline.py --attempts 3 --retry-delay 30
+      - name: Verify static dashboard and require current publication
         id: static_verify
-        run: npm test
+        shell: bash
+        env:
+          SHOULD_COLLECT: ${{ needs.freshness.outputs.should_collect }}
+        run: |
+          set -euo pipefail
+          # The collector pipeline already ran the full suite on its candidate.
+          if [[ "$SHOULD_COLLECT" != "true" ]]; then
+            npm test
+          fi
+          python3 scripts/check_sox_freshness.py --event-name schedule --require-fresh | tee "$RUNNER_TEMP/sox-verified.env"
+          cat "$RUNNER_TEMP/sox-verified.env" >> "$GITHUB_OUTPUT"
       - name: Commit generated SOX data
         if: needs.freshness.outputs.should_collect == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
@@ -107,43 +129,33 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/sox-analysis.json data/sox-history.json data/summary.json
-          cat > /tmp/sox-data-commit-message <<'EOF'
-          Preserve SOX snapshots for date-selectable static research
-
-          Constraint: GitHub Pages serves generated JSON only; live public-source access stays in the refresh workflow.
-          Confidence: high
-          Scope-risk: narrow
-          Directive: Keep sox-history.json append/replace-by-dataAsOf so users can inspect stored dates without browser-side finance calls.
-          Tested: npm test
-          Not-tested: Provider completeness beyond public Nasdaq/Yahoo endpoints.
-          EOF
-          git commit -F /tmp/sox-data-commit-message
+          git commit -m "Refresh verified current SOX snapshot"
           git fetch origin "$branch:refs/remotes/origin/$branch"
           remote_sha="$(git rev-parse "origin/$branch")"
           if [[ "$remote_sha" != "$base_sha" ]]; then
-            echo "The target branch changed after SOX collection; refusing to mix old-code output with the new source revision." >&2
-            echo "Rerun collection from remote ${remote_sha}." >&2
+            echo "The target branch changed; refusing to mix old-code output with new source." >&2
             exit 1
           fi
           git push origin "HEAD:$branch"
       - name: Record exact public data contract
         id: public_contract
-        shell: bash
+        run: echo "source_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Assemble the verified public site
         run: |
-          echo "analysis_sha256=$(sha256sum data/sox-analysis.json | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
-          echo "history_sha256=$(sha256sum data/sox-history.json | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
-          echo "summary_sha256=$(sha256sum data/summary.json | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
-          echo "source_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          mkdir -p _site
+          cp index.html _site/
+          cp -R assets data _site/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
-          path: .
+          path: _site
+
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
+    timeout-minutes: 10
     needs: [freshness, build]
     outputs:
       deployment_outcome: ${{ steps.deployment.outcome }}
@@ -162,61 +174,31 @@ jobs:
             echo "SOX main advanced after artifact construction; refusing to deploy a stale artifact." >&2
             exit 1
           fi
+          python3 scripts/check_sox_freshness.py --event-name schedule --require-fresh
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
-      - name: Verify live public data bytes
+      - name: Verify live public data bytes and freshness
         id: public_readback
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-          EXPECTED_ANALYSIS_SHA256: ${{ needs.build.outputs.analysis_sha256 }}
-          EXPECTED_HISTORY_SHA256: ${{ needs.build.outputs.history_sha256 }}
-          EXPECTED_SUMMARY_SHA256: ${{ needs.build.outputs.summary_sha256 }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          for attempt in {1..12}; do
-            matched=true
-            for contract in \
-              "data/sox-analysis.json:$EXPECTED_ANALYSIS_SHA256" \
-              "data/sox-history.json:$EXPECTED_HISTORY_SHA256" \
-              "data/summary.json:$EXPECTED_SUMMARY_SHA256"; do
-              relative_path="${contract%%:*}"
-              expected_sha256="${contract#*:}"
-              readback="/tmp/sox-${relative_path//\//-}"
-              if ! curl \
-                --fail \
-                --silent \
-                --show-error \
-                --connect-timeout 10 \
-                --max-time 30 \
-                --output "$readback" \
-                "${PAGE_URL%/}/${relative_path}?run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}" \
-                || [[ "$(sha256sum "$readback" | cut -d ' ' -f1)" != "$expected_sha256" ]]; then
-                matched=false
-                break
-              fi
-            done
-            if [[ "$matched" == "true" ]]; then
-              echo "Live SOX data is byte-identical to the uploaded Pages artifact."
-              exit 0
-            fi
-            [[ $attempt -lt 12 ]] || exit 1
-            sleep 5
-          done
+        run: python3 scripts/verify_publication.py --base-url "$PAGE_URL" --attempts 6 --retry-delay 5 --report "$RUNNER_TEMP/sox-public-verification.json"
 
   public-site-health:
     needs: [freshness, build, deploy]
-    if: ${{ always() && (github.event_name == 'schedule' || github.event_name == 'push') }}
+    if: ${{ always() }}
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 2
     permissions:
       contents: read
     steps:
       - name: Report collection and delivery outcomes separately
         env:
-          PREFLIGHT: ${{ needs.freshness.outputs.preflight_outcome }}
-          REASON: ${{ needs.freshness.outputs.freshness_reason }}
+          PREFLIGHT: ${{ needs.freshness.result }}
+          BUILD: ${{ needs.build.result }}
+          DEPLOY_JOB: ${{ needs.deploy.result }}
+          SHOULD_DEPLOY: ${{ needs.freshness.outputs.should_deploy }}
+          DELIVERY_REASON: ${{ needs.freshness.outputs.delivery_reason }}
           EXPECTED_DATE: ${{ needs.freshness.outputs.expected_data_as_of }}
           STORED_DATE: ${{ needs.freshness.outputs.actual_data_as_of }}
           REFRESH: ${{ needs.build.outputs.refresh_outcome }}
@@ -225,64 +207,28 @@ jobs:
           READBACK: ${{ needs.deploy.outputs.readback_outcome }}
           DATA_STATUS: ${{ needs.build.outputs.collected_data_status }}
           DATA_DATE: ${{ needs.build.outputs.collected_data_as_of }}
-          RETRY_NEEDED: ${{ needs.build.outputs.retry_needed }}
         run: |
           {
             echo '## SOX collection and delivery'
-            echo
             echo '| Check | Outcome |'
             echo '| --- | --- |'
-            printf '| Freshness preflight | %s |\n' "${PREFLIGHT:-not_run}"
-            printf '| Data refresh process | %s |\n' "${REFRESH:-not_run}"
-            printf '| Refreshed data status | %s |\n' "${DATA_STATUS:-not_run}"
-            printf '| Refreshed data date | %s |\n' "${DATA_DATE:-not_run}"
-            printf '| Further collection needed | %s |\n' "${RETRY_NEEDED:-not_run}"
-            printf '| Static verification | %s |\n' "${VERIFICATION:-not_run}"
+            printf '| Freshness preflight | %s |\n' "$PREFLIGHT"
+            printf '| Collection and candidate tests | %s |\n' "${REFRESH:-not_run}"
+            printf '| Current publication gate | %s |\n' "${VERIFICATION:-not_run}"
+            printf '| Data status and date | %s / %s |\n' "${DATA_STATUS:-not_run}" "${DATA_DATE:-$STORED_DATE}"
             printf '| Pages deployment | %s |\n' "${DEPLOYMENT:-not_run}"
-            printf '| Published data hash comparison | %s |\n' "${READBACK:-not_run}"
-            echo
-            printf 'Expected session: %s. Stored date before this run: %s. Decision: %s.\n' "$EXPECTED_DATE" "$STORED_DATE" "$REASON"
-            echo
-            echo 'Automatic failure mail follows public-page availability. A successful overall run alone does not establish successful collection or fresh data; inspect the outcomes above.'
+            printf '| Published bytes and freshness | %s |\n' "${READBACK:-$DELIVERY_REASON}"
+            printf '\nExpected session: %s. Delivery decision: %s.\n' "$EXPECTED_DATE" "$DELIVERY_REASON"
           } >> "$GITHUB_STEP_SUMMARY"
-      - name: Fail only when the existing SOX page is unusable
-        env:
-          PAGE_URL: https://sonchanggi.github.io/sox/
-        shell: bash
-        run: |
-          set -u
-          required_paths=(index.html data/summary.json data/sox-analysis.json)
-          for attempt in {1..12}; do
-            usable=true
-            for relative_path in "${required_paths[@]}"; do
-              readback="$RUNNER_TEMP/sox-health-${relative_path//\//-}"
-              if ! curl --fail --silent --show-error --location \
-                --header "Cache-Control: no-cache" \
-                --connect-timeout 10 \
-                --max-time 120 \
-                --output "$readback" \
-                "${PAGE_URL%/}/${relative_path}?health=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}"; then
-                usable=false
-                break
-              fi
-              if [[ ! -s "$readback" ]]; then
-                usable=false
-                break
-              fi
-              if [[ "$relative_path" == "index.html" ]] && ! grep -Eiq '<!doctype html|<html' "$readback"; then
-                usable=false
-                break
-              fi
-              if [[ "$relative_path" == *.json ]] && ! jq -e 'type == "object" and length > 0' "$readback" >/dev/null; then
-                usable=false
-                break
-              fi
-            done
-            if [[ "$usable" == "true" ]]; then
-              echo "The existing SOX page remains usable; automatic refresh or deploy errors stay in run logs without failure mail."
-              exit 0
-            fi
-            [[ $attempt -lt 12 ]] && sleep 10
-          done
-          echo "::error::The public SOX page or its required JSON is unavailable or invalid."
-          exit 1
+          if [[ "$PREFLIGHT" != "success" ]]; then
+            echo "::error::SOX freshness preflight failed."
+            exit 1
+          fi
+          if [[ "$SHOULD_DEPLOY" == "false" && "$DELIVERY_REASON" == "current_data_already_published" ]]; then
+            echo "Current healthy data and all public files already match; no new collection or deployment needed."
+          elif [[ "$SHOULD_DEPLOY" == "true" && "$BUILD" == "success" && "$DEPLOY_JOB" == "success" && "$VERIFICATION" == "success" && "$READBACK" == "success" ]]; then
+            echo "SOX current data, validation, deployment, and public readback all succeeded."
+          else
+            echo "::error::SOX collection or delivery is incomplete. Existing page availability does not establish freshness."
+            exit 1
+          fi

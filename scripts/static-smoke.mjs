@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
+const dataRoot = path.resolve(process.env.SOX_DATA_DIR || path.join(root, 'data'));
 const contentTypes = new Map([
   ['.html', 'text/html; charset=utf-8'],
   ['.js', 'text/javascript; charset=utf-8'],
@@ -13,8 +14,10 @@ const contentTypes = new Map([
 const server = http.createServer((req, res) => {
   const url = new URL(req.url || '/', 'http://127.0.0.1');
   const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
-  const file = path.normalize(path.join(root, pathname));
-  if (!file.startsWith(root)) {
+  const base = pathname.startsWith('/data/') ? dataRoot : root;
+  const relative = pathname.startsWith('/data/') ? pathname.slice('/data/'.length) : pathname;
+  const file = path.normalize(path.join(base, relative));
+  if (!file.startsWith(`${base}${path.sep}`)) {
     res.writeHead(403); res.end('forbidden'); return;
   }
   fs.readFile(file, (err, data) => {

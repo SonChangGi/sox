@@ -27,6 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from check_sox_freshness import decide as decide_freshness
 from earnings_growth import earnings_growth
 from sox_data_quality import collect_data_quality_failures
 
@@ -131,9 +132,19 @@ def http_json(url: str, *, data: dict[str, str] | None = None, timeout: int = 30
             "Referer": "https://indexes.nasdaqomx.com/Index/Weighting/SOX",
         })
     req = urllib.request.Request(url, data=encoded, headers=headers)
-    with urllib.request.urlopen(req, timeout=timeout) as response:
-        payload = response.read().decode("utf-8", "replace")
-    return json.loads(payload)
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                payload = response.read().decode("utf-8", "replace")
+            return json.loads(payload)
+        except urllib.error.HTTPError as exc:
+            if (exc.code != 429 and not 500 <= exc.code < 600) or attempt == 2:
+                raise
+            exc.close()
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == 2:
+                raise
+        time.sleep(2 ** attempt)
 
 
 def recent_trade_date_candidates(*, today: dt.date | None = None, lookback_days: int = 10) -> list[str]:
@@ -228,8 +239,15 @@ def fetch_chart(symbol: str) -> dict[str, Any]:
     meta = result.get("meta") or {}
     timestamps = result.get("timestamp") or []
     quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
-    closes = ((result.get("indicators") or {}).get("adjclose") or [{}])[0].get("adjclose") or quote.get("close") or []
+    adjusted = ((result.get("indicators") or {}).get("adjclose") or [{}])[0].get("adjclose")
+    price_series = "adjclose" if adjusted is not None else "close"
+    closes = adjusted if adjusted is not None else quote.get("close") or []
     volumes = quote.get("volume") or []
+    for name, values in (("timestamp", timestamps), (price_series, closes), ("volume", volumes)):
+        if not isinstance(values, list):
+            raise ValueError(f"chart {name} must be an array")
+        if len(values) != len(timestamps):
+            raise ValueError(f"chart {name} length {len(values)} differs from timestamp length {len(timestamps)}")
     points = []
     for ts, close, volume in zip(timestamps, closes, volumes):
         close_num = clean_number(close)
@@ -844,6 +862,7 @@ def write_publication(output_dir: Path, payloads: dict[str, dict[str, Any]]) -> 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--offline-ok", action="store_true", help="Use existing generated JSON if live refresh fails.")
+    parser.add_argument("--require-current", action="store_true", help="Require healthy data for the latest expected U.S. session before replacing JSON; overrides --offline-ok.")
     parser.add_argument("--max-workers", type=int, default=8)
     parser.add_argument("--output-dir", type=Path, default=DATA_DIR, help="Write candidate JSON here; existing snapshots are read from --history-source-dir.")
     parser.add_argument("--history-source-dir", type=Path, default=DATA_DIR, help="Read saved analysis/history without modifying them when staging a candidate.")
@@ -884,6 +903,22 @@ def main() -> int:
         collection_complete = True
         enrich_scores(rows)
         analysis = build_payload(rows, meta, failures)
+        if args.require_current:
+            freshness = decide_freshness(
+                payload=analysis,
+                event_name="schedule",
+                now_utc=dt.datetime.fromisoformat(now_iso().replace("Z", "+00:00")),
+            )
+            if freshness["should_collect"] != "false":
+                print(
+                    "refresh is not current and healthy; existing JSON preserved: "
+                    f"expected={freshness['expected_data_as_of']}, actual={freshness['actual_data_as_of']}, "
+                    f"reason={freshness['freshness_reason']}",
+                    file=sys.stderr,
+                )
+                for failure in analysis["status"]["failures"]:
+                    print(f"  {failure}", file=sys.stderr)
+                return 2
         if args.fail_on_degraded and analysis["status"]["level"] != "ok":
             print("refresh degraded; existing JSON preserved", file=sys.stderr)
             for failure in analysis["status"]["failures"]:
@@ -898,7 +933,7 @@ def main() -> int:
         print(f"wrote {output_dir / SUMMARY_PATH.name}")
         return 0
     except Exception as exc:  # noqa: BLE001
-        if args.offline_ok and not collection_complete and not publication_started and all((output_dir / p.name).exists() for p in (ANALYSIS_PATH, HISTORY_PATH, SUMMARY_PATH)):
+        if args.offline_ok and not args.require_current and not collection_complete and not publication_started and all((output_dir / p.name).exists() for p in (ANALYSIS_PATH, HISTORY_PATH, SUMMARY_PATH)):
             print(f"live refresh failed, keeping existing JSON: {type(exc).__name__}: {exc}", file=sys.stderr)
             return 0
         print(f"refresh failed: {type(exc).__name__}: {exc}", file=sys.stderr)

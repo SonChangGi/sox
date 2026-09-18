@@ -2,9 +2,14 @@
 from __future__ import annotations
 
 import datetime as dt
+from contextlib import redirect_stdout
+import io
+import json
+from pathlib import Path
+import tempfile
 import unittest
 
-from check_sox_freshness import decide, latest_expected_us_session_date, us_equity_holiday_name
+from check_sox_freshness import decide, latest_expected_us_session_date, main, us_equity_holiday_name
 from test_sox_data_quality import healthy_rows, nonpositive_growth
 
 
@@ -133,6 +138,34 @@ class FreshnessDecisionTests(unittest.TestCase):
         self.assertEqual(result["expected_data_as_of"], "2026-07-02")
         self.assertEqual(result["should_collect"], "false")
         self.assertEqual(result["should_deploy"], "false")
+
+    def test_weekend_and_monday_keep_friday_snapshot_current(self) -> None:
+        payload = generated_payload(generated_at="2026-09-12T00:30:00Z", data_as_of="2026-09-11")
+        for now in ("2026-09-13T04:00:00+00:00", "2026-09-14T04:00:00+00:00"):
+            with self.subTest(now=now):
+                result = decide(payload=payload, event_name="schedule", now_utc=dt.datetime.fromisoformat(now))
+                self.assertEqual(result["should_collect"], "false")
+
+    def test_before_collection_window_does_not_require_new_session(self) -> None:
+        now = dt.datetime(2026, 9, 17, 20, 30, tzinfo=dt.UTC)
+        self.assertEqual(latest_expected_us_session_date(now), dt.date(2026, 9, 16))
+        now = dt.datetime(2026, 9, 17, 21, 30, tzinfo=dt.UTC)
+        self.assertEqual(latest_expected_us_session_date(now), dt.date(2026, 9, 17))
+
+    def test_future_session_or_timestamp_cannot_pass(self) -> None:
+        for generated, day in (("2026-09-18T00:30:00Z", "2026-09-18"), ("2026-09-19T00:30:00Z", "2026-09-17")):
+            result = decide(payload=generated_payload(generated_at=generated, data_as_of=day), event_name="schedule", now_utc=dt.datetime(2026, 9, 18, 3, tzinfo=dt.UTC))
+            self.assertEqual(result["should_collect"], "true")
+            self.assertEqual(result["freshness_reason"], "future_session_or_generation")
+
+    def test_cli_strict_gate_rejects_stale_but_ok_data_even_on_push(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "analysis.json"
+            for day, expected_code in (("2026-09-16", 2), ("2026-09-17", 0)):
+                path.write_text(json.dumps(generated_payload(generated_at="2026-09-18T00:30:00Z", data_as_of=day)))
+                with redirect_stdout(io.StringIO()):
+                    code = main(["--event-name", "push", "--require-fresh", "--data-path", str(path), "--now-utc", "2026-09-18T03:00:00Z"])
+                self.assertEqual(code, expected_code)
 
 
 if __name__ == "__main__":

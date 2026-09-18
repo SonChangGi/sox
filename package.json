@@ -4,7 +4,7 @@
   "private": true,
   "description": "Static SOX index research dashboard with generated finance data.",
   "scripts": {
-    "refresh": "python3 scripts/fetch_sox_data.py --offline-ok --allow-degraded",
+    "refresh": "python3 scripts/refresh_sox_pipeline.py",
     "verify": "node scripts/verify.mjs",
     "test:smoke": "node scripts/static-smoke.mjs",
     "test": "python3 -m unittest discover -s scripts -p 'test_*.py' && node --check assets/app.js && node --check scripts/verify.mjs && node --check scripts/static-smoke.mjs && npm run verify && npm run test:smoke",

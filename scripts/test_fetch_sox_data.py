@@ -11,7 +11,8 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
+import urllib.error
 
 import fetch_sox_data as collector
 from earnings_growth import earnings_growth
@@ -112,6 +113,91 @@ def run_refresh(output: Path, source: Path, *options: str) -> int:
         return collector.main()
 
 
+class ProviderRequestRegressionTests(unittest.TestCase):
+    def test_transient_request_failures_retry_and_return_the_recovered_response(self) -> None:
+        failures = [
+            urllib.error.HTTPError("https://provider.test", 429, "rate limited", {}, None),
+            urllib.error.HTTPError("https://provider.test", 503, "unavailable", {}, None),
+            TimeoutError("provider timed out"),
+            urllib.error.URLError("temporary connection failure"),
+        ]
+        for failure in failures:
+            with self.subTest(failure=failure), patch.object(
+                collector.urllib.request, "urlopen", side_effect=[failure, io.BytesIO(b'{"recovered": true}')]
+            ) as request, patch.object(collector.time, "sleep") as sleep:
+                result = collector.http_json("https://provider.test", data={"id": "SOX"}, timeout=7)
+                self.assertEqual(result, {"recovered": True})
+                self.assertEqual(request.call_count, 2)
+                self.assertEqual(request.call_args.kwargs["timeout"], 7)
+                self.assertEqual(request.call_args.args[0].data, b"id=SOX")
+                sleep.assert_called_once_with(1)
+
+    def test_transient_failures_stop_after_three_attempts(self) -> None:
+        with patch.object(collector.urllib.request, "urlopen", side_effect=TimeoutError("still unavailable")) as request, patch.object(collector.time, "sleep") as sleep:
+            with self.assertRaisesRegex(TimeoutError, "still unavailable"):
+                collector.http_json("https://provider.test")
+        self.assertEqual(request.call_count, 3)
+        self.assertEqual(sleep.call_args_list, [call(1), call(2)])
+
+    def test_nonretryable_http_errors_fail_immediately(self) -> None:
+        for code in (400, 401, 403, 404):
+            failure = urllib.error.HTTPError("https://provider.test", code, "rejected", {}, None)
+            with self.subTest(code=code), patch.object(collector.urllib.request, "urlopen", side_effect=failure) as request, patch.object(collector.time, "sleep") as sleep:
+                with self.assertRaises(urllib.error.HTTPError) as raised:
+                    collector.http_json("https://provider.test")
+                self.assertEqual(raised.exception.code, code)
+                request.assert_called_once()
+                sleep.assert_not_called()
+
+    def test_invalid_response_json_does_not_retry(self) -> None:
+        with patch.object(collector.urllib.request, "urlopen", return_value=io.BytesIO(b'{"truncated":')) as request, patch.object(collector.time, "sleep") as sleep:
+            with self.assertRaises(json.JSONDecodeError):
+                collector.http_json("https://provider.test")
+        request.assert_called_once()
+        sleep.assert_not_called()
+
+
+class ProviderChartRegressionTests(unittest.TestCase):
+    def chart_payload(self) -> dict[str, object]:
+        return {"chart": {"result": [{
+            "timestamp": [1788960600, 1789047000, 1789133400],
+            "indicators": {
+                "quote": [{"close": [100, 101, 102], "volume": [1000, 1100, 1200]}],
+                "adjclose": [{"adjclose": [90, 91, 92]}],
+            },
+        }]}}
+
+    def test_mismatched_price_or_volume_arrays_cannot_truncate_the_latest_date(self) -> None:
+        for field in ("adjclose", "volume", "close"):
+            for size in (0, 2, 4):
+                with self.subTest(field=field, size=size):
+                    payload = self.chart_payload()
+                    indicators = payload["chart"]["result"][0]["indicators"]
+                    if field == "adjclose":
+                        indicators["adjclose"][0]["adjclose"] = [90] * size
+                    else:
+                        if field == "close":
+                            del indicators["adjclose"]
+                        indicators["quote"][0][field] = [100] * size
+                    with patch.object(collector, "http_json", return_value=payload), self.assertRaisesRegex(ValueError, "differs from timestamp length"):
+                        collector.fetch_chart("NVDA")
+
+    def test_adjusted_prices_are_not_filled_with_raw_closes(self) -> None:
+        payload = self.chart_payload()
+        payload["chart"]["result"][0]["indicators"]["adjclose"][0]["adjclose"] = [90, None, 92]
+        with patch.object(collector, "http_json", return_value=payload):
+            result = collector.fetch_chart("NVDA")
+        self.assertEqual([point["close"] for point in result["prices"]], [90, 92])
+        self.assertEqual(result["prices"][-1]["date"], AS_OF)
+
+    def test_raw_closes_are_used_as_a_whole_only_when_adjusted_series_is_absent(self) -> None:
+        payload = self.chart_payload()
+        del payload["chart"]["result"][0]["indicators"]["adjclose"]
+        with patch.object(collector, "http_json", return_value=payload):
+            result = collector.fetch_chart("NVDA")
+        self.assertEqual([point["close"] for point in result["prices"]], [100, 101, 102])
+
+
 class CollectorQualityRegressionTests(unittest.TestCase):
     def test_all_current_rows_are_ok_but_one_provider_failure_is_degraded(self) -> None:
         with provider_mocks():
@@ -185,6 +271,38 @@ class CollectorEarningsRegressionTests(unittest.TestCase):
 
 
 class CollectorRefreshRegressionTests(unittest.TestCase):
+    def test_require_current_rejects_healthy_but_stale_prices_before_history_or_publication(self) -> None:
+        for existing_output in (True, False):
+            with self.subTest(existing_output=existing_output), tempfile.TemporaryDirectory() as temp:
+                source = Path(temp) / "data"
+                output = source if existing_output else Path(temp) / "candidate"
+                original = seed_saved_data(source)
+                with provider_mocks(), patch.object(collector, "now_iso", return_value="2026-09-15T00:30:00Z"), patch.object(collector, "build_history") as history:
+                    result = run_refresh(output, source, "--require-current", "--offline-ok", "--allow-degraded")
+                self.assertNotEqual(result, 0)
+                history.assert_not_called()
+                self.assertEqual({name: (source / name).read_bytes() for name in FILES}, original)
+                if not existing_output:
+                    self.assertFalse(output.exists())
+
+    def test_require_current_cannot_use_offline_success_after_collection_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "data"
+            original = seed_saved_data(source)
+            with provider_mocks(), patch.object(collector, "fetch_constituents", side_effect=TimeoutError("unavailable")):
+                result = run_refresh(source, source, "--require-current", "--offline-ok")
+            self.assertNotEqual(result, 0)
+            self.assertEqual({name: (source / name).read_bytes() for name in FILES}, original)
+
+    def test_require_current_rejects_partial_provider_failures_even_with_allow_degraded(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "data"
+            original = seed_saved_data(source)
+            with provider_mocks(failed_symbol="Q07"):
+                result = run_refresh(source, source, "--require-current", "--allow-degraded", "--offline-ok")
+            self.assertNotEqual(result, 0)
+            self.assertEqual({name: (source / name).read_bytes() for name in FILES}, original)
+
     def test_strict_partial_provider_failure_preserves_all_existing_json_bytes(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             source = Path(temp) / "data"
@@ -221,7 +339,7 @@ class CollectorRefreshRegressionTests(unittest.TestCase):
                     return real_replace(staged, target)
 
                 with provider_mocks(), patch.object(Path, "replace", new=fail_second_replace):
-                    result = run_refresh(output, source, "--fail-on-degraded", "--offline-ok")
+                    result = run_refresh(output, source, "--require-current", "--fail-on-degraded", "--offline-ok")
                 self.assertNotEqual(result, 0)
                 self.assertEqual(replace_count, 2)
                 self.assertEqual({name: (source / name).read_bytes() for name in FILES}, original)
@@ -232,7 +350,7 @@ class CollectorRefreshRegressionTests(unittest.TestCase):
             source, output = Path(temp) / "data", Path(temp) / "candidate"
             original = seed_saved_data(source)
             with provider_mocks(eps_by_symbol={"Q00": (-1, 0.5)}):
-                result = run_refresh(output, source, "--fail-on-degraded")
+                result = run_refresh(output, source, "--require-current", "--fail-on-degraded")
             self.assertEqual(result, 0)
             self.assertEqual({name: (source / name).read_bytes() for name in FILES}, original)
             generated = {name: json.loads((output / name).read_text()) for name in FILES}

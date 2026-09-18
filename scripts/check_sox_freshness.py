@@ -4,8 +4,8 @@
 Scheduled runs skip only when the committed generated JSON was produced after
 the 06:30 KST automation window and already covers the latest expected U.S.
 regular-session date. If the primary run fails to commit data, later cron slots
-remain eligible to retry. Fresh scheduled retry slots also skip deployment so
-they do not create Pages work or failure mail when no data can change.
+remain eligible to retry. The workflow separately verifies the public release
+before skipping deployment, so a failed delivery remains recoverable.
 """
 from __future__ import annotations
 
@@ -23,8 +23,13 @@ CUTOFF_KST = dt.time(hour=6, minute=30)
 
 
 def latest_expected_us_session_date(now_utc: dt.datetime) -> dt.date:
-    local_today = ensure_utc(now_utc).astimezone(KST).date()
-    candidate = local_today - dt.timedelta(days=1)
+    local_now = ensure_utc(now_utc).astimezone(KST)
+    # The production window begins at 06:30 KST, after both DST and standard
+    # U.S. closes. Before it opens, do not require an unfinished/new session.
+    window_date = local_now.date()
+    if local_now.time() < CUTOFF_KST:
+        window_date -= dt.timedelta(days=1)
+    candidate = window_date - dt.timedelta(days=1)
     while not is_us_equity_regular_session(candidate):
         candidate -= dt.timedelta(days=1)
     return candidate
@@ -116,8 +121,9 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
         if isinstance(status, dict)
         else ""
     )
-    local_today = now_utc.astimezone(KST).date()
-    cutoff = dt.datetime.combine(local_today, CUTOFF_KST, tzinfo=KST)
+    # A Friday snapshot remains current over the weekend and Monday. A new
+    # collection timestamp alone must never make an old trading date current.
+    cutoff = dt.datetime.combine(expected + dt.timedelta(days=1), CUTOFF_KST, tzinfo=KST)
 
     base = {
         "event_name": event or "unknown",
@@ -159,7 +165,14 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
     if isinstance(status, dict) and status.get("failures"):
         quality_failures.append("Payload status records source failures")
     base["quality_failure_count"] = str(len(quality_failures))
-    if generated_kst >= cutoff and data_as_of >= expected and status_level == "ok" and not quality_failures:
+    if data_as_of > expected or generated_kst > now_utc.astimezone(KST):
+        return {
+            **base,
+            "should_collect": "true",
+            "should_deploy": "true",
+            "freshness_reason": "future_session_or_generation",
+        }
+    if generated_kst >= cutoff and data_as_of == expected and status_level == "ok" and not quality_failures:
         return {
             **base,
             "should_collect": "false",
@@ -226,15 +239,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--event-name", required=True)
     parser.add_argument("--data-path", type=Path, default=Path("data/sox-analysis.json"))
     parser.add_argument("--now-utc", help="Optional ISO timestamp for deterministic checks")
+    parser.add_argument("--require-fresh", action="store_true", help="Fail unless the payload passes the scheduled freshness and quality gates.")
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     now = dt.datetime.fromisoformat(args.now_utc.replace("Z", "+00:00")) if args.now_utc else None
-    result = decide(payload=load_payload(args.data_path), event_name=args.event_name, now_utc=now)
+    payload = load_payload(args.data_path)
+    result = decide(payload=payload, event_name=args.event_name, now_utc=now)
     for key, value in result.items():
         print(f"{key}={value}")
+    if args.require_fresh and decide(payload=payload, event_name="schedule", now_utc=now)["should_collect"] != "false":
+        return 2
     return 0
 
 
