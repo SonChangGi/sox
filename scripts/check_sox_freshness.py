@@ -49,7 +49,6 @@ def us_equity_holiday_name(day: dt.date) -> str | None:
 
 def us_equity_holidays(year: int) -> dict[dt.date, str]:
     holidays = {
-        observed_fixed_holiday(year, 1, 1): "new_years_day",
         nth_weekday(year, 1, 0, 3): "martin_luther_king_jr_day",
         nth_weekday(year, 2, 0, 3): "washingtons_birthday",
         easter_sunday(year) - dt.timedelta(days=2): "good_friday",
@@ -59,6 +58,12 @@ def us_equity_holidays(year: int) -> dict[dt.date, str]:
         nth_weekday(year, 11, 3, 4): "thanksgiving_day",
         observed_fixed_holiday(year, 12, 25): "christmas_day",
     }
+    # NYSE stays open on Dec 31 when Jan 1 is a Saturday (e.g. 2021).
+    new_year = dt.date(year, 1, 1)
+    if new_year.weekday() != 5:
+        holidays[new_year + dt.timedelta(days=1) if new_year.weekday() == 6 else new_year] = "new_years_day"
+    if year == 2025:
+        holidays[dt.date(2025, 1, 9)] = "national_day_of_mourning"
     if year >= 2022:
         holidays[observed_fixed_holiday(year, 6, 19)] = "juneteenth"
     return holidays
@@ -134,14 +139,7 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
         "expected_calendar": "us_equity_regular_session",
         "status_level": status_level or "unknown",
     }
-    if event == "push":
-        return {
-            **base,
-            "should_collect": "false",
-            "should_deploy": "true",
-            "freshness_reason": "push_uses_committed_generated_json",
-        }
-    if event != "schedule":
+    if event not in {"schedule", "push", "workflow_dispatch"}:
         return {
             **base,
             "should_collect": "true",
@@ -176,7 +174,7 @@ def decide(*, payload: dict[str, Any], event_name: str, now_utc: dt.datetime | N
         return {
             **base,
             "should_collect": "false",
-            "should_deploy": "false",
+            "should_deploy": "true" if event == "push" else "false",
             "freshness_reason": "fresh_for_kst_window_and_expected_us_session",
         }
     if generated_kst >= cutoff and data_as_of >= expected and status_level == "ok":

@@ -103,8 +103,8 @@ check(app.includes('layoutQuadrantRows') && app.includes('quadrant-plot'), 'quad
 check(app.includes("row[key] === 0 ? 0"), 'zero-value bars render at zero magnitude');
 check(app.includes('data-table-ticker'), 'static fallback coordinates chart selection with the table');
 check(!app.includes("metricCard('Stored dates'") && !app.includes("metricCard('Weight method'") && !app.includes("metricCard('Status'"), 'operational metrics are removed from the primary result grid');
-check(workflow.includes('30 22 * * 1-5'), 'workflow schedules SOX primary 07:30 KST slot');
-check(actionUses.length === 7, 'workflow has the expected seven first-party action references');
+check(['43 21 * * 1-5', '13 1 * * 2-6', '43 4 * * 2-6'].every(slot => workflow.includes(slot)), 'workflow separates primary 06:43 KST and 10:13/13:43 retry slots');
+check(actionUses.length === 8, 'workflow has the expected eight first-party action references including admission');
 check(mutableActionUses.length === 0, `workflow action references use immutable 40-character SHAs (${mutableActionUses.map((match) => match[0]).join(', ')})`);
 check(workflow.includes('actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6'), 'workflow pins Node24 checkout v6 to the reviewed commit');
 check(workflow.includes('actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6'), 'workflow pins Node24 setup-node v6 to the reviewed commit');
@@ -112,7 +112,8 @@ check(workflow.includes('actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889
 check(workflow.includes('actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5'), 'workflow pins Node24 upload-pages-artifact dependencies to the reviewed commit');
 check(workflow.includes('actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5'), 'workflow pins Node24 deploy-pages v5 to the reviewed commit');
 check(workflow.includes('Require the production branch') && workflow.includes('if [[ "$GITHUB_REF_NAME" != "$DEFAULT_BRANCH" ]]'), 'workflow rejects non-production manual refs');
-check(workflow.includes('jobs:\n  freshness:'), 'workflow runs a lightweight freshness preflight job');
+check(workflow.includes('  freshness:\n    needs: admission'), 'workflow checks freshness after cross-project admission');
+check(workflow.includes('scripts/automation_admission.py') && workflow.includes('actions: read'), 'workflow coordinates delayed peer runs through read-only API access');
 check(workflow.includes('scripts/check_sox_freshness.py'), 'workflow uses freshness gate before retries');
 check(workflow.includes("if: needs.freshness.outputs.should_deploy == 'true'"), 'workflow skips build/deploy for fresh scheduled retries');
 check(workflow.includes("if: needs.freshness.outputs.should_collect == 'true'"), 'workflow refreshes generated data only when freshness gate allows it');
@@ -132,7 +133,7 @@ check(workflow.includes('scripts/verify_publication.py') && publicVerifier.inclu
 check(publicVerifier.includes('event_name="schedule"'), 'public readback must also pass the freshness gate');
 check(workflow.includes('public-site-health:') && workflow.includes("if: ${{ always() }}"), 'all events report pipeline outcome even after failure');
 check(workflow.includes('Report collection and delivery outcomes separately') && workflow.includes('GITHUB_STEP_SUMMARY'), 'automation reports actual collection, validation and deployment outcomes separately');
-check(freshnessScript.includes('push_uses_committed_generated_json'), 'push events deploy committed generated JSON without regenerating uncommitted data');
+check(freshnessScript.includes('event not in {"schedule", "push", "workflow_dispatch"}'), 'push and manual requests use the same strict date and quality decision as scheduled retries');
 check(freshnessScript.includes('us_equity_holidays'), 'freshness gate understands U.S. equity market holidays');
 check(freshnessScript.includes('current_date_but_status_not_ok'), 'freshness gate retries current-date degraded snapshots');
 check(freshnessScript.includes('should_deploy'), 'freshness gate emits a deploy decision separate from collection');

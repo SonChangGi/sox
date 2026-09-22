@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import os
 from pathlib import Path
@@ -11,22 +12,25 @@ import sys
 import tempfile
 import time
 
-from check_sox_freshness import decide
+from check_sox_freshness import decide, latest_expected_us_session_date
 from fetch_sox_data import write_publication
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = ("sox-analysis.json", "sox-history.json", "summary.json")
 
 
-def refresh(*, root: Path, data_dir: Path, attempts: int, retry_delay: float) -> int:
+def refresh(*, root: Path, data_dir: Path, attempts: int, retry_delay: float,
+            expected_data_as_of: dt.date | None = None) -> int:
     # Candidates live outside the website tree and never replace the published
     # bundle until collection, complete tests, and the final date gate pass.
     with tempfile.TemporaryDirectory(prefix="sox-candidate-") as temporary:
+        expected_date = (expected_data_as_of or latest_expected_us_session_date(dt.datetime.now(dt.UTC))).isoformat()
         candidate = Path(temporary)
         command = [
             sys.executable, str(root / "scripts/fetch_sox_data.py"),
             "--fail-on-degraded", "--require-current", "--output-dir", str(candidate),
             "--history-source-dir", str(data_dir),
+            "--expected-data-as-of", expected_date,
         ]
         for attempt in range(1, attempts + 1):
             print(f"SOX collection attempt {attempt}/{attempts}", flush=True)
@@ -50,7 +54,7 @@ def refresh(*, root: Path, data_dir: Path, attempts: int, retry_delay: float) ->
         decision = decide(payload=payloads[FILES[0]], event_name="schedule")
         for key, value in decision.items():
             print(f"{key}={value}", flush=True)
-        if decision["should_collect"] != "false":
+        if decision["should_collect"] != "false" or payloads[FILES[0]].get("dataAsOf") != expected_date:
             print("Candidate is not fresh at promotion time; existing JSON preserved.", file=sys.stderr)
             return 2
         write_publication(data_dir, payloads)
@@ -63,11 +67,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
     parser.add_argument("--attempts", type=int, default=3)
     parser.add_argument("--retry-delay", type=float, default=30)
+    parser.add_argument("--expected-data-as-of", type=dt.date.fromisoformat)
     args = parser.parse_args(argv)
     if not 1 <= args.attempts <= 5 or not 0 <= args.retry_delay <= 120:
         parser.error("attempts must be 1..5 and retry-delay must be 0..120 seconds")
     try:
-        return refresh(root=ROOT, data_dir=args.data_dir.resolve(), attempts=args.attempts, retry_delay=args.retry_delay)
+        return refresh(root=ROOT, data_dir=args.data_dir.resolve(), attempts=args.attempts,
+                       retry_delay=args.retry_delay, expected_data_as_of=args.expected_data_as_of)
     except (OSError, ValueError) as exc:
         print(f"SOX refresh failed: {exc}", file=sys.stderr)
         return 1

@@ -39,6 +39,7 @@ class RefreshPipelineTests(unittest.TestCase):
                     return subprocess.CompletedProcess(command, verification_code)
                 self.assertIn("--fail-on-degraded", command)
                 self.assertIn("--require-current", command)
+                self.assertEqual(command[command.index("--expected-data-as-of") + 1], "2026-09-17")
                 self.assertNotIn("--offline-ok", command)
                 code = collection_codes[min(collection_count, len(collection_codes) - 1)]
                 collection_count += 1
@@ -49,7 +50,8 @@ class RefreshPipelineTests(unittest.TestCase):
                 return subprocess.CompletedProcess(command, code)
 
             with patch.object(pipeline.subprocess, "run", side_effect=run), patch.object(pipeline.time, "sleep") as sleep, patch.object(pipeline, "decide", side_effect=lambda **kwargs: decide(**kwargs, now_utc=now)), redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
-                code = pipeline.refresh(root=root, data_dir=data, attempts=3, retry_delay=30)
+                code = pipeline.refresh(root=root, data_dir=data, attempts=3, retry_delay=30,
+                                        expected_data_as_of=dt.date(2026, 9, 17))
             current = {name: (data / name).read_bytes() for name in pipeline.FILES}
             return code, original, current, calls, sleep.call_count
 

@@ -32,17 +32,36 @@ class FreshnessDecisionTests(unittest.TestCase):
     def scheduled(self, payload: dict) -> dict[str, str]:
         return decide(payload=payload, event_name="schedule", now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC))
 
-    def test_push_deploys_committed_json_without_collecting(self) -> None:
+    def test_push_cannot_deploy_missing_or_stale_data_without_collecting(self) -> None:
         result = decide(payload={}, event_name="push", now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC))
-        self.assertEqual(result["should_collect"], "false")
+        self.assertEqual(result["should_collect"], "true")
         self.assertEqual(result["should_deploy"], "true")
-        self.assertEqual(result["freshness_reason"], "push_uses_committed_generated_json")
+        self.assertEqual(result["freshness_reason"], "missing_generated_payload")
 
     def test_manual_dispatch_collects_and_deploys(self) -> None:
         result = decide(payload={}, event_name="workflow_dispatch", now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC))
         self.assertEqual(result["should_collect"], "true")
         self.assertEqual(result["should_deploy"], "true")
-        self.assertEqual(result["freshness_reason"], "manual_collects")
+        self.assertEqual(result["freshness_reason"], "missing_generated_payload")
+
+    def test_duplicate_manual_request_skips_healthy_current_data(self) -> None:
+        result = decide(payload=self.current_payload(), event_name="workflow_dispatch",
+                        now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC))
+        self.assertEqual(result["should_collect"], "false")
+        self.assertEqual(result["should_deploy"], "false")
+
+    def test_current_push_publishes_code_without_recollecting(self) -> None:
+        result = decide(payload=self.current_payload(), event_name="push",
+                        now_utc=dt.datetime(2026, 7, 9, 4, 31, tzinfo=dt.UTC))
+        self.assertEqual(result["should_collect"], "false")
+        self.assertEqual(result["should_deploy"], "true")
+
+    def test_nyse_saturday_new_year_does_not_close_december_31(self) -> None:
+        self.assertIsNone(us_equity_holiday_name(dt.date(2021, 12, 31)))
+        self.assertEqual(latest_expected_us_session_date(dt.datetime(2022, 1, 1, 0, tzinfo=dt.UTC)), dt.date(2021, 12, 31))
+
+    def test_national_day_of_mourning_is_not_a_trading_session(self) -> None:
+        self.assertEqual(latest_expected_us_session_date(dt.datetime(2025, 1, 10, 0, tzinfo=dt.UTC)), dt.date(2025, 1, 8))
 
     def test_fresh_schedule_skips_collect_and_deploy(self) -> None:
         result = decide(

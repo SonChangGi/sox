@@ -70,7 +70,7 @@ def provider_mocks(*, failed_symbol: str | None = None, eps_by_symbol: dict[str,
 
     stack.enter_context(patch.object(collector, "http_json", side_effect=AssertionError("unexpected network access")))
     stack.enter_context(patch.object(collector, "fetch_constituents", side_effect=constituents))
-    stack.enter_context(patch.object(collector, "fetch_chart", side_effect=lambda _symbol: chart()))
+    stack.enter_context(patch.object(collector, "fetch_chart", side_effect=lambda _symbol, **kwargs: chart()))
     stack.enter_context(patch.object(collector, "fetch_fundamentals", side_effect=fake_fundamentals))
     stack.enter_context(patch.object(collector.time, "sleep"))
     stack.enter_context(patch.object(collector, "now_iso", return_value=GENERATED_AT))
@@ -166,6 +166,56 @@ class ProviderChartRegressionTests(unittest.TestCase):
                 "adjclose": [{"adjclose": [90, 91, 92]}],
             },
         }]}}
+
+    def daily_payload(self):
+        start = int(dt.datetime(2026, 9, 11, 13, 30, tzinfo=dt.UTC).timestamp())
+        end = int(dt.datetime(2026, 9, 11, 20, tzinfo=dt.UTC).timestamp())
+        return {"chart": {"result": [{"meta": {"symbol": "Q00", "currentTradingPeriod": {
+            "regular": {"start": start, "end": end}}}, "timestamp": [end],
+            "indicators": {"quote": [{"close": [102], "volume": [1200]}],
+                           "adjclose": [{"adjclose": [92]}]}}]}}
+
+    def incomplete_history(self):
+        payload = self.chart_payload()
+        payload["chart"]["result"][0]["indicators"]["adjclose"][0]["adjclose"][-1] = None
+        payload["chart"]["result"][0]["indicators"]["quote"][0]["close"][-1] = None
+        return payload
+
+    def test_exact_daily_adjusted_close_repairs_only_missing_target(self):
+        history = self.incomplete_history()
+        with patch.object(collector, "http_json", side_effect=[history, self.daily_payload()]) as request, patch.object(collector, "now_iso", return_value=GENERATED_AT):
+            result = collector.fetch_chart("Q00", expected_date=AS_OF)
+        self.assertEqual([row["close"] for row in result["prices"]], [90, 91, 92])
+        self.assertEqual(result["latestSessionRepair"]["dataAsOf"], AS_OF)
+        self.assertIn("range=1d", request.call_args.args[0])
+
+    def test_healthy_history_never_requests_or_overwrites_daily_prices(self):
+        with patch.object(collector, "http_json", return_value=self.chart_payload()) as request:
+            result = collector.fetch_chart("Q00", expected_date=AS_OF)
+        self.assertEqual(len(result["prices"]), 3)
+        request.assert_called_once()
+
+    def test_incomplete_future_wrong_symbol_and_raw_only_repairs_are_rejected(self):
+        cases = []
+        raw_only = self.daily_payload()
+        del raw_only["chart"]["result"][0]["indicators"]["adjclose"]
+        cases.append(raw_only)
+        wrong = self.daily_payload()
+        wrong["chart"]["result"][0]["meta"]["symbol"] = "OTHER"
+        cases.append(wrong)
+        incomplete = self.daily_payload()
+        incomplete["chart"]["result"][0]["indicators"]["adjclose"][0]["adjclose"] = [None]
+        cases.append(incomplete)
+        future = self.daily_payload()
+        future["chart"]["result"][0]["meta"]["currentTradingPeriod"]["regular"]["end"] += 86400
+        cases.append(future)
+        wrong_day = self.daily_payload()
+        wrong_day["chart"]["result"][0]["timestamp"][0] -= 86400
+        cases.append(wrong_day)
+        for payload in cases:
+            with self.subTest(payload=payload), patch.object(collector, "http_json", side_effect=[self.incomplete_history(), payload]), patch.object(collector, "now_iso", return_value=GENERATED_AT):
+                with self.assertRaises(ValueError):
+                    collector.fetch_chart("Q00", expected_date=AS_OF)
 
     def test_mismatched_price_or_volume_arrays_cannot_truncate_the_latest_date(self) -> None:
         for field in ("adjclose", "volume", "close"):

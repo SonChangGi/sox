@@ -26,8 +26,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from check_sox_freshness import decide as decide_freshness
+from check_sox_freshness import latest_expected_us_session_date
 from earnings_growth import earnings_growth
 from sox_data_quality import collect_data_quality_failures
 
@@ -230,9 +232,50 @@ def clean_number(value: Any) -> float | None:
     return number
 
 
-def fetch_chart(symbol: str) -> dict[str, Any]:
+def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, Any]:
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}?range=18mo&interval=1d&events=history"
     payload = http_json(url)
+    parsed = parse_chart(payload)
+    if expected_date and parsed["prices"][-1]["date"] < expected_date:
+        # A long history can contain a null latest close while the same
+        # provider's one-day daily endpoint already has the complete session.
+        # Never infer an adjusted close from a raw quote or change old prices.
+        repair_url = url.replace("range=18mo", "range=1d")
+        daily_payload = http_json(repair_url)
+        daily = parse_chart(daily_payload)
+        raw = daily_payload["chart"]["result"][0]
+        meta = daily["meta"]
+        regular = meta.get("currentTradingPeriod", {}).get("regular", {})
+        end = regular.get("end")
+        start = regular.get("start")
+        now = dt.datetime.fromisoformat(now_iso().replace("Z", "+00:00"))
+        if not isinstance(start, (int, float)) or not isinstance(end, (int, float)) or not start < end <= now.timestamp():
+            raise ValueError("latest daily quote is not a completed regular session")
+        if dt.datetime.fromtimestamp(end, ZoneInfo("America/New_York")).date().isoformat() != expected_date:
+            raise ValueError("latest daily quote regular session differs from the fixed target")
+        if not raw.get("indicators", {}).get("adjclose") or not (payload["chart"]["result"][0].get("indicators", {}).get("adjclose")):
+            raise ValueError("latest daily repair requires actual adjusted-close data in both responses")
+        matches = [point for point in daily["prices"] if point["date"] == expected_date]
+        if len(matches) != 1 or matches[0]["close"] <= 0 or matches[0]["volume"] is None or matches[0]["volume"] < 0:
+            raise ValueError("latest daily quote lacks the exact target adjusted close and volume")
+        # Match timestamp to the provider's regular session, including a
+        # closing-auction timestamp at its exact end.
+        timestamps = raw.get("timestamp") or []
+        if len(timestamps) != 1 or not start <= timestamps[0] <= end:
+            raise ValueError("latest daily quote timestamp is outside its regular session")
+        if meta.get("symbol", symbol).upper() != symbol.upper():
+            raise ValueError("latest daily quote symbol differs from the requested symbol")
+        parsed["prices"].append(matches[0])
+        parsed["latestSessionRepair"] = {"source": "yahoo-daily-chart", "url": repair_url,
+            "dataAsOf": expected_date, "retrievedAt": now_iso(), "priceField": "adjclose"}
+    if expected_date:
+        parsed["prices"] = [point for point in parsed["prices"] if point["date"] <= expected_date]
+        if not parsed["prices"] or parsed["prices"][-1]["date"] != expected_date:
+            raise ValueError(f"chart has no valid adjusted close for required session {expected_date}")
+    return parsed
+
+
+def parse_chart(payload: dict[str, Any]) -> dict[str, Any]:
     result = (payload.get("chart", {}).get("result") or [None])[0]
     if not result:
         raise ValueError("empty chart result")
@@ -398,13 +441,13 @@ def classify(price_score: float | None, earnings_score: float | None) -> str:
     return "중립/혼재"
 
 
-def analyze_symbol(row: dict[str, Any]) -> dict[str, Any]:
+def analyze_symbol(row: dict[str, Any], expected_date: str | None = None) -> dict[str, Any]:
     symbol = row["ticker"]
     failures: list[str] = []
     chart: dict[str, Any] = {"meta": {}, "prices": []}
     fundamentals: dict[str, Any] = {}
     try:
-        chart = fetch_chart(symbol)
+        chart = fetch_chart(symbol, expected_date=expected_date) if expected_date else fetch_chart(symbol)
         time.sleep(0.02)
     except Exception as exc:  # noqa: BLE001
         failures.append(f"chart: {type(exc).__name__}: {exc}")
@@ -478,6 +521,7 @@ def analyze_symbol(row: dict[str, Any]) -> dict[str, Any]:
             "failures": failures,
             "pricePoints": len(prices),
             "fundamentalTypes": sorted(fundamentals.keys()),
+            **({"latestSessionRepair": chart["latestSessionRepair"]} if chart.get("latestSessionRepair") else {}),
         },
     }
 
@@ -782,7 +826,7 @@ def build_summary(analysis: dict[str, Any], history: dict[str, Any] | None = Non
         "status": {
             "state": analysis.get("status", {}).get("level", "unknown"),
             "label": analysis.get("status", {}).get("message", "SOX public summary"),
-            "cadence": "scheduled 07:30/09:30/11:30/13:30 KST Tue-Sat plus reviewed workflow_dispatch",
+            "cadence": "scheduled 06:43/10:13/13:43 KST Tue-Sat; current-session retries skip; coordinated workflow_dispatch",
             "expectedFreshnessDays": 3,
             "degradedReasons": analysis.get("status", {}).get("failures", [])[:5],
         },
@@ -805,7 +849,7 @@ def build_summary(analysis: dict[str, Any], history: dict[str, Any] | None = Non
             "workflowUrl": "https://github.com/SonChangGi/sox/actions/workflows/deploy-pages.yml",
             "manualUpdateLabel": "GitHub Actions deploy-pages 수동 실행",
             "tokenPolicy": "Static page keeps no GitHub token; refresh script owns public-source access.",
-            "scheduleKst": ["07:30 Tue-Sat", "09:30 Tue-Sat retry", "11:30 Tue-Sat retry", "13:30 Tue-Sat retry"],
+            "scheduleKst": ["06:43 Tue-Sat", "10:13 Tue-Sat retry", "13:43 Tue-Sat retry"],
             "validation": "npm test verifies generated analysis, history, summary contract, browser endpoint boundaries, and static smoke readback.",
         },
         "limitations": [
@@ -863,6 +907,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--offline-ok", action="store_true", help="Use existing generated JSON if live refresh fails.")
     parser.add_argument("--require-current", action="store_true", help="Require healthy data for the latest expected U.S. session before replacing JSON; overrides --offline-ok.")
+    parser.add_argument("--expected-data-as-of", type=dt.date.fromisoformat, help="Pinned completed session from the pipeline; rejected if it is no longer current.")
     parser.add_argument("--max-workers", type=int, default=8)
     parser.add_argument("--output-dir", type=Path, default=DATA_DIR, help="Write candidate JSON here; existing snapshots are read from --history-source-dir.")
     parser.add_argument("--history-source-dir", type=Path, default=DATA_DIR, help="Read saved analysis/history without modifying them when staging a candidate.")
@@ -883,11 +928,17 @@ def main() -> int:
     publication_started = False
     collection_complete = False
     try:
+        expected_date = None
+        if args.require_current:
+            expected = latest_expected_us_session_date(dt.datetime.fromisoformat(now_iso().replace("Z", "+00:00")))
+            if args.expected_data_as_of and args.expected_data_as_of != expected:
+                raise ValueError("Pinned session is no longer current; restart from a new freshness decision")
+            expected_date = expected.isoformat()
         constituents, meta, source_failures = fetch_constituents()
         failures.extend(source_failures)
         rows: list[dict[str, Any]] = []
         with ThreadPoolExecutor(max_workers=max(1, args.max_workers)) as pool:
-            futures = {pool.submit(analyze_symbol, c): c for c in constituents}
+            futures = {pool.submit(analyze_symbol, c, expected_date): c for c in constituents}
             for future in as_completed(futures):
                 c = futures[future]
                 try:

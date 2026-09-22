@@ -5,14 +5,14 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # 07:30 KST Tue-Sat, then 09:30/11:30/13:30 provider recovery slots.
-    - cron: "30 22 * * 1-5"
-    - cron: "30 0 * * 2-6"
-    - cron: "30 2 * * 2-6"
-    - cron: "30 4 * * 2-6"
+    # KST Tue-Sat: 06:43 primary, 10:13 and 13:43 bounded recovery.
+    - cron: "43 21 * * 1-5"
+    - cron: "13 1 * * 2-6"
+    - cron: "43 4 * * 2-6"
 
 permissions:
   contents: write
+  actions: read
   pages: write
   id-token: write
 
@@ -21,7 +21,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  admission:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Wait for earlier peer data pipelines
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/automation_admission.py
+
   freshness:
+    needs: admission
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -97,7 +109,9 @@ jobs:
       - name: Collect and verify a current candidate before promotion
         id: refresh
         if: needs.freshness.outputs.should_collect == 'true'
-        run: python3 scripts/refresh_sox_pipeline.py --attempts 3 --retry-delay 30
+        env:
+          EXPECTED_DATA_AS_OF: ${{ needs.freshness.outputs.expected_data_as_of }}
+        run: python3 scripts/refresh_sox_pipeline.py --attempts 3 --retry-delay 30 --expected-data-as-of "$EXPECTED_DATA_AS_OF"
       - name: Verify static dashboard and require current publication
         id: static_verify
         shell: bash
@@ -112,7 +126,7 @@ jobs:
           python3 scripts/check_sox_freshness.py --event-name schedule --require-fresh | tee "$RUNNER_TEMP/sox-verified.env"
           cat "$RUNNER_TEMP/sox-verified.env" >> "$GITHUB_OUTPUT"
       - name: Commit generated SOX data
-        if: needs.freshness.outputs.should_collect == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: needs.freshness.outputs.should_collect == 'true'
         run: |
           base_sha="$(git rev-parse HEAD)"
           branch="${GITHUB_REF_NAME:-main}"
