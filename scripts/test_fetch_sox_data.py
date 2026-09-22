@@ -195,6 +195,23 @@ class ProviderChartRegressionTests(unittest.TestCase):
         self.assertEqual(len(result["prices"]), 3)
         request.assert_called_once()
 
+    def test_completed_daily_bar_survives_new_york_midnight_metadata_rollover(self):
+        payload = self.daily_payload()
+        regular = payload["chart"]["result"][0]["meta"]["currentTradingPeriod"]["regular"]
+        regular["start"] += 3 * 86400
+        regular["end"] += 3 * 86400
+        with patch.object(collector, "http_json", side_effect=[self.incomplete_history(), payload]), patch.object(collector, "now_iso", return_value="2026-09-12T05:00:00Z"):
+            result = collector.fetch_chart("Q00", expected_date=AS_OF)
+        self.assertEqual(result["prices"][-1], {"date": AS_OF, "close": 92.0, "volume": 1200.0})
+
+    def test_past_date_recovery_still_rejects_off_session_quotes(self):
+        for hour in (12, 22):
+            payload = self.daily_payload()
+            payload["chart"]["result"][0]["timestamp"] = [int(dt.datetime(2026, 9, 11, hour, tzinfo=dt.UTC).timestamp())]
+            with self.subTest(hour=hour), patch.object(collector, "http_json", side_effect=[self.incomplete_history(), payload]), patch.object(collector, "now_iso", return_value="2026-09-12T05:00:00Z"):
+                with self.assertRaisesRegex(ValueError, "outside its regular session"):
+                    collector.fetch_chart("Q00", expected_date=AS_OF)
+
     def test_incomplete_future_wrong_symbol_and_raw_only_repairs_are_rejected(self):
         cases = []
         raw_only = self.daily_payload()

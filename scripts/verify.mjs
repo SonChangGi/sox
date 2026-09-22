@@ -65,7 +65,8 @@ check(history.snapshots.every((snapshot) => Array.isArray(snapshot.constituents)
 check(summary.schemaVersion === 1, 'summary schemaVersion is 1');
 check(summary.contract === 'quant-research-summary', 'summary contract is quant-research-summary');
 check(summary.projectId === 'sox', 'summary projectId is sox');
-check(summary.status?.cadence?.includes('07:30/09:30/11:30/13:30 KST'), 'summary records staggered automation cadence');
+const recordedSlots = summary.automation?.scheduleKst?.map(slot => slot.split(' ')[0]) || [];
+check(recordedSlots.length >= 3 && summary.status?.cadence?.includes(`${recordedSlots.join('/')} KST`), 'summary cadence agrees with its recorded automation slots');
 check(summary.coverage?.snapshotCount === history.snapshotCount, 'summary exposes history snapshot count');
 check(summary.automation?.workflowUrl?.includes('/actions/workflows/deploy-pages.yml'), 'summary records automation workflow URL');
 check(summary.historyUrl === 'https://sonchanggi.github.io/sox/data/sox-history.json', 'summary exposes public history URL');

@@ -30,6 +30,7 @@ from zoneinfo import ZoneInfo
 
 from check_sox_freshness import decide as decide_freshness
 from check_sox_freshness import latest_expected_us_session_date
+from check_sox_freshness import is_us_equity_regular_session
 from earnings_growth import earnings_growth
 from sox_data_quality import collect_data_quality_failures
 
@@ -249,6 +250,17 @@ def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, A
         end = regular.get("end")
         start = regular.get("start")
         now = dt.datetime.fromisoformat(now_iso().replace("Z", "+00:00"))
+        target = dt.date.fromisoformat(expected_date)
+        ny = ZoneInfo("America/New_York")
+        if not is_us_equity_regular_session(target):
+            raise ValueError("latest daily quote target is not a regular trading day")
+        # After New York midnight Yahoo's currentTradingPeriod can describe
+        # the upcoming session while range=1d still returns yesterday's bar.
+        # A strictly past local date is complete even on an early-close day;
+        # use the regular-hours bounds only to reject off-session timestamps.
+        if target < now.astimezone(ny).date():
+            start = dt.datetime.combine(target, dt.time(9, 30), ny).timestamp()
+            end = dt.datetime.combine(target, dt.time(16), ny).timestamp()
         if not isinstance(start, (int, float)) or not isinstance(end, (int, float)) or not start < end <= now.timestamp():
             raise ValueError("latest daily quote is not a completed regular session")
         if dt.datetime.fromtimestamp(end, ZoneInfo("America/New_York")).date().isoformat() != expected_date:
