@@ -88,7 +88,7 @@ jobs:
     needs: freshness
     if: needs.freshness.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     outputs:
       source_sha: ${{ steps.public_contract.outputs.source_sha }}
       refresh_outcome: ${{ steps.refresh.outcome }}
@@ -100,6 +100,11 @@ jobs:
         with:
           ref: ${{ needs.freshness.outputs.source_sha }}
           fetch-depth: 0
+      - name: Recheck admission when retrying failed jobs only
+        if: github.run_attempt != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/automation_admission.py --max-wait-seconds 300
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
