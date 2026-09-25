@@ -31,14 +31,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 62
+    "snapshotCount": 63
   },
-  "dataAsOf": "2026-09-23",
+  "dataAsOf": "2026-09-24",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-23T23:56:35Z",
+  "generatedAt": "2026-09-25T03:06:14Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -53,10 +53,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.9055172413793103,
+        "priceMomentum": 0.8372413793103448,
         "rank": 1,
-        "score": 0.9449310344827586,
-        "weight": 0.07895261551743014
+        "score": 0.9073793103448275,
+        "weight": 0.07822922714280338
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,10 +73,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6258620689655172,
-        "priceMomentum": 0.9719704433497537,
+        "priceMomentum": 0.9719704433497538,
         "rank": 2,
         "score": 0.8162216748768474,
-        "weight": 0.06494092284120213
+        "weight": 0.06483714675369781
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,10 +93,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.7013054187192118,
+        "priceMomentum": 0.7523152709359606,
         "rank": 3,
-        "score": 0.7348559113300492,
-        "weight": 0.0040212977872312325
+        "score": 0.7629113300492611,
+        "weight": 0.004041075751671027
       },
       "name": "Astera Labs",
       "signals": [
@@ -109,14 +109,34 @@
       ]
     },
     {
+      "id": "SITM",
+      "label": "SITM",
+      "metrics": {
+        "earningsMomentum": 0.7206896551724138,
+        "priceMomentum": 0.7120443349753695,
+        "rank": 4,
+        "score": 0.7159347290640394,
+        "weight": 0.0011832573733171834
+      },
+      "name": "Sitime Corp Cmn Stk",
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "SITM",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "TER",
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8189655172413792,
-        "priceMomentum": 0.640960591133005,
-        "rank": 4,
-        "score": 0.7210628078817733,
-        "weight": 0.0039751631302088145
+        "priceMomentum": 0.6202709359605911,
+        "rank": 5,
+        "score": 0.7096834975369458,
+        "weight": 0.0040279609932811905
       },
       "name": "Teradyne",
       "signals": [
@@ -124,26 +144,6 @@
       ],
       "status": "중립/혼재",
       "symbol": "TER",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
-      "id": "NVDA",
-      "label": "NVDA",
-      "metrics": {
-        "earningsMomentum": 0.7689655172413793,
-        "priceMomentum": 0.6149014778325124,
-        "rank": 5,
-        "score": 0.6842302955665025,
-        "weight": 0.3524515895726028
-      },
-      "name": "NVIDIA",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "NVDA",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
