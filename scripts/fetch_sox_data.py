@@ -239,9 +239,16 @@ def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, A
     parsed = parse_chart(payload)
     if expected_date and parsed["prices"][-1]["date"] < expected_date:
         # A long history can contain a null latest close while the same
-        # provider's one-day daily endpoint already has the complete session.
+        # provider's bounded daily endpoint already has the complete session.
         # Never infer an adjusted close from a raw quote or change old prices.
-        repair_url = url.replace("range=18mo", "range=1d")
+        target = dt.date.fromisoformat(expected_date)
+        ny = ZoneInfo("America/New_York")
+        period1 = int(dt.datetime.combine(target, dt.time.min, ny).timestamp())
+        period2 = int(dt.datetime.combine(target + dt.timedelta(days=1), dt.time.min, ny).timestamp())
+        # range=1d is a rolling latest quote and may carry a closing trade's
+        # timestamp rather than the historical daily bar's session timestamp.
+        # Query the fixed target's regular-hours history instead.
+        repair_url = url.replace("range=18mo", f"period1={period1}&period2={period2}&includePrePost=false")
         daily_payload = http_json(repair_url)
         daily = parse_chart(daily_payload)
         raw = daily_payload["chart"]["result"][0]
@@ -250,12 +257,10 @@ def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, A
         end = regular.get("end")
         start = regular.get("start")
         now = dt.datetime.fromisoformat(now_iso().replace("Z", "+00:00"))
-        target = dt.date.fromisoformat(expected_date)
-        ny = ZoneInfo("America/New_York")
         if not is_us_equity_regular_session(target):
             raise ValueError("latest daily quote target is not a regular trading day")
         # After New York midnight Yahoo's currentTradingPeriod can describe
-        # the upcoming session while range=1d still returns yesterday's bar.
+        # the upcoming session while the bounded query returns yesterday's bar.
         # A strictly past local date is complete even on an early-close day;
         # use the regular-hours bounds only to reject off-session timestamps.
         if target < now.astimezone(ny).date():
@@ -274,7 +279,10 @@ def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, A
         # closing-auction timestamp at its exact end.
         timestamps = raw.get("timestamp") or []
         if len(timestamps) != 1 or not start <= timestamps[0] <= end:
-            raise ValueError("latest daily quote timestamp is outside its regular session")
+            raise ValueError(
+                "latest daily quote timestamp is outside its regular session: "
+                f"target={expected_date}, timestamps={timestamps}, regular_start={start}, regular_end={end}"
+            )
         if meta.get("symbol", symbol).upper() != symbol.upper():
             raise ValueError("latest daily quote symbol differs from the requested symbol")
         parsed["prices"].append(matches[0])

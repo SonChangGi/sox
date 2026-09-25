@@ -187,7 +187,33 @@ class ProviderChartRegressionTests(unittest.TestCase):
             result = collector.fetch_chart("Q00", expected_date=AS_OF)
         self.assertEqual([row["close"] for row in result["prices"]], [90, 91, 92])
         self.assertEqual(result["latestSessionRepair"]["dataAsOf"], AS_OF)
-        self.assertIn("range=1d", request.call_args.args[0])
+        query = collector.urllib.parse.parse_qs(collector.urllib.parse.urlparse(request.call_args.args[0]).query)
+        self.assertNotIn("range", query)
+        self.assertEqual(query["includePrePost"], ["false"])
+        self.assertEqual(query["interval"], ["1d"])
+        self.assertEqual(query["period1"], [str(int(dt.datetime(2026, 9, 11, 4, tzinfo=dt.UTC).timestamp()))])
+        self.assertEqual(query["period2"], [str(int(dt.datetime(2026, 9, 12, 4, tzinfo=dt.UTC).timestamp()))])
+
+    def test_bounded_history_avoids_rolling_closing_trade_timestamp(self):
+        daily = self.daily_payload()
+        rolling = deepcopy(daily)
+        rolling["chart"]["result"][0]["timestamp"][0] += 1
+
+        def provider(url):
+            if "range=18mo" in url:
+                return self.incomplete_history()
+            return rolling if "range=1d" in url else daily
+
+        with patch.object(collector, "http_json", side_effect=provider), patch.object(collector, "now_iso", return_value=GENERATED_AT):
+            result = collector.fetch_chart("Q00", expected_date=AS_OF)
+        self.assertEqual(result["prices"][-1]["close"], 92)
+
+    def test_bounded_history_still_rejects_a_post_close_timestamp(self):
+        daily = self.daily_payload()
+        daily["chart"]["result"][0]["timestamp"][0] += 1
+        with patch.object(collector, "http_json", side_effect=[self.incomplete_history(), daily]), patch.object(collector, "now_iso", return_value=GENERATED_AT):
+            with self.assertRaisesRegex(ValueError, "outside its regular session: target="):
+                collector.fetch_chart("Q00", expected_date=AS_OF)
 
     def test_healthy_history_never_requests_or_overwrites_daily_prices(self):
         with patch.object(collector, "http_json", return_value=self.chart_payload()) as request:
