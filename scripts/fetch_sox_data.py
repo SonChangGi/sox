@@ -53,6 +53,7 @@ YAHOO_TYPES = [
     "quarterlyDilutedEPS",
 ]
 EXPECTED_MIN_CONSTITUENTS = 25
+YAHOO_DAILY_CLOSE_TIMESTAMP_GRACE_SECONDS = 2
 
 COMPANY_ALIASES = {
     "ADI": "Analog Devices",
@@ -275,10 +276,15 @@ def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, A
         matches = [point for point in daily["prices"] if point["date"] == expected_date]
         if len(matches) != 1 or matches[0]["close"] <= 0 or matches[0]["volume"] is None or matches[0]["volume"] < 0:
             raise ValueError("latest daily quote lacks the exact target adjusted close and volume")
-        # Match timestamp to the provider's regular session, including a
-        # closing-auction timestamp at its exact end.
+        # Yahoo's fixed-date daily bar can be stamped one or two seconds after
+        # the regular close (observed across 21 symbols on 2026-09-25). Treat
+        # only that narrow close marker as the completed session's daily bar.
+        # The fixed target, adjusted close, volume, and completed-session
+        # checks above still apply; later after-hours timestamps fail closed.
         timestamps = raw.get("timestamp") or []
-        if len(timestamps) != 1 or not start <= timestamps[0] <= end:
+        if (len(timestamps) != 1 or not isinstance(timestamps[0], (int, float))
+                or isinstance(timestamps[0], bool)
+                or not start <= timestamps[0] <= end + YAHOO_DAILY_CLOSE_TIMESTAMP_GRACE_SECONDS):
             raise ValueError(
                 "latest daily quote timestamp is outside its regular session: "
                 f"target={expected_date}, timestamps={timestamps}, regular_start={start}, regular_end={end}"
@@ -287,7 +293,8 @@ def fetch_chart(symbol: str, *, expected_date: str | None = None) -> dict[str, A
             raise ValueError("latest daily quote symbol differs from the requested symbol")
         parsed["prices"].append(matches[0])
         parsed["latestSessionRepair"] = {"source": "yahoo-daily-chart", "url": repair_url,
-            "dataAsOf": expected_date, "retrievedAt": now_iso(), "priceField": "adjclose"}
+            "dataAsOf": expected_date, "retrievedAt": now_iso(), "priceField": "adjclose",
+            "dailyBarTimestamp": timestamps[0], "regularSessionEnd": end}
     if expected_date:
         parsed["prices"] = [point for point in parsed["prices"] if point["date"] <= expected_date]
         if not parsed["prices"] or parsed["prices"][-1]["date"] != expected_date:

@@ -208,9 +208,20 @@ class ProviderChartRegressionTests(unittest.TestCase):
             result = collector.fetch_chart("Q00", expected_date=AS_OF)
         self.assertEqual(result["prices"][-1]["close"], 92)
 
-    def test_bounded_history_still_rejects_a_post_close_timestamp(self):
+    def test_bounded_history_accepts_only_observed_close_marker_drift(self):
+        end = self.daily_payload()["chart"]["result"][0]["timestamp"][0]
+        for seconds in (1, 2):
+            daily = self.daily_payload()
+            daily["chart"]["result"][0]["timestamp"][0] += seconds
+            with self.subTest(seconds=seconds), patch.object(collector, "http_json", side_effect=[self.incomplete_history(), daily]), patch.object(collector, "now_iso", return_value=GENERATED_AT):
+                result = collector.fetch_chart("Q00", expected_date=AS_OF)
+            self.assertEqual(result["prices"][-1]["close"], 92)
+            self.assertEqual(result["latestSessionRepair"]["dailyBarTimestamp"], end + seconds)
+            self.assertEqual(result["latestSessionRepair"]["regularSessionEnd"], end)
+
+    def test_bounded_history_still_rejects_later_post_close_timestamp(self):
         daily = self.daily_payload()
-        daily["chart"]["result"][0]["timestamp"][0] += 1
+        daily["chart"]["result"][0]["timestamp"][0] += 3
         with patch.object(collector, "http_json", side_effect=[self.incomplete_history(), daily]), patch.object(collector, "now_iso", return_value=GENERATED_AT):
             with self.assertRaisesRegex(ValueError, "outside its regular session: target="):
                 collector.fetch_chart("Q00", expected_date=AS_OF)
