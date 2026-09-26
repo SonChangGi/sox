@@ -31,14 +31,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 63
+    "snapshotCount": 64
   },
-  "dataAsOf": "2026-09-24",
+  "dataAsOf": "2026-09-25",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-25T03:06:14Z",
+  "generatedAt": "2026-09-26T06:07:58Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -53,9 +53,9 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8372413793103448,
+        "priceMomentum": 0.8517241379310345,
         "rank": 1,
-        "score": 0.9073793103448275,
+        "score": 0.9153448275862069,
         "weight": 0.07822922714280338
       },
       "name": "Micron Technology",
@@ -73,9 +73,9 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6258620689655172,
-        "priceMomentum": 0.9719704433497538,
+        "priceMomentum": 0.9754187192118227,
         "rank": 2,
-        "score": 0.8162216748768474,
+        "score": 0.8181182266009852,
         "weight": 0.06483714675369781
       },
       "name": "Advanced Micro Devices",
@@ -93,9 +93,9 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.7523152709359606,
+        "priceMomentum": 0.7536699507389162,
         "rank": 3,
-        "score": 0.7629113300492611,
+        "score": 0.7636564039408866,
         "weight": 0.004041075751671027
       },
       "name": "Astera Labs",
@@ -113,9 +113,9 @@
       "label": "SITM",
       "metrics": {
         "earningsMomentum": 0.7206896551724138,
-        "priceMomentum": 0.7120443349753695,
+        "priceMomentum": 0.7352463054187193,
         "rank": 4,
-        "score": 0.7159347290640394,
+        "score": 0.7286958128078818,
         "weight": 0.0011832573733171834
       },
       "name": "Sitime Corp Cmn Stk",
@@ -133,9 +133,9 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8189655172413792,
-        "priceMomentum": 0.6202709359605911,
+        "priceMomentum": 0.6271674876847291,
         "rank": 5,
-        "score": 0.7096834975369458,
+        "score": 0.7134766009852217,
         "weight": 0.0040279609932811905
       },
       "name": "Teradyne",
