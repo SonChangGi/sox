@@ -853,7 +853,7 @@ def build_summary(analysis: dict[str, Any], history: dict[str, Any] | None = Non
         "status": {
             "state": analysis.get("status", {}).get("level", "unknown"),
             "label": analysis.get("status", {}).get("message", "SOX public summary"),
-            "cadence": "scheduled 06:43/10:13/13:43 KST Tue-Sat; current-session retries skip; coordinated workflow_dispatch",
+            "cadence": "scheduled 06:43/08:13/10:13/13:43 KST Tue-Sat; current-session retries skip; coordinated workflow_dispatch",
             "expectedFreshnessDays": 3,
             "degradedReasons": analysis.get("status", {}).get("failures", [])[:5],
         },
@@ -876,7 +876,7 @@ def build_summary(analysis: dict[str, Any], history: dict[str, Any] | None = Non
             "workflowUrl": "https://github.com/SonChangGi/sox/actions/workflows/deploy-pages.yml",
             "manualUpdateLabel": "GitHub Actions deploy-pages 수동 실행",
             "tokenPolicy": "Static page keeps no GitHub token; refresh script owns public-source access.",
-            "scheduleKst": ["06:43 Tue-Sat", "10:13 Tue-Sat retry", "13:43 Tue-Sat retry"],
+            "scheduleKst": ["06:43 Tue-Sat", "08:13 Tue-Sat retry", "10:13 Tue-Sat retry", "13:43 Tue-Sat retry"],
             "validation": "npm test verifies generated analysis, history, summary contract, browser endpoint boundaries, and static smoke readback.",
         },
         "limitations": [

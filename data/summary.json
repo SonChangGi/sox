@@ -3,6 +3,7 @@
     "manualUpdateLabel": "GitHub Actions deploy-pages 수동 실행",
     "scheduleKst": [
       "06:43 Tue-Sat",
+      "08:13 Tue-Sat retry",
       "10:13 Tue-Sat retry",
       "13:43 Tue-Sat retry"
     ],
@@ -164,7 +165,7 @@
     }
   ],
   "status": {
-    "cadence": "scheduled 06:43/10:13/13:43 KST Tue-Sat; current-session retries skip; coordinated workflow_dispatch",
+    "cadence": "scheduled 06:43/08:13/10:13/13:43 KST Tue-Sat; current-session retries skip; coordinated workflow_dispatch",
     "degradedReasons": [],
     "expectedFreshnessDays": 3,
     "label": "Generated from live public sources.",

@@ -66,7 +66,7 @@ check(summary.schemaVersion === 1, 'summary schemaVersion is 1');
 check(summary.contract === 'quant-research-summary', 'summary contract is quant-research-summary');
 check(summary.projectId === 'sox', 'summary projectId is sox');
 const recordedSlots = summary.automation?.scheduleKst?.map(slot => slot.split(' ')[0]) || [];
-check(recordedSlots.length >= 3 && summary.status?.cadence?.includes(`${recordedSlots.join('/')} KST`), 'summary cadence agrees with its recorded automation slots');
+check(recordedSlots.length === 4 && summary.status?.cadence?.includes(`${recordedSlots.join('/')} KST`), 'summary cadence agrees with its recorded automation slots');
 check(summary.coverage?.snapshotCount === history.snapshotCount, 'summary exposes history snapshot count');
 check(summary.automation?.workflowUrl?.includes('/actions/workflows/deploy-pages.yml'), 'summary records automation workflow URL');
 check(summary.historyUrl === 'https://sonchanggi.github.io/sox/data/sox-history.json', 'summary exposes public history URL');
@@ -104,7 +104,7 @@ check(app.includes('layoutQuadrantRows') && app.includes('quadrant-plot'), 'quad
 check(app.includes("row[key] === 0 ? 0"), 'zero-value bars render at zero magnitude');
 check(app.includes('data-table-ticker'), 'static fallback coordinates chart selection with the table');
 check(!app.includes("metricCard('Stored dates'") && !app.includes("metricCard('Weight method'") && !app.includes("metricCard('Status'"), 'operational metrics are removed from the primary result grid');
-check(['43 21 * * 1-5', '13 1 * * 2-6', '43 4 * * 2-6'].every(slot => workflow.includes(slot)), 'workflow separates primary 06:43 KST and 10:13/13:43 retry slots');
+check(['43 21 * * 1-5', '13 23 * * 1-5', '13 1 * * 2-6', '43 4 * * 2-6'].every(slot => workflow.includes(slot)), 'workflow separates primary 06:43 KST and 08:13/10:13/13:43 retry slots');
 check(actionUses.length === 8, 'workflow has the expected eight first-party action references including admission');
 check(mutableActionUses.length === 0, `workflow action references use immutable 40-character SHAs (${mutableActionUses.map((match) => match[0]).join(', ')})`);
 check(workflow.includes('actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6'), 'workflow pins Node24 checkout v6 to the reviewed commit');

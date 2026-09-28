@@ -5,8 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # KST Tue-Sat: 06:43 primary, 10:13 and 13:43 bounded recovery.
+    # KST Tue-Sat: 06:43 primary, 08:13/10:13/13:43 bounded recovery.
     - cron: "43 21 * * 1-5"
+    - cron: "13 23 * * 1-5"
     - cron: "13 1 * * 2-6"
     - cron: "43 4 * * 2-6"
 
