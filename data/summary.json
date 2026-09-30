@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 65
+    "snapshotCount": 66
   },
-  "dataAsOf": "2026-09-28",
+  "dataAsOf": "2026-09-29",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-09-28T23:31:30Z",
+  "generatedAt": "2026-09-30T02:08:47Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,9 +54,9 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8710344827586207,
+        "priceMomentum": 0.8696551724137931,
         "rank": 1,
-        "score": 0.9259655172413794,
+        "score": 0.9252068965517242,
         "weight": 0.07822922714280338
       },
       "name": "Micron Technology",
@@ -74,9 +74,9 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6258620689655172,
-        "priceMomentum": 0.9777093596059114,
+        "priceMomentum": 0.9701231527093597,
         "rank": 2,
-        "score": 0.8193780788177341,
+        "score": 0.8152056650246307,
         "weight": 0.06483714675369781
       },
       "name": "Advanced Micro Devices",
@@ -94,9 +94,9 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.6858620689655173,
+        "priceMomentum": 0.6817241379310345,
         "rank": 3,
-        "score": 0.7263620689655172,
+        "score": 0.7240862068965517,
         "weight": 0.004041075751671027
       },
       "name": "Astera Labs",
@@ -114,9 +114,9 @@
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8189655172413792,
-        "priceMomentum": 0.6460098522167488,
+        "priceMomentum": 0.6382019704433498,
         "rank": 4,
-        "score": 0.7238399014778325,
+        "score": 0.719545566502463,
         "weight": 0.0040279609932811905
       },
       "name": "Teradyne",
@@ -134,9 +134,9 @@
       "label": "SITM",
       "metrics": {
         "earningsMomentum": 0.7206896551724138,
-        "priceMomentum": 0.7219211822660099,
+        "priceMomentum": 0.6835221674876848,
         "rank": 5,
-        "score": 0.7213669950738917,
+        "score": 0.7002475369458129,
         "weight": 0.0011832573733171834
       },
       "name": "Sitime Corp Cmn Stk",
