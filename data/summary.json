@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 73
+    "snapshotCount": 74
   },
-  "dataAsOf": "2026-10-08",
+  "dataAsOf": "2026-10-09",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-09T01:25:25Z",
+  "generatedAt": "2026-10-10T01:14:05Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,9 +54,9 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.7917241379310345,
+        "priceMomentum": 0.8213793103448276,
         "rank": 1,
-        "score": 0.8823448275862069,
+        "score": 0.8986551724137932,
         "weight": 0.07822922714280338
       },
       "name": "Micron Technology",
@@ -74,9 +74,9 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.6258620689655172,
-        "priceMomentum": 0.9538177339901478,
+        "priceMomentum": 0.9166009852216749,
         "rank": 2,
-        "score": 0.8062376847290641,
+        "score": 0.785768472906404,
         "weight": 0.06483714675369781
       },
       "name": "Advanced Micro Devices",
@@ -90,33 +90,13 @@
       ]
     },
     {
-      "id": "MRVL",
-      "label": "MRVL",
-      "metrics": {
-        "earningsMomentum": 0.4517241379310345,
-        "priceMomentum": 0.9354187192118227,
-        "rank": 3,
-        "score": 0.7177561576354681,
-        "weight": 0.010878622316432105
-      },
-      "name": "Marvell Technology",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "MRVL",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "TER",
       "label": "TER",
       "metrics": {
         "earningsMomentum": 0.8189655172413792,
-        "priceMomentum": 0.5968226600985223,
-        "rank": 4,
-        "score": 0.696786945812808,
+        "priceMomentum": 0.6460098522167488,
+        "rank": 3,
+        "score": 0.7238399014778325,
         "weight": 0.0040279609932811905
       },
       "name": "Teradyne",
@@ -130,13 +110,33 @@
       ]
     },
     {
+      "id": "MRVL",
+      "label": "MRVL",
+      "metrics": {
+        "earningsMomentum": 0.44482758620689655,
+        "priceMomentum": 0.9464532019704434,
+        "rank": 4,
+        "score": 0.7207216748768474,
+        "weight": 0.010878622316432105
+      },
+      "name": "Marvell Technology",
+      "signals": [
+        "가격 선행 / 실적 확인"
+      ],
+      "status": "가격 선행 / 실적 확인",
+      "symbol": "MRVL",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "ALAB",
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7758620689655172,
-        "priceMomentum": 0.6247536945812808,
+        "priceMomentum": 0.6422167487684729,
         "rank": 5,
-        "score": 0.6927524630541873,
+        "score": 0.7023571428571429,
         "weight": 0.004041075751671027
       },
       "name": "Astera Labs",
