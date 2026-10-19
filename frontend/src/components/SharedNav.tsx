@@ -9,7 +9,7 @@ const projects = getCanonicalNavigation("sox");
 const navigationLinks = [
   ...projects.filter((project) => project.id !== "hub"),
   { id: "spo", label: "SPO", url: "https://sonchanggi.github.io/SPO/", current: false },
-  { id: "observatory", label: "연구 관측소", url: "https://research-observatory-changgi.changgi-son.chatgpt.site/", current: false },
+  { id: "observatory", label: "알파 하우스", url: "https://research-observatory-changgi.changgi-son.chatgpt.site/", current: false },
 ];
 const THEME_STORAGE_KEY = "quant-research-theme";
 const LEGACY_THEME_STORAGE_KEY = "sox-theme";
