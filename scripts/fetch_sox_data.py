@@ -417,9 +417,34 @@ def latest(entries: list[dict[str, Any]] | None) -> dict[str, Any] | None:
 
 
 def yoy(entries: list[dict[str, Any]] | None) -> float | None:
-    if not entries or len(entries) < 5:
+    """Compare quarterly observations with a unique comparable prior-year period.
+
+    Calendar-year and 52/53-week fiscal periods end 364--371 days apart.
+    Without fiscal-quarter IDs, ambiguous or incompatible periods must stay
+    unavailable rather than being selected by their position in the response.
+    """
+    if not entries or len(entries) < 2:
         return None
-    return pct_change(entries[-1].get("raw"), entries[-5].get("raw"))
+    dated = []
+    for entry in entries:
+        if entry.get("periodType") != "3M":
+            return None
+        try:
+            period_end = dt.date.fromisoformat(entry.get("asOfDate"))
+        except (TypeError, ValueError):
+            return None
+        dated.append((period_end, entry))
+    current_date = max(period_end for period_end, _ in dated)
+    current = [entry for period_end, entry in dated if period_end == current_date]
+    previous = [entry for period_end, entry in dated if 364 <= (current_date - period_end).days <= 371]
+    if len(current) != 1 or len(previous) != 1:
+        return None
+    current, previous = current[0], previous[0]
+    currency = current.get("currencyCode")
+    if not currency or currency != previous.get("currencyCode"):
+        return None
+    change = pct_change(clean_number(current.get("raw")), clean_number(previous.get("raw")))
+    return change if change is not None and math.isfinite(change) else None
 
 
 def rank_scores(values: dict[str, float | None], *, high_is_good: bool = True) -> dict[str, float | None]:
@@ -429,8 +454,16 @@ def rank_scores(values: dict[str, float | None], *, high_is_good: bool = True) -
     valid.sort(key=lambda kv: kv[1], reverse=high_is_good)
     n = len(valid)
     scores = {}
-    for index, (key, _value) in enumerate(valid):
-        scores[key] = 1.0 if n == 1 else 1 - (index / (n - 1))
+    index = 0
+    while index < n:
+        end = index + 1
+        while end < n and valid[end][1] == valid[index][1]:
+            end += 1
+        # Average the occupied ranks so tied values cannot depend on fetch order.
+        score = 1.0 if n == 1 else 1 - ((index + end - 1) / 2 / (n - 1))
+        for key, _value in valid[index:end]:
+            scores[key] = score
+        index = end
     return {k: scores.get(k) for k in values}
 
 
