@@ -12,13 +12,15 @@
       "platform/packages/ui/src/styles.css": "e277f29caa54841d3442a366718618b364b688ccd5cd38460dece5e31a57cbbf"
     }
   },
-  "aggregateFingerprint": "ac2344a6fd40372e67549c78edd742d7ff6823db788a9ece4363e65a04d1ca36",
+  "aggregateFingerprint": "6ad87128affaf0ba811f48cbf6c68364be162c727b8b1bb2660b7a93f9e228b6",
   "files": {
     "src/shared-platform/contracts.ts": "a53f0810a3007a5696fb121ed5c40cd6f5762883c995f65a71d54d321aa0023f",
     "src/shared-platform/control-manifest.ts": "6b81b95d6078838df73dd3ea449ea129485a047c8bcc5f4761f6c65b4c0d42a7",
-    "src/shared-platform/project-registry.ts": "260a1cd9e5d57c12f6b328494304f1df0ea9cdda39c26a2540b5ef49a074b147",
+    "src/shared-platform/project-registry.ts": "304ae5c52f49dd4fc497f7fc88de293a95d6a5e86d4ea9cec79ae9be910656a7",
     "src/shared-platform/static-result-adapter.ts": "f7a33fa9df932445d963a4ab7dd5d586d4a150cd41506d82ab04b3e2df2cc1d1",
     "src/shared-platform/token-aliases.css": "a0581197f7d3ea25a5552c6d7acc96142ef97a34781807fb8f0147c79edc9c8c",
-    "src/shared-platform/index.ts": "a1836bf38aad113fd707abe59813d849fcc2aeb4d5d2728bcd107b1b9ddb24d7"
+    "src/shared-platform/index.ts": "a1836bf38aad113fd707abe59813d849fcc2aeb4d5d2728bcd107b1b9ddb24d7",
+    "src/shared-navigation/menu.generated.ts": "a323d49c794e2844bf551d1a967b194fb970ab75bfd01de2366042c3d1726caa",
+    "src/shared-navigation/use-shared-navigation.ts": "dc90b91535ec75a1348182ea01078418cad67d75c2914a72dba4c4012f04769f"
   }
 }

@@ -76,9 +76,10 @@ check(summary.pageUrl === 'https://sonchanggi.github.io/sox/', 'summary pageUrl 
 check(html.includes('Quant Research Hub'), 'index links/copy includes Quant Research Hub');
 check(html.includes('https://sonchanggi.github.io/quant-dashboard/'), 'index has quant-dashboard return link');
 check(html.includes('class="skip-link"'), 'index includes a keyboard skip link');
+check(html.includes('https://sonchanggi.github.io/quant-dashboard/shared/navigation/v1/nav.js') && !html.includes('https://sonchanggi.github.io/best-factor/'), 'shared navigation uses the central runtime without retired Best');
 check(html.includes('class="has-quant-shared-nav"'), 'body reserves the fixed shared navigation height');
 check(html.includes('assets/shared-nav.css?v=20260728-shared-nav'), 'index loads the canonical shared navigation stylesheet');
-check((html.match(/class="quant-shared-nav__link(?:\s|")/g) || []).length === 10, 'shared navigation exposes ten project links plus the Hub brand');
+check((html.match(/class="quant-shared-nav__link(?:\s|")/g) || []).length === 9, 'shared navigation exposes nine project links plus the Hub brand');
 check((html.match(/aria-current="page"/g) || []).length === 1, 'shared navigation marks exactly one current project');
 check(html.includes('class="quant-shared-nav__link is-active" href="https://sonchanggi.github.io/sox/" aria-current="page"'), 'current SOX navigation item uses its canonical public URL');
 check(html.includes('<details class="ops-details">'), 'source and operations copy is consolidated in one closed details section');

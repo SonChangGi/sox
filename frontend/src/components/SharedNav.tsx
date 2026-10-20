@@ -1,16 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useSharedNavigation } from "@/shared-navigation/use-shared-navigation";
 import {
-  assertDisplayStatePatch,
-  getCanonicalNavigation
+  assertDisplayStatePatch
 } from "@/shared-platform";
 
-const projects = getCanonicalNavigation("sox");
-// Navigation-only destinations do not expand the financial data registry.
-const navigationLinks = [
-  ...projects.filter((project) => project.id !== "hub"),
-  { id: "spo", label: "SPO", url: "https://sonchanggi.github.io/SPO/", current: false },
-  { id: "observatory", label: "알파 하우스", url: "https://research-observatory-changgi.changgi-son.chatgpt.site/", current: false },
-];
+
 const THEME_STORAGE_KEY = "quant-research-theme";
 const LEGACY_THEME_STORAGE_KEY = "sox-theme";
 
@@ -32,6 +26,7 @@ function initialTheme(): Theme {
 }
 
 export function SharedNav() {
+  const {brand, navigation: navigationLinks} = useSharedNavigation("sox");
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const linksRef = useRef<HTMLDivElement>(null);
 
@@ -65,11 +60,11 @@ export function SharedNav() {
   }
 
   return (
-    <nav className="quant-shared-nav" aria-label="연결 프로젝트 바로가기">
+    <nav data-quant-navigation-managed="react" className="quant-shared-nav" aria-label="연결 프로젝트 바로가기">
       <div className="quant-shared-nav__inner">
         <a
           className="quant-shared-nav__brand"
-          href={projects[0].url}
+          href={brand.url}
           aria-label="Quant Research Hub로 이동"
         >
           Quant Research Hub
