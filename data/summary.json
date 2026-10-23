@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 82
+    "snapshotCount": 83
   },
-  "dataAsOf": "2026-10-21",
+  "dataAsOf": "2026-10-22",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-22T01:28:21Z",
+  "generatedAt": "2026-10-23T01:27:04Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,9 +54,9 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.7275862068965517,
+        "priceMomentum": 0.783448275862069,
         "rank": 1,
-        "score": 0.8470689655172414,
+        "score": 0.877793103448276,
         "weight": 0.07822922714280338
       },
       "name": "Micron Technology",
@@ -70,21 +70,21 @@
       ]
     },
     {
-      "id": "AMD",
-      "label": "AMD",
+      "id": "NVDA",
+      "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.6258620689655172,
-        "priceMomentum": 0.8278571428571428,
+        "earningsMomentum": 0.7689655172413793,
+        "priceMomentum": 0.7116748768472907,
         "rank": 2,
-        "score": 0.7369593596059114,
-        "weight": 0.06483714675369781
+        "score": 0.7374556650246307,
+        "weight": 0.35188982518433515
       },
-      "name": "Advanced Micro Devices",
+      "name": "NVIDIA",
       "signals": [
-        "중립/혼재"
+        "가격·실적 동반 강세"
       ],
-      "status": "중립/혼재",
-      "symbol": "AMD",
+      "status": "가격·실적 동반 강세",
+      "symbol": "NVDA",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
@@ -94,9 +94,9 @@
       "label": "ADI",
       "metrics": {
         "earningsMomentum": 0.6672413793103449,
-        "priceMomentum": 0.7911330049261084,
+        "priceMomentum": 0.781256157635468,
         "rank": 3,
-        "score": 0.7353817733990149,
+        "score": 0.7299495073891626,
         "weight": 0.012062859842684659
       },
       "name": "Analog Devices",
@@ -110,21 +110,21 @@
       ]
     },
     {
-      "id": "NVDA",
-      "label": "NVDA",
+      "id": "AMD",
+      "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.7689655172413793,
-        "priceMomentum": 0.6611083743842365,
+        "earningsMomentum": 0.6258620689655172,
+        "priceMomentum": 0.804408866995074,
         "rank": 4,
-        "score": 0.7096440886699509,
-        "weight": 0.35188982518433515
+        "score": 0.7240628078817735,
+        "weight": 0.06483714675369781
       },
-      "name": "NVIDIA",
+      "name": "Advanced Micro Devices",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "NVDA",
+      "symbol": "AMD",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
@@ -134,9 +134,9 @@
       "label": "MRVL",
       "metrics": {
         "earningsMomentum": 0.4517241379310345,
-        "priceMomentum": 0.8804679802955665,
+        "priceMomentum": 0.8708128078817734,
         "rank": 5,
-        "score": 0.6875332512315271,
+        "score": 0.6822229064039409,
         "weight": 0.010878622316432105
       },
       "name": "Marvell Technology",
