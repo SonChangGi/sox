@@ -112,6 +112,8 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           python-version: '3.12'
+      - name: Verify collector regressions and static dashboard
+        run: npm test
       - name: Collect and verify a current candidate before promotion
         id: refresh
         if: needs.freshness.outputs.should_collect == 'true'
@@ -121,14 +123,9 @@ jobs:
       - name: Verify static dashboard and require current publication
         id: static_verify
         shell: bash
-        env:
-          SHOULD_COLLECT: ${{ needs.freshness.outputs.should_collect }}
         run: |
           set -euo pipefail
-          # The collector pipeline already ran the full suite on its candidate.
-          if [[ "$SHOULD_COLLECT" != "true" ]]; then
-            npm test
-          fi
+          # Regressions ran before collection; the pipeline also tests any new candidate.
           python3 scripts/check_sox_freshness.py --event-name schedule --require-fresh | tee "$RUNNER_TEMP/sox-verified.env"
           cat "$RUNNER_TEMP/sox-verified.env" >> "$GITHUB_OUTPUT"
       - name: Commit generated SOX data

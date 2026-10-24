@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "currency": "USD",
+    "symbol": "Q",
+    "exchangeName": "NYQ",
+    "fullExchangeName": "NYSE",
+    "instrumentType": "EQUITY",
+    "firstTradeDate": 1761571800,
+    "regularMarketTime": 1792785602,
+    "hasPrePostMarketData": true,
+    "gmtoffset": -14400,
+    "timezone": "EDT",
+    "exchangeTimezoneName": "America/New_York",
+    "regularMarketPrice": 109.83,
+    "regularMarketChangePercent": 0.965,
+    "fulldayPrice": 109.83,
+    "fulldayChange": 1.22,
+    "fulldayChangePercent": 1.122,
+    "fiftyTwoWeekHigh": 177.28,
+    "fiftyTwoWeekLow": 70.5,
+    "regularMarketDayHigh": 110.265,
+    "regularMarketDayLow": 105.005,
+    "regularMarketVolume": 1897758,
+    "longName": "Qnity Electronics, Inc.",
+    "shortName": "Qnity Electronics, Inc.",
+    "chartPreviousClose": 70.5,
+    "priceHint": 2,
+    "currentTradingPeriod": {
+      "pre": {
+        "timezone": "EDT",
+        "start": 1792742400,
+        "end": 1792762200,
+        "gmtoffset": -14400
+      },
+      "regular": {
+        "timezone": "EDT",
+        "start": 1792762200,
+        "end": 1792785600,
+        "gmtoffset": -14400
+      },
+      "post": {
+        "timezone": "EDT",
+        "start": 1792785600,
+        "end": 1792800000,
+        "gmtoffset": -14400
+      }
+    },
+    "dataGranularity": "1d",
+    "range": "18mo",
+    "validRanges": [
+      "1d",
+      "5d",
+      "1mo",
+      "3mo",
+      "6mo",
+      "1y",
+      "ytd",
+      "max"
+    ]
+  },
+  "prices": [
+    {
+      "date": "2026-10-23",
+      "close": 109.83,
+      "volume": 1897758
+    }
+  ]
+}

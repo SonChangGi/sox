@@ -1,0 +1,17 @@
+{
+  "timeseries": {
+    "result": [
+      {
+        "meta": {
+          "symbol": [
+            "Q"
+          ],
+          "type": [
+            "trailingMarketCap"
+          ]
+        }
+      }
+    ],
+    "error": null
+  }
+}

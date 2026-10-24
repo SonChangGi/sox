@@ -32,6 +32,8 @@
 
 EPS·순이익의 전년 값이 0 이하이면 일반 YoY는 `null`이고 화면에는 흑자전환·적자축소 등 상태를 표시합니다. 순위 입력은 별도의 `(현재−전년)/|전년|` 변화 신호이며 전년 값이 0인 항목은 점수에서 제외합니다. 양수 기저의 기존 YoY와 가격 계산은 유지합니다. 새 산출물은 `absolute_prior_base_change_v1` 방법론과 비교한 분기 값·날짜를 기록하며, 과거 날짜의 저장 결과는 재계산하지 않습니다.
 
+Yahoo `trailingMarketCap`이 API 오류 없이 metadata만 반환하면 동일 Yahoo 공개 종목 페이지의 구조화된 quote 값을 확인합니다. 종목명·티커·거래소·USD 통화, 완료된 목표 거래일, chart의 정규장 시각·수정 전 가격, 시가총액과 발행주식 수 × 가격의 일치를 모두 검증한 경우에만 원시 시가총액을 사용하고 `dataQuality.marketCapRepair`에 URL·조회 시각·기준일·검증 입력을 기록합니다. 과거 시가총액·분기 주식 수나 시간외 가격을 대입하지 않으며 검증 실패는 계속 공개를 차단합니다.
+
 ## 공통 프런트엔드 경계
 
 `frontend/`는 분석 코드를 복제하지 않는 독립 build입니다. 저장 기준일은
@@ -45,7 +47,7 @@ Pages origin의 runtime import는 사용하지 않습니다. 자세한 계약은
 [`docs/shared-frontend-integration.md`](docs/shared-frontend-integration.md)를
 참고하세요.
 
-> 주의: `proxy weight`는 Yahoo trailing market cap을 SOX universe 안에서 정규화한 값이며, 공식 SOX 지수 비중이 아닙니다. 본 페이지는 개인 리서치용이며 투자, 세무, 법률 또는 매매 조언이 아닙니다.
+> 주의: `proxy weight`는 Yahoo 시가총액(시계열 또는 검증된 현재 정규장 quote)을 SOX universe 안에서 정규화한 값이며, 공식 SOX 지수 비중이 아닙니다. 본 페이지는 개인 리서치용이며 투자, 세무, 법률 또는 매매 조언이 아닙니다.
 
 ## 로컬 실행
 

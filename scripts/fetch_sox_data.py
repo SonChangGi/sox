@@ -33,6 +33,7 @@ from check_sox_freshness import latest_expected_us_session_date
 from check_sox_freshness import is_us_equity_regular_session
 from earnings_growth import earnings_growth
 from sox_data_quality import collect_data_quality_failures
+from yahoo_market_cap import validated_market_cap
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
@@ -337,6 +338,8 @@ def fetch_fundamentals(symbol: str) -> dict[str, Any]:
         f"{urllib.parse.quote(symbol)}?type={types}&merge=false&period1={YAHOO_PERIOD1}&period2={YAHOO_PERIOD2}"
     )
     payload = http_json(url)
+    if payload.get("timeseries", {}).get("error") is not None:
+        raise ValueError("fundamentals timeseries returned an API error")
     result = payload.get("timeseries", {}).get("result") or []
     mapped: dict[str, list[dict[str, Any]]] = {}
     for block in result:
@@ -524,6 +527,23 @@ def analyze_symbol(row: dict[str, Any], expected_date: str | None = None) -> dic
     high_252 = max((p["close"] for p in prices[-252:]), default=None)
     low_252 = min((p["close"] for p in prices[-252:]), default=None)
     market_cap = clean_number((latest(fundamentals.get("trailingMarketCap")) or {}).get("raw"))
+    market_cap_repair = None
+    # Only repair a successful but empty series. Provider errors and invalid
+    # observations still fail normally; no saved cap or share count is reused.
+    if expected_date and fundamentals.get("trailingMarketCap") == [] and not failures:
+        try:
+            url = f"https://finance.yahoo.com/quote/{urllib.parse.quote(symbol, safe='')}/"
+            request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html"})
+            with urllib.request.urlopen(request, timeout=30) as response:
+                document = response.read().decode("utf-8")
+            retrieved_at = now_iso()
+            market_cap, market_cap_repair = validated_market_cap(
+                document, symbol=symbol, chart=chart, expected_date=expected_date,
+                now=dt.datetime.fromisoformat(retrieved_at.replace("Z", "+00:00")),
+            )
+            market_cap_repair.update({"url": url, "retrievedAt": retrieved_at})
+        except Exception as exc:  # noqa: BLE001 - preserve fail-closed publication
+            failures.append(f"market cap quote: {type(exc).__name__}: {exc}")
     revenue = clean_number((latest(fundamentals.get("trailingTotalRevenue")) or {}).get("raw"))
     net_income = clean_number((latest(fundamentals.get("trailingNetIncome")) or {}).get("raw"))
     pe = clean_number((latest(fundamentals.get("trailingPeRatio")) or {}).get("raw"))
@@ -581,6 +601,7 @@ def analyze_symbol(row: dict[str, Any], expected_date: str | None = None) -> dic
             "failures": failures,
             "pricePoints": len(prices),
             "fundamentalTypes": sorted(fundamentals.keys()),
+            **({"marketCapRepair": market_cap_repair} if market_cap_repair else {}),
             **({"latestSessionRepair": chart["latestSessionRepair"]} if chart.get("latestSessionRepair") else {}),
         },
     }
@@ -768,7 +789,7 @@ def build_payload(rows: list[dict[str, Any]], constituent_meta: dict[str, Any], 
             "earningsGrowthVersion": "absolute_prior_base_change_v1",
             "earningsGrowth": "EPS·순이익 YoY는 전년 값이 양수일 때만 표시합니다. 전년 적자·0 기저는 흑자전환·적자축소 등 상태로 구분합니다. 점수는 (현재−전년)/|전년|의 개선 방향을 사용하며, 전년 값이 0이거나 비교 불가인 항목은 제외하고 나머지 가중치를 재정규화합니다.",
             "combined": "55% price momentum + 45% earnings/fundamental momentum when both are available.",
-            "weightCaveat": "Proxy weights are normalized by Yahoo trailing market cap and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
+            "weightCaveat": "Proxy weights are normalized by Yahoo market cap (timeseries or a validated current regular-session quote) and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
         },
     }
 
