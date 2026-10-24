@@ -13,7 +13,7 @@
   },
   "caveats": [
     "Research only; not investment advice.",
-    "Proxy weights are normalized by Yahoo trailing market cap and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
+    "Proxy weights are normalized by Yahoo market cap (timeseries or a validated current regular-session quote) and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
     "pending: verify https://sonchanggi.github.io/sox/ after GitHub Pages deployment"
   ],
   "contract": "quant-research-summary",
@@ -32,18 +32,18 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 83
+    "snapshotCount": 84
   },
-  "dataAsOf": "2026-10-22",
+  "dataAsOf": "2026-10-23",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-23T01:27:04Z",
+  "generatedAt": "2026-10-24T17:59:32Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
-    "Proxy weights are normalized by Yahoo trailing market cap and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
+    "Proxy weights are normalized by Yahoo market cap (timeseries or a validated current regular-session quote) and are not official SOX index weights unless official weights are present in the free Nasdaq payload.",
     "Nasdaq/Yahoo public endpoints can lag or omit fields; failed providers are captured in status.degradedReasons.",
     "pending: verify https://sonchanggi.github.io/sox/ after GitHub Pages deployment"
   ],
@@ -53,11 +53,11 @@
       "id": "MU",
       "label": "MU",
       "metrics": {
-        "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.783448275862069,
+        "earningsMomentum": 0.9962962962962962,
+        "priceMomentum": 0.8027586206896552,
         "rank": 1,
-        "score": 0.877793103448276,
-        "weight": 0.07822922714280338
+        "score": 0.8898505747126437,
+        "weight": 0.08001449006718658
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "NVDA",
-      "label": "NVDA",
-      "metrics": {
-        "earningsMomentum": 0.7689655172413793,
-        "priceMomentum": 0.7116748768472907,
-        "rank": 2,
-        "score": 0.7374556650246307,
-        "weight": 0.35188982518433515
-      },
-      "name": "NVIDIA",
-      "signals": [
-        "가격·실적 동반 강세"
-      ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "NVDA",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "ADI",
       "label": "ADI",
       "metrics": {
-        "earningsMomentum": 0.6672413793103449,
-        "priceMomentum": 0.781256157635468,
-        "rank": 3,
-        "score": 0.7299495073891626,
-        "weight": 0.012062859842684659
+        "earningsMomentum": 0.6679438058748404,
+        "priceMomentum": 0.8000985221674877,
+        "rank": 2,
+        "score": 0.7406288998357964,
+        "weight": 0.011925587243890663
       },
       "name": "Analog Devices",
       "signals": [
@@ -113,11 +93,11 @@
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6258620689655172,
-        "priceMomentum": 0.804408866995074,
-        "rank": 4,
-        "score": 0.7240628078817735,
-        "weight": 0.06483714675369781
+        "earningsMomentum": 0.6245210727969349,
+        "priceMomentum": 0.8335960591133005,
+        "rank": 3,
+        "score": 0.739512315270936,
+        "weight": 0.05269034354883787
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -130,14 +110,34 @@
       ]
     },
     {
+      "id": "NVDA",
+      "label": "NVDA",
+      "metrics": {
+        "earningsMomentum": 0.7651340996168582,
+        "priceMomentum": 0.6921428571428572,
+        "rank": 4,
+        "score": 0.7249889162561577,
+        "weight": 0.37261049030488735
+      },
+      "name": "NVIDIA",
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "NVDA",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "MRVL",
       "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.4517241379310345,
-        "priceMomentum": 0.8708128078817734,
+        "earningsMomentum": 0.4565772669220945,
+        "priceMomentum": 0.8673645320197044,
         "rank": 5,
-        "score": 0.6822229064039409,
-        "weight": 0.010878622316432105
+        "score": 0.68251026272578,
+        "weight": 0.011424463387146868
       },
       "name": "Marvell Technology",
       "signals": [
