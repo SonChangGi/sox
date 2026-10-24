@@ -34,6 +34,7 @@ from check_sox_freshness import is_us_equity_regular_session
 from earnings_growth import earnings_growth
 from sox_data_quality import collect_data_quality_failures
 from yahoo_market_cap import validated_market_cap
+import micron_ttm
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
@@ -546,6 +547,26 @@ def analyze_symbol(row: dict[str, Any], expected_date: str | None = None) -> dic
             failures.append(f"market cap quote: {type(exc).__name__}: {exc}")
     revenue = clean_number((latest(fundamentals.get("trailingTotalRevenue")) or {}).get("raw"))
     net_income = clean_number((latest(fundamentals.get("trailingNetIncome")) or {}).get("raw"))
+    ttm_repair = None
+    if (symbol == "MU" and expected_date and not failures
+            and fundamentals.get("trailingTotalRevenue") == []
+            and fundamentals.get("trailingNetIncome") == []):
+        try:
+            def read_public_html(url):
+                request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html"})
+                with urllib.request.urlopen(request, timeout=30) as response:
+                    return response.read().decode("utf-8")
+
+            quote_html = read_public_html(micron_ttm.QUOTE_URL)
+            index_html = read_public_html(micron_ttm.RESULTS_URL)
+            _year, release_url, _filing_url = micron_ttm.latest_documents(index_html)
+            release_html = read_public_html(release_url)
+            revenue, net_income, ttm_repair = micron_ttm.validate_ttm(
+                quote_html, index_html, release_html, chart=chart, expected_date=expected_date,
+                now=dt.datetime.fromisoformat(now_iso().replace("Z", "+00:00")),
+            )
+        except Exception as exc:  # noqa: BLE001 - partial data must remain unpublished
+            failures.append(f"TTM annual verification: {type(exc).__name__}: {exc}")
     pe = clean_number((latest(fundamentals.get("trailingPeRatio")) or {}).get("raw"))
     latest_q_rev = latest(fundamentals.get("quarterlyTotalRevenue"))
     latest_q_eps = latest(fundamentals.get("quarterlyDilutedEPS"))
@@ -602,6 +623,7 @@ def analyze_symbol(row: dict[str, Any], expected_date: str | None = None) -> dic
             "pricePoints": len(prices),
             "fundamentalTypes": sorted(fundamentals.keys()),
             **({"marketCapRepair": market_cap_repair} if market_cap_repair else {}),
+            **({"ttmRepair": ttm_repair} if ttm_repair else {}),
             **({"latestSessionRepair": chart["latestSessionRepair"]} if chart.get("latestSessionRepair") else {}),
         },
     }
