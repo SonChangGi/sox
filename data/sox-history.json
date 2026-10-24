@@ -24,7 +24,8 @@
             "pricePoints": 378,
             "ttmRepair": {
               "currency": "USD",
-              "fiscalBasis": "latest four fiscal quarters (52/53-week annual report)",
+              "fiscalBasis": "latest four fiscal quarters (52/53-week annual results release)",
+              "issuerFilingCheck": "latest issuer index link only; filing body not fetched or validated",
               "issuerFilingUrl": "https://d18rn0p25nwr6d.cloudfront.net/CIK-0000723125/5dafce68-38e8-4cad-a8f3-ab56d04d73fd.pdf",
               "issuerIndexUrl": "https://investors.micron.com/financials/quarterly-results/default.aspx",
               "issuerReleaseUrl": "https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results",
@@ -34,7 +35,7 @@
               "periodType": "TTM",
               "quoteUrl": "https://finance.yahoo.com/quote/MU/",
               "retrievedAt": "2026-10-24T17:59:32Z",
-              "source": "yahoo-quote-summary-issuer-annual-verified",
+              "source": "yahoo-quote-summary-issuer-annual-release-verified",
               "sourceFields": [
                 "financialData.totalRevenue.raw",
                 "defaultKeyStatistics.netIncomeToCommon.raw"

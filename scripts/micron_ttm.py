@@ -164,8 +164,11 @@ def validate_ttm(quote_html, index_html, release_html, *, chart, expected_date, 
         raise ValueError("issuer annual financial statements are missing or ambiguous")
     annual, operations = annual[0], operations[0]
     header = " ".join(" ".join(r) for r in annual[:3])
+    basis_labels = [cell for cell in annual[1][1:] if cell]
     if ("in millions, except per share amounts" not in header
-            or not re.search(r"GAAP.*Non-GAAP", header)
+            or len(basis_labels) != 2
+            or not re.fullmatch(r"GAAP(?: \(\d+\))?", basis_labels[0])
+            or not re.fullmatch(r"Non-GAAP(?: \(\d+\))?", basis_labels[1])
             or re.findall(r"FY-\d+", header) != [f"FY-{year % 100}", f"FY-{(year-1) % 100}"] * 2
             or "In millions, except per share amounts" not in " ".join(operations[0])
             or "Year Ended" not in " ".join(operations[1])):
@@ -185,12 +188,13 @@ def validate_ttm(quote_html, index_html, release_html, *, chart, expected_date, 
     if not math.isclose(number(finance.get("profitMargins")), income / revenue, abs_tol=0.000005, rel_tol=0):
         raise ValueError("Yahoo TTM margin disagrees with raw income/revenue")
     return revenue, income, {
-        "source": "yahoo-quote-summary-issuer-annual-verified", "periodType": "TTM",
-        "fiscalBasis": "latest four fiscal quarters (52/53-week annual report)",
+        "source": "yahoo-quote-summary-issuer-annual-release-verified", "periodType": "TTM",
+        "fiscalBasis": "latest four fiscal quarters (52/53-week annual results release)",
         "periodStart": (dates[-1] + dt.timedelta(days=1)).isoformat(), "periodEnd": end.isoformat(),
         "currency": "USD", "sourceFields": ["financialData.totalRevenue.raw", "defaultKeyStatistics.netIncomeToCommon.raw"],
         "quoteUrl": QUOTE_URL, "issuerIndexUrl": RESULTS_URL, "issuerReleaseUrl": release_url,
         "issuerFilingUrl": filing_url, "issuerStatementUnit": "USD millions",
+        "issuerFilingCheck": "latest issuer index link only; filing body not fetched or validated",
         "retrievedAt": now.isoformat().replace("+00:00", "Z"),
         "sourceSha256": {name: hashlib.sha256(doc.encode()).hexdigest() for name, doc in
                          (("quote", quote_html), ("issuerIndex", index_html), ("issuerRelease", release_html))},

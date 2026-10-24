@@ -46,7 +46,10 @@ class AnnualTtmValidationTests(unittest.TestCase):
         self.assertEqual(provenance["periodEnd"], "2026-09-03")
         self.assertEqual(provenance["currency"], "USD")
         self.assertTrue(provenance["issuerFilingUrl"].endswith('.pdf'))
-        self.assertEqual(len(provenance["sourceSha256"]), 3)
+        self.assertEqual(provenance["source"], "yahoo-quote-summary-issuer-annual-release-verified")
+        self.assertEqual(provenance["issuerFilingCheck"],
+                         "latest issuer index link only; filing body not fetched or validated")
+        self.assertEqual(set(provenance["sourceSha256"]), {"quote", "issuerIndex", "issuerRelease"})
         self.assertTrue(all(len(h) == 64 for h in provenance["sourceSha256"].values()))
 
     def test_wrong_entity_currency_exchange_or_quote_session_fails(self):
@@ -112,6 +115,21 @@ class AnnualTtmValidationTests(unittest.TestCase):
         ):
             self.release = changed
             with self.subTest(release=changed[:80]), self.assertRaises(ValueError): self.validate()
+
+    def test_annual_columns_require_separate_gaap_then_non_gaap_labels(self):
+        original = self.release
+        for label in ("Non-GAAP (1)", "Adjusted GAAP (1)", "GAAP Non-GAAP (1)", "GAAP (1) extra", ""):
+            self.release = original.replace("<td>GAAP (1)</td>", f"<td>{label}</td>")
+            with self.subTest(label=label), self.assertRaisesRegex(ValueError, "GAAP column"):
+                self.validate()
+        for changed in (
+            original.replace("<td>Non-GAAP (2)</td>", "<td>GAAP (2)</td>"),
+            original.replace("<td>GAAP (1)</td>", "<td>GAAP (1)</td><td>GAAP (1)</td>"),
+            original.replace("<td>GAAP (1)</td>", "<td>Non-GAAP (1)</td>").replace("<td>Non-GAAP (2)</td>", "<td>GAAP (2)</td>"),
+        ):
+            self.release = changed
+            with self.subTest(release=changed[:200]), self.assertRaisesRegex(ValueError, "GAAP column"):
+                self.validate()
 
     def test_provider_error_duplicate_summary_and_bad_margin_fail(self):
         original = micron_ttm.summary(self.quote)
