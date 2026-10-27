@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 84
+    "snapshotCount": 85
   },
-  "dataAsOf": "2026-10-23",
+  "dataAsOf": "2026-10-26",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-24T17:59:32Z",
+  "generatedAt": "2026-10-27T02:01:20Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -53,11 +53,11 @@
       "id": "MU",
       "label": "MU",
       "metrics": {
-        "earningsMomentum": 0.9962962962962962,
-        "priceMomentum": 0.8027586206896552,
+        "earningsMomentum": 0.993103448275862,
+        "priceMomentum": 0.8213793103448276,
         "rank": 1,
-        "score": 0.8898505747126437,
-        "weight": 0.08001449006718658
+        "score": 0.8986551724137932,
+        "weight": 0.07219348610263641
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "ADI",
-      "label": "ADI",
-      "metrics": {
-        "earningsMomentum": 0.6679438058748404,
-        "priceMomentum": 0.8000985221674877,
-        "rank": 2,
-        "score": 0.7406288998357964,
-        "weight": 0.011925587243890663
-      },
-      "name": "Analog Devices",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "ADI",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "AMD",
       "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.6245210727969349,
-        "priceMomentum": 0.8335960591133005,
-        "rank": 3,
-        "score": 0.739512315270936,
-        "weight": 0.05269034354883787
+        "earningsMomentum": 0.5879310344827586,
+        "priceMomentum": 0.8577339901477833,
+        "rank": 2,
+        "score": 0.7363226600985222,
+        "weight": 0.06134253373613743
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -110,41 +90,61 @@
       ]
     },
     {
+      "id": "ADI",
+      "label": "ADI",
+      "metrics": {
+        "earningsMomentum": 0.6189655172413793,
+        "priceMomentum": 0.8079064039408868,
+        "rank": 3,
+        "score": 0.7228830049261085,
+        "weight": 0.013778692841397383
+      },
+      "name": "Analog Devices",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "ADI",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "NVDA",
       "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.7651340996168582,
-        "priceMomentum": 0.6921428571428572,
+        "earningsMomentum": 0.7482758620689656,
+        "priceMomentum": 0.6431773399014779,
         "rank": 4,
-        "score": 0.7249889162561577,
-        "weight": 0.37261049030488735
+        "score": 0.6904716748768474,
+        "weight": 0.37039435367732865
       },
       "name": "NVIDIA",
       "signals": [
-        "가격·실적 동반 강세"
+        "중립/혼재"
       ],
-      "status": "가격·실적 동반 강세",
+      "status": "중립/혼재",
       "symbol": "NVDA",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
     },
     {
-      "id": "MRVL",
-      "label": "MRVL",
+      "id": "ASML",
+      "label": "ASML",
       "metrics": {
-        "earningsMomentum": 0.4565772669220945,
-        "priceMomentum": 0.8673645320197044,
+        "earningsMomentum": 0.6793103448275862,
+        "priceMomentum": 0.629088669950739,
         "rank": 5,
-        "score": 0.68251026272578,
-        "weight": 0.011424463387146868
+        "score": 0.6516884236453202,
+        "weight": 0.04424872284227081
       },
-      "name": "Marvell Technology",
+      "name": "ASML Holding",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "MRVL",
+      "symbol": "ASML",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
