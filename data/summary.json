@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 85
+    "snapshotCount": 86
   },
-  "dataAsOf": "2026-10-26",
+  "dataAsOf": "2026-10-27",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-27T02:01:20Z",
+  "generatedAt": "2026-10-28T00:43:37Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8213793103448276,
+        "priceMomentum": 0.8310344827586207,
         "rank": 1,
-        "score": 0.8986551724137932,
-        "weight": 0.07219348610263641
+        "score": 0.9039655172413794,
+        "weight": 0.07266924344299272
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.5879310344827586,
-        "priceMomentum": 0.8577339901477833,
+        "priceMomentum": 0.8561330049261084,
         "rank": 2,
-        "score": 0.7363226600985222,
-        "weight": 0.06134253373613743
+        "score": 0.7354421182266011,
+        "weight": 0.06164122908557922
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "ADI",
       "label": "ADI",
       "metrics": {
-        "earningsMomentum": 0.6189655172413793,
-        "priceMomentum": 0.8079064039408868,
+        "earningsMomentum": 0.6172413793103448,
+        "priceMomentum": 0.8184729064039409,
         "rank": 3,
-        "score": 0.7228830049261085,
-        "weight": 0.013778692841397383
+        "score": 0.7279187192118227,
+        "weight": 0.014048804734357753
       },
       "name": "Analog Devices",
       "signals": [
@@ -110,41 +110,41 @@
       ]
     },
     {
-      "id": "NVDA",
-      "label": "NVDA",
+      "id": "ALAB",
+      "label": "ALAB",
       "metrics": {
-        "earningsMomentum": 0.7482758620689656,
-        "priceMomentum": 0.6431773399014779,
+        "earningsMomentum": 0.7741379310344827,
+        "priceMomentum": 0.6338916256157635,
         "rank": 4,
-        "score": 0.6904716748768474,
-        "weight": 0.37039435367732865
+        "score": 0.6970024630541872,
+        "weight": 0.003199761146296597
       },
-      "name": "NVIDIA",
+      "name": "Astera Labs",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "NVDA",
+      "symbol": "ALAB",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
     },
     {
-      "id": "ASML",
-      "label": "ASML",
+      "id": "MRVL",
+      "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.6793103448275862,
-        "priceMomentum": 0.629088669950739,
+        "earningsMomentum": 0.3758620689655172,
+        "priceMomentum": 0.8859852216748769,
         "rank": 5,
-        "score": 0.6516884236453202,
-        "weight": 0.04424872284227081
+        "score": 0.6564298029556651,
+        "weight": 0.014932261860058565
       },
-      "name": "ASML Holding",
+      "name": "Marvell Technology",
       "signals": [
-        "중립/혼재"
+        "가격 선행 / 실적 확인"
       ],
-      "status": "중립/혼재",
-      "symbol": "ASML",
+      "status": "가격 선행 / 실적 확인",
+      "symbol": "MRVL",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
