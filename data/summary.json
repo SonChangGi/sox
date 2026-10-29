@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 86
+    "snapshotCount": 87
   },
-  "dataAsOf": "2026-10-27",
+  "dataAsOf": "2026-10-28",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-28T00:43:37Z",
+  "generatedAt": "2026-10-29T01:13:18Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8310344827586207,
+        "priceMomentum": 0.8496551724137931,
         "rank": 1,
-        "score": 0.9039655172413794,
-        "weight": 0.07266924344299272
+        "score": 0.9142068965517242,
+        "weight": 0.07305906818871884
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.5879310344827586,
-        "priceMomentum": 0.8561330049261084,
+        "priceMomentum": 0.8751724137931035,
         "rank": 2,
-        "score": 0.7354421182266011,
-        "weight": 0.06164122908557922
+        "score": 0.7459137931034483,
+        "weight": 0.06358895805233608
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "ADI",
       "label": "ADI",
       "metrics": {
-        "earningsMomentum": 0.6172413793103448,
-        "priceMomentum": 0.8184729064039409,
+        "earningsMomentum": 0.6189655172413793,
+        "priceMomentum": 0.823448275862069,
         "rank": 3,
-        "score": 0.7279187192118227,
-        "weight": 0.014048804734357753
+        "score": 0.7314310344827587,
+        "weight": 0.014329942159701655
       },
       "name": "Analog Devices",
       "signals": [
@@ -114,10 +114,10 @@
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7741379310344827,
-        "priceMomentum": 0.6338916256157635,
+        "priceMomentum": 0.6172413793103448,
         "rank": 4,
-        "score": 0.6970024630541872,
-        "weight": 0.003199761146296597
+        "score": 0.6878448275862069,
+        "weight": 0.0034579624821344727
       },
       "name": "Astera Labs",
       "signals": [
@@ -133,11 +133,11 @@
       "id": "MRVL",
       "label": "MRVL",
       "metrics": {
-        "earningsMomentum": 0.3758620689655172,
-        "priceMomentum": 0.8859852216748769,
+        "earningsMomentum": 0.36896551724137927,
+        "priceMomentum": 0.8862068965517241,
         "rank": 5,
-        "score": 0.6564298029556651,
-        "weight": 0.014932261860058565
+        "score": 0.653448275862069,
+        "weight": 0.015219006713591143
       },
       "name": "Marvell Technology",
       "signals": [
