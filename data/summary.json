@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 87
+    "snapshotCount": 88
   },
-  "dataAsOf": "2026-10-28",
+  "dataAsOf": "2026-10-29",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-29T01:13:18Z",
+  "generatedAt": "2026-10-30T02:34:10Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8496551724137931,
+        "priceMomentum": 0.8213793103448276,
         "rank": 1,
-        "score": 0.9142068965517242,
-        "weight": 0.07305906818871884
+        "score": 0.8986551724137932,
+        "weight": 0.07302247341596939
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.5879310344827586,
-        "priceMomentum": 0.8751724137931035,
+        "priceMomentum": 0.8710344827586207,
         "rank": 2,
-        "score": 0.7459137931034483,
-        "weight": 0.06358895805233608
+        "score": 0.7436379310344828,
+        "weight": 0.06523248439656353
       },
       "name": "Advanced Micro Devices",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "ADI",
       "label": "ADI",
       "metrics": {
-        "earningsMomentum": 0.6189655172413793,
-        "priceMomentum": 0.823448275862069,
+        "earningsMomentum": 0.6172413793103448,
+        "priceMomentum": 0.8324137931034483,
         "rank": 3,
-        "score": 0.7314310344827587,
-        "weight": 0.014329942159701655
+        "score": 0.7355862068965517,
+        "weight": 0.014336038659685486
       },
       "name": "Analog Devices",
       "signals": [
@@ -110,14 +110,34 @@
       ]
     },
     {
+      "id": "TXN",
+      "label": "TXN",
+      "metrics": {
+        "earningsMomentum": 0.45517241379310347,
+        "priceMomentum": 0.8517241379310345,
+        "rank": 4,
+        "score": 0.6732758620689656,
+        "weight": 0.019567997676014033
+      },
+      "name": "Texas Instruments",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "TXN",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "ALAB",
       "label": "ALAB",
       "metrics": {
         "earningsMomentum": 0.7741379310344827,
-        "priceMomentum": 0.6172413793103448,
-        "rank": 4,
-        "score": 0.6878448275862069,
-        "weight": 0.0034579624821344727
+        "priceMomentum": 0.5855172413793104,
+        "rank": 5,
+        "score": 0.6703965517241379,
+        "weight": 0.003561804244920231
       },
       "name": "Astera Labs",
       "signals": [
@@ -125,26 +145,6 @@
       ],
       "status": "중립/혼재",
       "symbol": "ALAB",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
-      "id": "MRVL",
-      "label": "MRVL",
-      "metrics": {
-        "earningsMomentum": 0.36896551724137927,
-        "priceMomentum": 0.8862068965517241,
-        "rank": 5,
-        "score": 0.653448275862069,
-        "weight": 0.015219006713591143
-      },
-      "name": "Marvell Technology",
-      "signals": [
-        "가격 선행 / 실적 확인"
-      ],
-      "status": "가격 선행 / 실적 확인",
-      "symbol": "MRVL",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
