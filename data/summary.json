@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 88
+    "snapshotCount": 89
   },
-  "dataAsOf": "2026-10-29",
+  "dataAsOf": "2026-10-30",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-30T02:34:10Z",
+  "generatedAt": "2026-10-31T02:18:07Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8213793103448276,
+        "priceMomentum": 0.8337931034482758,
         "rank": 1,
-        "score": 0.8986551724137932,
-        "weight": 0.07302247341596939
+        "score": 0.9054827586206897,
+        "weight": 0.07173077054007629
       },
       "name": "Micron Technology",
       "signals": [
@@ -70,34 +70,14 @@
       ]
     },
     {
-      "id": "AMD",
-      "label": "AMD",
-      "metrics": {
-        "earningsMomentum": 0.5879310344827586,
-        "priceMomentum": 0.8710344827586207,
-        "rank": 2,
-        "score": 0.7436379310344828,
-        "weight": 0.06523248439656353
-      },
-      "name": "Advanced Micro Devices",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "AMD",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "ADI",
       "label": "ADI",
       "metrics": {
         "earningsMomentum": 0.6172413793103448,
-        "priceMomentum": 0.8324137931034483,
-        "rank": 3,
-        "score": 0.7355862068965517,
-        "weight": 0.014336038659685486
+        "priceMomentum": 0.876551724137931,
+        "rank": 2,
+        "score": 0.7598620689655173,
+        "weight": 0.015044780314308679
       },
       "name": "Analog Devices",
       "signals": [
@@ -110,41 +90,61 @@
       ]
     },
     {
-      "id": "TXN",
-      "label": "TXN",
+      "id": "AMD",
+      "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.45517241379310347,
-        "priceMomentum": 0.8517241379310345,
-        "rank": 4,
-        "score": 0.6732758620689656,
-        "weight": 0.019567997676014033
+        "earningsMomentum": 0.5879310344827586,
+        "priceMomentum": 0.8131034482758621,
+        "rank": 3,
+        "score": 0.7117758620689656,
+        "weight": 0.06625976314390701
       },
-      "name": "Texas Instruments",
+      "name": "Advanced Micro Devices",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
+      "symbol": "AMD",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "TXN",
+      "label": "TXN",
+      "metrics": {
+        "earningsMomentum": 0.4431034482758621,
+        "priceMomentum": 0.9055172413793104,
+        "rank": 4,
+        "score": 0.6974310344827588,
+        "weight": 0.020501691639998914
+      },
+      "name": "Texas Instruments",
+      "signals": [
+        "가격 선행 / 실적 확인"
+      ],
+      "status": "가격 선행 / 실적 확인",
       "symbol": "TXN",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
     },
     {
-      "id": "ALAB",
-      "label": "ALAB",
+      "id": "ASML",
+      "label": "ASML",
       "metrics": {
-        "earningsMomentum": 0.7741379310344827,
-        "priceMomentum": 0.5855172413793104,
+        "earningsMomentum": 0.6741379310344828,
+        "priceMomentum": 0.6565517241379311,
         "rank": 5,
-        "score": 0.6703965517241379,
-        "weight": 0.003561804244920231
+        "score": 0.6644655172413794,
+        "weight": 0.04636138801012735
       },
-      "name": "Astera Labs",
+      "name": "ASML Holding",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "ALAB",
+      "symbol": "ASML",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
