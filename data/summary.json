@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 89
+    "snapshotCount": 90
   },
-  "dataAsOf": "2026-10-30",
+  "dataAsOf": "2026-11-02",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-10-31T02:18:07Z",
+  "generatedAt": "2026-11-03T03:03:55Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.8337931034482758,
+        "priceMomentum": 0.8103448275862069,
         "rank": 1,
-        "score": 0.9054827586206897,
-        "weight": 0.07173077054007629
+        "score": 0.8925862068965518,
+        "weight": 0.07404361677387004
       },
       "name": "Micron Technology",
       "signals": [
@@ -74,10 +74,10 @@
       "label": "ADI",
       "metrics": {
         "earningsMomentum": 0.6172413793103448,
-        "priceMomentum": 0.876551724137931,
+        "priceMomentum": 0.8903448275862069,
         "rank": 2,
-        "score": 0.7598620689655173,
-        "weight": 0.015044780314308679
+        "score": 0.7674482758620691,
+        "weight": 0.014950301051927534
       },
       "name": "Analog Devices",
       "signals": [
@@ -90,34 +90,14 @@
       ]
     },
     {
-      "id": "AMD",
-      "label": "AMD",
-      "metrics": {
-        "earningsMomentum": 0.5879310344827586,
-        "priceMomentum": 0.8131034482758621,
-        "rank": 3,
-        "score": 0.7117758620689656,
-        "weight": 0.06625976314390701
-      },
-      "name": "Advanced Micro Devices",
-      "signals": [
-        "중립/혼재"
-      ],
-      "status": "중립/혼재",
-      "symbol": "AMD",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
       "id": "TXN",
       "label": "TXN",
       "metrics": {
-        "earningsMomentum": 0.4431034482758621,
-        "priceMomentum": 0.9055172413793104,
-        "rank": 4,
-        "score": 0.6974310344827588,
-        "weight": 0.020501691639998914
+        "earningsMomentum": 0.4448275862068966,
+        "priceMomentum": 0.9317241379310346,
+        "rank": 3,
+        "score": 0.7126206896551726,
+        "weight": 0.02034446750746432
       },
       "name": "Texas Instruments",
       "signals": [
@@ -130,21 +110,41 @@
       ]
     },
     {
-      "id": "ASML",
-      "label": "ASML",
+      "id": "NVDA",
+      "label": "NVDA",
       "metrics": {
-        "earningsMomentum": 0.6741379310344828,
-        "priceMomentum": 0.6565517241379311,
-        "rank": 5,
-        "score": 0.6644655172413794,
-        "weight": 0.04636138801012735
+        "earningsMomentum": 0.7482758620689656,
+        "priceMomentum": 0.6255172413793104,
+        "rank": 4,
+        "score": 0.6807586206896552,
+        "weight": 0.3655111137177789
       },
-      "name": "ASML Holding",
+      "name": "NVIDIA",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "ASML",
+      "symbol": "NVDA",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
+      "id": "AMD",
+      "label": "AMD",
+      "metrics": {
+        "earningsMomentum": 0.5879310344827586,
+        "priceMomentum": 0.7558620689655172,
+        "rank": 5,
+        "score": 0.680293103448276,
+        "weight": 0.06095548258620397
+      },
+      "name": "Advanced Micro Devices",
+      "signals": [
+        "중립/혼재"
+      ],
+      "status": "중립/혼재",
+      "symbol": "AMD",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
