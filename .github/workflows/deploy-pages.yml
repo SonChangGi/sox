@@ -26,9 +26,18 @@ jobs:
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    outputs:
+      wait_outcome: ${{ steps.wait.outcome }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Check if source collection requires admission
+        id: initial_freshness
+        run: python3 scripts/check_sox_freshness.py --event-name schedule >> "$GITHUB_OUTPUT"
       - name: Wait for earlier peer data pipelines
+        id: wait
+        if: steps.initial_freshness.outputs.should_collect != 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/automation_admission.py
@@ -86,7 +95,7 @@ jobs:
           echo "delivery_reason=$reason" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: freshness
+    needs: [admission, freshness]
     if: needs.freshness.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -101,8 +110,8 @@ jobs:
         with:
           ref: ${{ needs.freshness.outputs.source_sha }}
           fetch-depth: 0
-      - name: Recheck admission when retrying failed jobs only
-        if: github.run_attempt != '1'
+      - name: Recheck admission if collection becomes necessary or is retried
+        if: needs.freshness.outputs.should_collect == 'true' && (needs.admission.outputs.wait_outcome != 'success' || github.run_attempt != '1')
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/automation_admission.py --max-wait-seconds 300

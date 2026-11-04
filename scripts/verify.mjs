@@ -115,6 +115,8 @@ check(workflow.includes('actions/upload-pages-artifact@fc324d3547104276b827a68af
 check(workflow.includes('actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5'), 'workflow pins Node24 deploy-pages v5 to the reviewed commit');
 check(workflow.includes('Require the production branch') && workflow.includes('if [[ "$GITHUB_REF_NAME" != "$DEFAULT_BRANCH" ]]'), 'workflow rejects non-production manual refs');
 check(workflow.includes('  freshness:\n    needs: admission'), 'workflow checks freshness after cross-project admission');
+check(workflow.includes("if: steps.initial_freshness.outputs.should_collect != 'false'"), 'already-current SOX data bypasses the collection queue');
+check(workflow.includes("needs.admission.outputs.wait_outcome != 'success' || github.run_attempt != '1'"), 'collection rechecks admission when the first pass skipped waiting or the job is retried');
 check(workflow.includes('scripts/automation_admission.py') && workflow.includes('actions: read'), 'workflow coordinates delayed peer runs through read-only API access');
 check(workflow.includes('scripts/check_sox_freshness.py'), 'workflow uses freshness gate before retries');
 check(workflow.includes("if: needs.freshness.outputs.should_deploy == 'true'"), 'workflow skips build/deploy for fresh scheduled retries');
