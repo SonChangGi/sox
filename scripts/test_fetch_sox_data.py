@@ -303,6 +303,36 @@ class ProviderChartRegressionTests(unittest.TestCase):
 
 
 class CollectorQualityRegressionTests(unittest.TestCase):
+    def test_empty_ttm_is_reconstructed_from_four_matching_reported_quarters(self) -> None:
+        data = fundamentals()
+        data["trailingTotalRevenue"] = []
+        data["trailingNetIncome"] = []
+        with patch.object(collector, "fetch_chart", return_value=chart()), \
+             patch.object(collector, "fetch_fundamentals", return_value=data), \
+             patch.object(collector.time, "sleep"):
+            row = collector.analyze_symbol({"ticker": "TSM"}, AS_OF)
+        self.assertEqual(row["metrics"]["trailingRevenue"], 480_000_000)
+        self.assertEqual(row["metrics"]["trailingNetIncome"], 60_000_000)
+        self.assertEqual(row["metrics"]["netMargin"], 0.125)
+        self.assertEqual(row["dataQuality"]["ttmRepair"]["periodEnd"], "2026-06-30")
+
+    def test_ttm_reconstruction_rejects_gaps_duplicates_currency_and_future_periods(self) -> None:
+        data = fundamentals()
+        for changes, expected in (
+            ({"asOfDate": "2025-12-31"}, AS_OF),
+            ({"asOfDate": "2025-10-30"}, AS_OF),
+            ({"currencyCode": "TWD"}, AS_OF),
+            ({}, "2026-06-29"),
+        ):
+            with self.subTest(changes=changes, expected=expected):
+                candidate = deepcopy(data)
+                for field in ("quarterlyTotalRevenue", "quarterlyNetIncome"):
+                    candidate[field][-4].update(changes)
+                if "currencyCode" in changes:
+                    candidate["quarterlyNetIncome"][-4]["currencyCode"] = "USD"
+                with self.assertRaises(ValueError):
+                    collector.trailing_from_quarters(candidate, expected)
+
     def test_all_current_rows_are_ok_but_one_provider_failure_is_degraded(self) -> None:
         with provider_mocks():
             healthy = analyze_rows()

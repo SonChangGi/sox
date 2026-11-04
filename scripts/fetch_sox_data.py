@@ -420,6 +420,37 @@ def latest(entries: list[dict[str, Any]] | None) -> dict[str, Any] | None:
     return entries[-1]
 
 
+def trailing_from_quarters(fundamentals: dict[str, Any], expected_date: str) -> tuple[float, float, dict[str, Any]]:
+    """Reconstruct same-currency TTM totals from four matched fiscal quarters."""
+    revenue = fundamentals.get("quarterlyTotalRevenue", [])[-4:]
+    income = fundamentals.get("quarterlyNetIncome", [])[-4:]
+    if len(revenue) != 4 or len(income) != 4:
+        raise ValueError("requires four quarters of both revenue and net income")
+
+    dates = [dt.date.fromisoformat(row["asOfDate"]) for row in revenue]
+    if [day.isoformat() for day in dates] != [row["asOfDate"] for row in income]:
+        raise ValueError("quarterly revenue and net income periods differ")
+    if any(not 77 <= (end - start).days <= 105 for start, end in zip(dates, dates[1:])):
+        raise ValueError("fiscal quarters are duplicated or not consecutive")
+    if dates[-1] > dt.date.fromisoformat(expected_date):
+        raise ValueError("quarter end is after the requested market session")
+
+    currency = revenue[0].get("currencyCode")
+    if not currency or any(row.get("periodType") != "3M" or row.get("currencyCode") != currency
+                           for row in revenue + income):
+        raise ValueError("requires comparable three-month values in one reported currency")
+    values = [clean_number(row.get("raw")) for row in revenue + income]
+    if any(value is None for value in values) or any(value <= 0 for value in values[:4]):
+        raise ValueError("requires finite values and positive quarterly revenue")
+    return math.fsum(values[:4]), math.fsum(values[4:]), {
+        "method": "yahoo_four_reported_quarters",
+        "periodEnd": dates[-1].isoformat(),
+        "quarterEnds": [day.isoformat() for day in dates],
+        "currency": currency,
+        "retrievedAt": now_iso(),
+    }
+
+
 def yoy(entries: list[dict[str, Any]] | None) -> float | None:
     """Compare quarterly observations with a unique comparable prior-year period.
 
@@ -567,6 +598,13 @@ def analyze_symbol(row: dict[str, Any], expected_date: str | None = None) -> dic
             )
         except Exception as exc:  # noqa: BLE001 - partial data must remain unpublished
             failures.append(f"TTM annual verification: {type(exc).__name__}: {exc}")
+    elif (expected_date and not failures
+          and fundamentals.get("trailingTotalRevenue") == []
+          and fundamentals.get("trailingNetIncome") == []):
+        try:
+            revenue, net_income, ttm_repair = trailing_from_quarters(fundamentals, expected_date)
+        except (KeyError, TypeError, ValueError, OverflowError) as exc:
+            failures.append(f"TTM quarterly verification: {type(exc).__name__}: {exc}")
     pe = clean_number((latest(fundamentals.get("trailingPeRatio")) or {}).get("raw"))
     latest_q_rev = latest(fundamentals.get("quarterlyTotalRevenue"))
     latest_q_eps = latest(fundamentals.get("quarterlyDilutedEPS"))
