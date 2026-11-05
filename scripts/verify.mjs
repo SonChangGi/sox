@@ -106,7 +106,7 @@ check(app.includes("row[key] === 0 ? 0"), 'zero-value bars render at zero magnit
 check(app.includes('data-table-ticker'), 'static fallback coordinates chart selection with the table');
 check(!app.includes("metricCard('Stored dates'") && !app.includes("metricCard('Weight method'") && !app.includes("metricCard('Status'"), 'operational metrics are removed from the primary result grid');
 check(['43 21 * * 1-5', '13 23 * * 1-5', '13 1 * * 2-6', '43 4 * * 2-6'].every(slot => workflow.includes(slot)), 'workflow separates primary 06:43 KST and 08:13/10:13/13:43 retry slots');
-check(actionUses.length === 8, 'workflow has the expected eight first-party action references including admission');
+check(actionUses.length === 13, 'workflow has the expected thirteen immutable action references including UI-only deployment');
 check(mutableActionUses.length === 0, `workflow action references use immutable 40-character SHAs (${mutableActionUses.map((match) => match[0]).join(', ')})`);
 check(workflow.includes('actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6'), 'workflow pins Node24 checkout v6 to the reviewed commit');
 check(workflow.includes('actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6'), 'workflow pins Node24 setup-node v6 to the reviewed commit');
@@ -135,7 +135,15 @@ check(workflow.includes('source_sha: ${{ steps.public_contract.outputs.source_sh
 check(workflow.includes('Verify live public data bytes'), 'workflow verifies live Pages data after deployment');
 check(workflow.includes('scripts/verify_publication.py') && publicVerifier.includes('hashlib.sha256'), 'public verifier compares every release file by SHA256');
 check(publicVerifier.includes('event_name="schedule"'), 'public readback must also pass the freshness gate');
-check(workflow.includes('public-site-health:') && workflow.includes("if: ${{ always() }}"), 'all events report pipeline outcome even after failure');
+check(workflow.includes('public-site-health:') && workflow.includes("always() && !(github.event_name == 'workflow_dispatch' && inputs.ui_only)"), 'collection events report pipeline outcome even after failure; UI-only delivery reports separately');
+const uiJob = workflow.split('  deploy-ui:')[1] || '';
+check(workflow.includes('default: false\n        type: boolean'), 'UI-only deployment is an explicit opt-in');
+check(workflow.includes("github.ref_name == github.event.repository.default_branch && !(github.event_name == 'workflow_dispatch' && inputs.ui_only)"), 'UI-only dispatch cannot enter the collection admission path');
+check(uiJob.includes("github.event_name == 'workflow_dispatch' && inputs.ui_only && github.ref_name == github.event.repository.default_branch"), 'UI-only deployment requires an explicit dispatch on the production branch');
+check(!/refresh_sox_pipeline|check_sox_freshness|automation_admission|git push/.test(uiJob), 'UI-only deployment does not collect, refresh data state, or write source');
+check(uiJob.includes('sha256sum --check') && uiJob.includes('git status --porcelain -- data'), 'UI-only verification preserves all existing data bytes and paths');
+check(uiJob.includes('cmp --silent "_site/$relative_path" "$readback"'), 'UI-only public readback compares all release bytes');
+check((uiJob.match(/git rev-parse FETCH_HEAD/g) || []).length === 2, 'UI-only deployment rejects a superseded source before build and publication');
 check(workflow.includes('Report collection and delivery outcomes separately') && workflow.includes('GITHUB_STEP_SUMMARY'), 'automation reports actual collection, validation and deployment outcomes separately');
 check(freshnessScript.includes('event not in {"schedule", "push", "workflow_dispatch"}'), 'push and manual requests use the same strict date and quality decision as scheduled retries');
 check(freshnessScript.includes('us_equity_holidays'), 'freshness gate understands U.S. equity market holidays');

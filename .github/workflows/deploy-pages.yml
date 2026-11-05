@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      ui_only:
+        description: Deploy UI with the exact existing data; do not collect
+        required: false
+        default: false
+        type: boolean
   schedule:
     # KST Tue-Sat: 06:43 primary, 08:13/10:13/13:43 bounded recovery.
     - cron: "43 21 * * 1-5"
@@ -23,7 +29,7 @@ concurrency:
 
 jobs:
   admission:
-    if: github.ref_name == github.event.repository.default_branch
+    if: github.ref_name == github.event.repository.default_branch && !(github.event_name == 'workflow_dispatch' && inputs.ui_only)
     runs-on: ubuntu-latest
     timeout-minutes: 50
     outputs:
@@ -212,7 +218,7 @@ jobs:
 
   public-site-health:
     needs: [freshness, build, deploy]
-    if: ${{ always() }}
+    if: ${{ always() && !(github.event_name == 'workflow_dispatch' && inputs.ui_only) }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
@@ -258,3 +264,75 @@ jobs:
             echo "::error::SOX collection or delivery is incomplete. Existing page availability does not establish freshness."
             exit 1
           fi
+
+  deploy-ui:
+    if: github.event_name == 'workflow_dispatch' && inputs.ui_only && github.ref_name == github.event.repository.default_branch
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: '3.12'
+      - name: Verify UI without modifying existing data
+        shell: bash
+        run: |
+          set -euo pipefail
+          git ls-files data | xargs sha256sum > "$RUNNER_TEMP/sox-ui-data.sha256"
+          npm test
+          sha256sum --check "$RUNNER_TEMP/sox-ui-data.sha256"
+          test -z "$(git status --porcelain -- data)"
+      - name: Require the requested revision to remain current
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git fetch origin "$DEFAULT_BRANCH"
+          test "$(git rev-parse FETCH_HEAD)" = "$GITHUB_SHA"
+      - name: Assemble UI with unchanged existing data
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp -R assets data _site/
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: _site
+      - name: Recheck the current source before publication
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git fetch origin "$DEFAULT_BRANCH"
+          test "$(git rev-parse FETCH_HEAD)" = "$GITHUB_SHA"
+      - name: Deploy the verified UI
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+      - name: Verify public UI and preserved data bytes
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          paths=(index.html assets/app.js assets/styles.css assets/shared-nav.css data/sox-analysis.json data/sox-history.json data/summary.json)
+          for relative_path in "${paths[@]}"; do
+            matched=false
+            for attempt in 1 2 3 4 5 6; do
+              readback="$RUNNER_TEMP/sox-ui-readback"
+              if curl --fail --silent --show-error --retry 2 --max-time 30 -H 'Cache-Control: no-cache' "${PAGE_URL%/}/${relative_path}?ui_readback=${GITHUB_RUN_ID}-${attempt}" -o "$readback" && cmp --silent "_site/$relative_path" "$readback"; then
+                matched=true
+                break
+              fi
+              sleep 5
+            done
+            if [[ "$matched" != "true" ]]; then
+              echo "Public bytes do not match: $relative_path" >&2
+              exit 1
+            fi
+          done
+          echo 'UI published; all release bytes match. Existing data preserved without collection.' >> "$GITHUB_STEP_SUMMARY"

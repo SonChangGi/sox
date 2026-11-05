@@ -629,6 +629,37 @@ h3 {
   inset: 24px;
 }
 
+html[data-quant-preview='silicon'] body[data-qd-project='sox'] .quad-point {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  padding: 0 !important;
+  background: var(--qd-accent, #66d9ed) !important;
+  border: 2px solid var(--qd-surface, #111416) !important;
+  overflow: visible !important;
+}
+html[data-quant-preview='silicon'] body[data-qd-project='sox'] .chart-grid > .panel > :is(.bar-chart, .quadrant) {
+  margin-top: 0 !important;
+  flex-shrink: 0 !important;
+}
+html[data-quant-preview='silicon'] body[data-qd-project='sox'] .quad-point > span {
+  position: absolute;
+  bottom: 20px;
+  padding: 3px 6px;
+  border: 1px solid var(--qd-border, #30363b);
+  border-radius: 4px;
+  background: var(--qd-surface, #111416);
+  color: var(--qd-text, #eef1f2);
+  font-size: 12px;
+  visibility: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+}
+html[data-quant-preview='silicon'] body[data-qd-project='sox'] .quad-point:is(:hover,:focus-visible,.is-active) > span {
+  visibility: visible;
+}
+
 .quad-point {
   position: absolute;
   display: grid;

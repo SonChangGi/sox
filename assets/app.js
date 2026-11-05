@@ -275,6 +275,7 @@
 
   function renderBarChart(target, rows, key, options = {}) {
     if (!target) return;
+    window.QuantRange?.entries.get(`sox-${key}`)?.destroy();
     const valid = rows.filter((row) => isFiniteNumber(row[key])).slice(0, 8);
     if (!valid.length) {
       target.classList.remove('skeleton-box');
@@ -283,54 +284,61 @@
     }
     const max = Math.max(...valid.map((row) => Math.abs(row[key]) || 0), 0.00001);
     target.classList.remove('skeleton-box');
-    target.innerHTML = valid.map((row) => {
+    target.innerHTML = valid.map((row, index) => {
       const width = row[key] === 0 ? 0 : Math.abs(row[key]) / max * 100;
       const value = options.kind === 'score' ? formatScore(row[key]) : formatPercent(row[key]);
       const active = row.ticker === activeTicker();
       const pinned = row.ticker === state.pinnedTicker;
-      return `<button class="bar-row${active ? ' is-active' : ''}${pinned ? ' is-pinned' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${pinned}" aria-label="${escapeAttr(`${row.ticker} ${value}`)}">
+      return `<button class="bar-row${active ? ' is-active' : ''}${pinned ? ' is-pinned' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" data-qr-series-id="${escapeAttr(key)}" data-qr-point-id="${escapeAttr(row.ticker)}" data-qr-index="${index}" aria-pressed="${pinned}" aria-label="${escapeAttr(`${row.ticker} ${value}`)}">
         <span class="bar-label">${escapeHtml(row.ticker)}</span>
         <span class="bar-track"><span class="bar-fill ${options.color || ''}" style="width:${width.toFixed(2)}%"></span></span>
         <span class="bar-value">${value}</span>
       </button>`;
     }).join('');
+    if (window.QuantRange) {
+      const buttons = [...target.querySelectorAll('.bar-row')];
+      const title = target.closest('article')?.querySelector('h3')?.textContent || key;
+      window.QuantRange.register({
+        id: `sox-${key}`, element: target, host: target.parentElement, kind: 'category',
+        onSeriesFocus(id, context) { if (id === null && context.origin === 'clear') clearNativeChartSelection(); },
+        onPointChange(point) {
+          const ticker = point?.pointId || valid[point?.index]?.ticker;
+          if (ticker) { state.pinnedTicker = ticker; state.previewTicker = ''; syncChartSelection(); }
+        },
+        domain: valid.map(row => ({ key: row.ticker, label: row.ticker })),
+        series: [{ id: key, label: title, color: options.color === 'green' ? 'var(--green)' : options.color === 'amber' ? 'var(--amber)' : 'var(--accent)', unit: options.kind === 'percent' ? '%' : '점',
+          measure: 'absolute', aggregate: options.kind === 'percent' ? 'sum' : 'range',
+          points: valid.map(row => ({ key: row.ticker, value: row[key] * 100 })) }],
+        locate(event) {
+          let index = 0, nearest = Infinity;
+          buttons.forEach((button, i) => { const box = button.getBoundingClientRect();
+            const distance = Math.abs(event.clientY - box.top - box.height / 2);
+            if (distance < nearest) { nearest = distance; index = i; }
+          });
+          return { index };
+        },
+        project(selection) {
+          const box = target.getBoundingClientRect();
+          const first = buttons[Math.min(selection.start.index, selection.end.index)].getBoundingClientRect();
+          const last = buttons[Math.max(selection.start.index, selection.end.index)].getBoundingClientRect();
+          return { left: 0, top: first.top - box.top, width: box.width, height: last.bottom - first.top };
+        },
+      });
+    }
   }
 
   function layoutQuadrantRows(rows) {
-    const model = { width: 240, height: 190 };
-    const minimumDistance = 38;
-    const offsets = [];
-    for (let yIndex = -5; yIndex <= 5; yIndex += 1) {
-      for (let xIndex = -5; xIndex <= 5; xIndex += 1) {
-        offsets.push({ x: xIndex * minimumDistance, y: yIndex * minimumDistance });
-      }
-    }
-    offsets.sort((left, right) => Math.hypot(left.x, left.y) - Math.hypot(right.x, right.y) || left.y - right.y || left.x - right.x);
-    const occupied = [];
-    return rows.map((row) => {
-      const baseX = clamp(row.scores.priceMomentum, 0, 1) * model.width;
-      const baseY = (1 - clamp(row.scores.earningsMomentum, 0, 1)) * model.height;
-      const position = offsets
-        .map((offset) => ({
-          x: clamp(baseX + offset.x, 0, model.width),
-          y: clamp(baseY + offset.y, 0, model.height),
-        }))
-        .find((candidate) => occupied.every((point) =>
-          Math.abs(candidate.x - point.x) >= minimumDistance
-          || Math.abs(candidate.y - point.y) >= minimumDistance))
-        || { x: baseX, y: baseY };
-      occupied.push(position);
-      return {
-        row,
-        left: position.x / model.width * 100,
-        top: position.y / model.height * 100,
-      };
-    });
+    // Keep the dot at its actual data coordinates; labels appear on hover/focus.
+    return rows.map(row => ({ row,
+      left: clamp(row.scores.priceMomentum, 0, 1) * 100,
+      top: (1 - clamp(row.scores.earningsMomentum, 0, 1)) * 100,
+    }));
   }
 
   function renderQuadrant() {
     const target = els.quadrantChart;
     if (!target) return;
+    window.QuantRange?.entries.get('sox-quadrant')?.destroy();
     const rows = [...state.rows]
       .filter((row) => isFiniteNumber(row.scores?.priceMomentum) && isFiniteNumber(row.scores?.earningsMomentum))
       .sort((a, b) => (b.scores?.combined || 0) - (a.scores?.combined || 0))
@@ -344,8 +352,29 @@
     target.innerHTML = '<span class="quad-axis y">earnings momentum ↑</span><span class="quad-axis x">price momentum →</span><div class="quadrant-plot">' + positioned.map(({ row, left, top }) => {
       const active = row.ticker === activeTicker();
       const pinned = row.ticker === state.pinnedTicker;
-      return `<button class="quad-point${active ? ' is-active' : ''}${pinned ? ' is-pinned' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" aria-pressed="${pinned}" aria-label="${escapeAttr(`${row.ticker} · 가격 ${formatScore(row.scores.priceMomentum)} · 실적 ${formatScore(row.scores.earningsMomentum)} · ${row.scores.label || ''}`)}" style="left:${left.toFixed(2)}%;top:${top.toFixed(2)}%">${escapeHtml(row.ticker)}</button>`;
+      return `<button class="quad-point${active ? ' is-active' : ''}${pinned ? ' is-pinned' : ''}" type="button" data-chart-ticker="${escapeAttr(row.ticker)}" data-qr-point-id="${escapeAttr(row.ticker)}" aria-pressed="${pinned}" aria-label="${escapeAttr(`${row.ticker} · 가격 ${formatScore(row.scores.priceMomentum)} · 실적 ${formatScore(row.scores.earningsMomentum)} · ${row.scores.label || ''}`)}" style="left:${left.toFixed(6)}%;top:${top.toFixed(6)}%"><span style="${top < 20 ? 'top:20px;bottom:auto;' : ''}${left > 80 ? 'right:0;' : left < 20 ? 'left:0;' : ''}">${escapeHtml(row.ticker)}</span></button>`;
     }).join('') + '</div>';
+    const plot = target.querySelector('.quadrant-plot');
+    window.QuantRange?.register({
+      id: 'sox-quadrant', element: plot, host: target.parentElement, kind: 'scatter', domain: [], series: [],
+      onSeriesFocus(id, context) { if (id === null && context.origin === 'clear') clearNativeChartSelection(); },
+      onPointChange(point) {
+        if (point?.pointId) { state.pinnedTicker = point.pointId; state.previewTicker = ''; syncChartSelection(); }
+      },
+      scatter: rows.map(row => ({ id: row.ticker, label: row.ticker, x: row.scores.priceMomentum * 100, y: row.scores.earningsMomentum * 100 })),
+      scatterAxes: { xLabel: '가격 모멘텀', yLabel: '실적 모멘텀', xUnit: '점', yUnit: '점' },
+      xDomain: [0, 100], yDomain: [0, 100],
+      locate(event) { const box = plot.getBoundingClientRect();
+        return { x: clamp((event.clientX - box.left) / box.width, 0, 1) * 100,
+          y: (1 - clamp((event.clientY - box.top) / box.height, 0, 1)) * 100 };
+      },
+      project(selection) { const box = plot.getBoundingClientRect();
+        return { left: Math.min(selection.start.x, selection.end.x) / 100 * box.width,
+          top: (1 - Math.max(selection.start.y, selection.end.y) / 100) * box.height,
+          width: Math.abs(selection.start.x - selection.end.x) / 100 * box.width,
+          height: Math.abs(selection.start.y - selection.end.y) / 100 * box.height };
+      },
+    });
   }
 
   function handleChartSelection(event) {
@@ -376,6 +405,19 @@
     if (!ticker) return;
     event.preventDefault();
     state.pinnedTicker = ticker;
+    state.previewTicker = '';
+    syncChartSelection();
+    const chart = target.closest('[data-quant-range]');
+    const handle = window.QuantRange?.entries.get(chart?.dataset.quantRange);
+    if (target.dataset.qrSeriesId) {
+      handle?.selectSeries?.(target.dataset.qrSeriesId, { pointIndex: Number(target.dataset.qrIndex), origin: 'line' });
+    } else {
+      handle?.selectPoint?.({ pointId: ticker, origin: 'line' });
+    }
+  }
+
+  function clearNativeChartSelection() {
+    state.pinnedTicker = '';
     state.previewTicker = '';
     syncChartSelection();
   }
