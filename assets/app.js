@@ -638,7 +638,7 @@
     return `<article class="metric-card">
       <p class="eyebrow">${escapeHtml(label)}</p>
       <div class="value">${escapeHtml(value ?? '-')}</div>
-      <div class="detail">${escapeHtml(String(detail ?? ''))}</div>
+      <div class="detail">${escapeHtml(String(detail ?? '')).replace(/\b\d{4}-\d{2}-\d{2}\b/g, '<span class="metric-date">$&</span>')}</div>
     </article>`;
   }
 
@@ -660,22 +660,34 @@
 
   function formatNumber(value, options = {}) {
     if (!isFiniteNumber(value)) return '-';
-    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, ...options }).format(value);
+    if (window.QuantFormat?.number) return window.QuantFormat.number(value, { locale: 'en-US', ...options });
+    // Standalone fallback follows the same display-only policy as the shared runtime.
+    const normalized = Object.is(value, -0) ? 0 : value;
+    const display = Math.abs(normalized) * (options.style === 'percent' ? 100 : 1);
+    const clean = { ...options };
+    delete clean.minimumFractionDigits;
+    delete clean.maximumFractionDigits;
+    delete clean.minimumSignificantDigits;
+    delete clean.maximumSignificantDigits;
+    const precision = display > 0 && display < 0.01
+      ? { minimumSignificantDigits: 1, maximumSignificantDigits: 2 }
+      : { minimumFractionDigits: 0, maximumFractionDigits: 2 };
+    return new Intl.NumberFormat('en-US', { ...clean, ...precision }).format(normalized);
   }
 
   function formatCurrency(value) {
     if (!isFiniteNumber(value)) return '-';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: value > 100 ? 0 : 2 }).format(value);
+    return formatNumber(value, { style: 'currency', currency: 'USD' });
   }
 
   function formatCompact(value) {
     if (!isFiniteNumber(value)) return '-';
-    return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(value);
+    return formatNumber(value, { notation: 'compact' });
   }
 
   function formatPercent(value) {
     if (!isFiniteNumber(value)) return '-';
-    return new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 }).format(value);
+    return formatNumber(value, { style: 'percent' });
   }
 
   function formatEarningsGrowth(yoy, growth) {
@@ -694,7 +706,7 @@
 
   function formatScore(value) {
     if (!isFiniteNumber(value)) return '-';
-    return Math.round(value * 100).toString();
+    return formatNumber(value * 100);
   }
 
   function formatDate(value) {
