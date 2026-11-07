@@ -177,7 +177,11 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -R assets data _site/
+      - name: Verify final design contract
+        id: design_guard
+        run: node scripts/design-contract/verify-design.cjs --html _site/index.html --project sox
       - name: Upload Pages artifact
+        if: steps.design_guard.outcome == 'success'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: _site
@@ -301,7 +305,11 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -R assets data _site/
+      - name: Verify final design contract
+        id: design_guard
+        run: node scripts/design-contract/verify-design.cjs --html _site/index.html --project sox
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        if: steps.design_guard.outcome == 'success'
         with:
           path: _site
       - name: Recheck the current source before publication

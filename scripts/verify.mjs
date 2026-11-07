@@ -1,3 +1,4 @@
+import designContract from './design-contract/verify-design.cjs';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -14,6 +15,7 @@ const analysis = JSON.parse(fs.readFileSync(path.join(dataRoot, 'sox-analysis.js
 const history = JSON.parse(fs.readFileSync(path.join(dataRoot, 'sox-history.json'), 'utf8'));
 const summary = JSON.parse(fs.readFileSync(path.join(dataRoot, 'summary.json'), 'utf8'));
 const html = readText('index.html');
+designContract.verifyHtml(html, { project: 'sox' });
 const app = readText('assets/app.js');
 const css = readText('assets/styles.css');
 const sharedNav = readText('assets/shared-nav.css');
