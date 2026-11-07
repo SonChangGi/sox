@@ -103,48 +103,8 @@ code {
   transform: translateY(0);
 }
 
-.site-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 58px;
-  margin: 0;
-  padding: 7px max(16px, calc((100vw - 1320px) / 2));
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  background: color-mix(in srgb, var(--surface), transparent 5%);
-  backdrop-filter: blur(18px);
-}
-
-.site-nav-brand {
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.site-nav-links {
-  display: flex;
-  gap: 4px;
-  min-width: 0;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-
-.site-nav-links::-webkit-scrollbar { display: none; }
-
-.site-nav-links a,
 .hero-actions a,
-.panel-link,
-.theme-toggle {
+.panel-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -162,36 +122,6 @@ code {
   white-space: nowrap;
   cursor: pointer;
   transition: transform 150ms ease, color 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
-}
-
-.site-nav-links a:hover,
-.site-nav-links a:focus-visible,
-.site-nav-links .is-active,
-.theme-toggle:hover,
-.theme-toggle:focus-visible {
-  color: var(--accent-strong);
-  background: var(--accent-soft);
-  border-color: color-mix(in srgb, var(--accent), transparent 72%);
-}
-
-.theme-toggle {
-  color: var(--ink);
-  background: var(--surface-soft);
-  border-color: var(--line);
-  box-shadow: none;
-}
-
-.theme-toggle-icon {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: inset -4px -4px 0 color-mix(in srgb, var(--surface), transparent 10%);
-}
-
-html[data-theme="dark"] .theme-toggle-icon {
-  background: #f8d76f;
-  box-shadow: -5px 0 0 0 var(--surface-strong);
 }
 
 .hero {
@@ -1096,22 +1026,6 @@ td.name-cell {
 }
 
 @media (max-width: 760px) {
-  .site-nav {
-    grid-template-columns: 1fr auto;
-    width: 100%;
-    margin: 0;
-    padding: 7px 12px;
-  }
-
-  .site-nav-brand {
-    min-width: 0;
-  }
-
-  .site-nav-links {
-    grid-column: 1 / -1;
-    order: 3;
-    padding-bottom: 2px;
-  }
 
   .hero {
     width: min(100% - 28px, 1240px);
