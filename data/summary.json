@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 93
+    "snapshotCount": 94
   },
-  "dataAsOf": "2026-11-05",
+  "dataAsOf": "2026-11-06",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-11-06T03:23:38Z",
+  "generatedAt": "2026-11-07T02:45:08Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,10 +54,10 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.993103448275862,
-        "priceMomentum": 0.7110344827586207,
+        "priceMomentum": 0.7013793103448276,
         "rank": 1,
-        "score": 0.8379655172413794,
-        "weight": 0.06911663970689615
+        "score": 0.8326551724137932,
+        "weight": 0.06329875057753487
       },
       "name": "Micron Technology",
       "signals": [
@@ -73,11 +73,11 @@
       "id": "ADI",
       "label": "ADI",
       "metrics": {
-        "earningsMomentum": 0.6155172413793104,
-        "priceMomentum": 0.8903448275862069,
+        "earningsMomentum": 0.6603448275862069,
+        "priceMomentum": 0.8489655172413793,
         "rank": 2,
-        "score": 0.7666724137931036,
-        "weight": 0.015121675633562414
+        "score": 0.7640862068965517,
+        "weight": 0.014910073631227535
       },
       "name": "Analog Devices",
       "signals": [
@@ -90,14 +90,34 @@
       ]
     },
     {
+      "id": "LSCC",
+      "label": "LSCC",
+      "metrics": {
+        "earningsMomentum": 0.7844827586206896,
+        "priceMomentum": 0.7248275862068966,
+        "rank": 3,
+        "score": 0.7516724137931035,
+        "weight": 0.0011875035764463613
+      },
+      "name": "Lattice Semicond",
+      "signals": [
+        "가격·실적 동반 강세"
+      ],
+      "status": "가격·실적 동반 강세",
+      "symbol": "LSCC",
+      "warnings": [
+        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
+      ]
+    },
+    {
       "id": "TXN",
       "label": "TXN",
       "metrics": {
-        "earningsMomentum": 0.4689655172413793,
-        "priceMomentum": 0.9641379310344828,
-        "rank": 3,
-        "score": 0.7413103448275863,
-        "weight": 0.021876243778521987
+        "earningsMomentum": 0.47586206896551725,
+        "priceMomentum": 0.9551724137931035,
+        "rank": 4,
+        "score": 0.7394827586206897,
+        "weight": 0.02167459700752897
       },
       "name": "Texas Instruments",
       "signals": [
@@ -110,41 +130,21 @@
       ]
     },
     {
-      "id": "LSCC",
-      "label": "LSCC",
+      "id": "AMD",
+      "label": "AMD",
       "metrics": {
-        "earningsMomentum": 0.7879310344827586,
-        "priceMomentum": 0.6558620689655172,
-        "rank": 4,
-        "score": 0.7152931034482759,
-        "weight": 0.0011717639405838633
+        "earningsMomentum": 0.493103448275862,
+        "priceMomentum": 0.8489655172413794,
+        "rank": 5,
+        "score": 0.6888275862068967,
+        "weight": 0.056530938698358575
       },
-      "name": "Lattice Semicond",
+      "name": "Advanced Micro Devices",
       "signals": [
         "중립/혼재"
       ],
       "status": "중립/혼재",
-      "symbol": "LSCC",
-      "warnings": [
-        "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
-      ]
-    },
-    {
-      "id": "ASML",
-      "label": "ASML",
-      "metrics": {
-        "earningsMomentum": 0.6741379310344827,
-        "priceMomentum": 0.6972413793103448,
-        "rank": 5,
-        "score": 0.6868448275862069,
-        "weight": 0.0443813645931514
-      },
-      "name": "ASML Holding",
-      "signals": [
-        "가격·실적 동반 강세"
-      ],
-      "status": "가격·실적 동반 강세",
-      "symbol": "ASML",
+      "symbol": "AMD",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
       ]
