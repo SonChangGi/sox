@@ -19,14 +19,16 @@
 
   <link rel="stylesheet" href="https://sonchanggi.github.io/quant-dashboard/shared/navigation/v1/nav.css">
 
-<link rel="stylesheet" href="assets/design-engine.css?v=778627119a00">
-<link rel="stylesheet" href="https://sonchanggi.github.io/quant-dashboard/shared/design/startup/1.2.0/sox.css" data-quant-first-paint-css>
+<link rel="stylesheet" href="assets/design-engine.css?v=50c4f5e076ae">
+<link rel="stylesheet" href="https://sonchanggi.github.io/quant-dashboard/shared/design/tokens/0.4.2/shell.css" data-quant-common-design="0.4.2">
+    <link rel="stylesheet" href="https://sonchanggi.github.io/quant-dashboard/shared/design/startup/1.2.0/sox.css" data-quant-first-paint-css>
 <script src="https://sonchanggi.github.io/quant-dashboard/shared/design/startup/1.2.0/start.js" data-quant-design-project="sox"></script>
   <script src="assets/vendor/echarts.min.js?v=b66b25aeb4df" defer></script>
-  <script src="assets/research-charts.js?v=c91d5d74cbda" defer></script>
+  <script src="assets/research-charts.js?v=da554b30c054" defer></script>
   <script src="assets/app.js?v=248cfc0dd9f9" defer></script>
   <script type="module" src="assets/design-engine.js?v=0.4.0"></script>
 <script src="https://sonchanggi.github.io/quant-dashboard/shared/navigation/v1/nav.js" data-quant-project="sox" defer></script>
+
 </head>
 <body id="top" class="has-quant-shared-nav">
   <a class="skip-link" href="#main-content">본문 바로가기</a>
@@ -78,43 +80,43 @@
   </header>
 
   <main id="main-content">
-    <section class="section cockpit-section" aria-labelledby="cockpit-title">
+    <section data-quant-section class="section cockpit-section" aria-labelledby="cockpit-title">
       <div class="section-heading">
         <p class="eyebrow">Research Cockpit</p>
         <h2 id="cockpit-title">핵심 결과</h2>
       </div>
-      <div class="metric-grid" id="metric-grid" aria-live="polite">
+      <div class="metric-grid" id="metric-grid" data-quant-card aria-live="polite">
         <article class="metric-card skeleton">데이터를 불러오는 중...</article>
       </div>
     </section>
 
-    <section class="section" id="charts" aria-labelledby="charts-title">
+    <section data-quant-section class="section" id="charts" aria-labelledby="charts-title">
       <div class="section-heading">
         <p class="eyebrow">Charts</p>
         <h2 id="charts-title">비중·모멘텀 시각화</h2>
       </div>
       <div id="chart-selection" class="chart-readout" aria-live="polite" hidden></div>
       <div class="chart-grid">
-        <article class="panel" aria-labelledby="weight-chart-title">
+        <article data-quant-card class="panel" aria-labelledby="weight-chart-title">
           <div class="panel-header compact"><div><p class="eyebrow">Proxy Weight</p><h3 id="weight-chart-title">상위 프록시 비중</h3></div></div>
           <div id="weight-chart" class="bar-chart skeleton-box"></div>
         </article>
-        <article class="panel" aria-labelledby="price-chart-title">
+        <article data-quant-card class="panel" aria-labelledby="price-chart-title">
           <div class="panel-header compact"><div><p class="eyebrow">Price Momentum</p><h3 id="price-chart-title">가격 모멘텀 리더</h3></div></div>
           <div id="price-chart" class="bar-chart skeleton-box"></div>
         </article>
-        <article class="panel" aria-labelledby="earnings-chart-title">
+        <article data-quant-card class="panel" aria-labelledby="earnings-chart-title">
           <div class="panel-header compact"><div><p class="eyebrow">Earnings Momentum</p><h3 id="earnings-chart-title">실적 모멘텀 리더</h3></div></div>
           <div id="earnings-chart" class="bar-chart skeleton-box"></div>
         </article>
-        <article class="panel" aria-labelledby="quadrant-title">
+        <article data-quant-card class="panel" aria-labelledby="quadrant-title">
           <div class="panel-header compact"><div><p class="eyebrow">Quadrant</p><h3 id="quadrant-title">가격 vs 실적</h3></div></div>
           <div id="quadrant-chart" class="quadrant skeleton-box"></div>
         </article>
       </div>
     </section>
 
-    <section class="section" id="momentum" aria-labelledby="momentum-title">
+    <section data-quant-section class="section" id="momentum" aria-labelledby="momentum-title">
       <div class="section-heading">
         <p class="eyebrow">Momentum Dossier</p>
         <h2 id="momentum-title">가격·실적 모멘텀 상위 종목</h2>
@@ -122,7 +124,7 @@
       <div class="leader-grid" id="leader-grid" aria-live="polite"></div>
     </section>
 
-    <section class="section" id="constituents" aria-labelledby="constituents-title">
+    <section data-quant-section class="section" id="constituents" aria-labelledby="constituents-title">
       <div class="section-heading split-heading">
         <div>
           <p class="eyebrow">Constituents</p>
@@ -162,7 +164,7 @@
         </div>
       </div>
       <div class="table-wrap" role="region" aria-label="SOX 구성종목 상세 테이블" tabindex="0">
-        <table id="constituent-table">
+        <table data-quant-table id="constituent-table">
           <caption>SOX 구성종목 프록시 비중, 가격 모멘텀, 실적 모멘텀, 재무 지표</caption>
           <thead>
             <tr>
@@ -187,7 +189,7 @@
       </div>
     </section>
 
-    <section class="section methodology-section" id="methodology" aria-label="데이터와 운영 상세">
+    <section data-quant-section class="section methodology-section" id="methodology" aria-label="데이터와 운영 상세">
       <details class="ops-details">
         <summary>
           <span>데이터 · 출처 · 운영 상세</span>
