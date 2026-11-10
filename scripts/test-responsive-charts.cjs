@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const outputs=[],handlers={},events={};let option,disposed=0;
-function element(tag){const button={textContent:''};const e={style:{},addEventListener(k,f){events[k]=f;},removeEventListener(){},getBoundingClientRect(){return {left:0,top:0};},classList:{remove(){},add(){}},replaceChildren(){},setAttribute(){},before(){},after(){},remove(){},focus(){},querySelector(){return button;}};if(tag==='output')outputs.push(e);return e;}
+function element(tag){const button={textContent:''};const e={style:{},dataset:{},addEventListener(k,f){events[k]=f;},removeEventListener(){},getBoundingClientRect(){return {left:0,top:0};},classList:{remove(){},add(){}},replaceChildren(){},setAttribute(){},before(){},after(){},remove(){},focus(){},querySelector(){return button;}};if(tag==='output')outputs.push(e);return e;}
 const chart={setOption(o){option=o;},on(k,f){handlers[k]=f;},dispatchAction(){},convertFromPixel(query,value){return value;},resize(){},dispose(){disposed++;}};
 const ctx={window:{echarts:{init:()=>chart}},document:{documentElement:{dataset:{theme:'dark'}},createElement:element},getComputedStyle:()=>({getPropertyValue:()=>''}),ResizeObserver:class{observe(){}disconnect(){}},MutationObserver:class{observe(){}disconnect(){}}};
 vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../assets/research-charts.js'),'utf8'),ctx);
