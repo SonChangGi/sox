@@ -45,7 +45,7 @@ html[data-qe-theme] body.qd-v04 table th {position:sticky;top:0;z-index:1;backgr
 @media(max-width:760px){html[data-qe-theme] body.qd-v04 .leader-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;overflow:visible!important;}html[data-qe-theme] body.qd-v04 .leader-grid>article{min-width:0!important;width:auto!important;}}
 /* Reserve the final plotting space before data/renderer arrival. */
 #weight-chart,#price-chart,#earnings-chart{min-height:360px;}
-#quadrant-chart{min-height:350px;background:none;}
+#quadrant-chart{min-height:300px;background:none;}
 .sox-chart-options{position:relative;float:right;z-index:2;}
 .sox-chart-options summary,.sox-chart-options button{min-height:44px;min-width:44px;cursor:pointer;}
 .sox-range-output{display:block;padding:12px 0;line-height:1.6;overflow-wrap:anywhere;}
@@ -86,3 +86,13 @@ html[data-theme] body.qd-v04 #charts .panel[data-quant-card]::before {content:no
 html[data-theme] body :is(.qd-focus-button,.qd-focus-tools) {display:none!important}
 [data-quant-touch-chart]:focus-visible {outline:2px solid var(--qs-focus);outline-offset:3px}
 [data-quant-touch-chart][data-quant-gesture=compare] .qe-point-tooltip {visibility:hidden!important}
+
+.sox-quadrant-guide{display:flex;align-items:center;flex-wrap:wrap;gap:4px 7px;margin:5px 0 0;color:var(--qs-muted);font-size:12px;line-height:1.5}
+.sox-quadrant-guide i{width:7px;height:7px;border-radius:50%;background:var(--chart-1,#75aaff)}
+.sox-quadrant-point:not([hidden]){display:block;margin-top:8px;font-size:13px;color:var(--qs-text);font-variant-numeric:tabular-nums}
+
+.sox-chart-selection{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.sox-chart-selection span{position:absolute;background:color-mix(in srgb,var(--qs-accent) 13%,transparent);border:1px solid color-mix(in srgb,var(--qs-accent) 70%,transparent)}
+#quadrant-chart[data-sox-range-active] .qe-point-tooltip,.qe-research-chart[data-sox-range-active] .qe-point-tooltip{visibility:hidden!important}
+
+#quadrant-chart.qe-research-chart{border:0;border-radius:0}

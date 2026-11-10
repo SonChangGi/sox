@@ -354,11 +354,10 @@
     window.SoxResearchCharts?.unmount(target);
     const rows = [...state.rows]
       .filter((row) => isFiniteNumber(row.scores?.priceMomentum) && isFiniteNumber(row.scores?.earningsMomentum))
-      .sort((a, b) => (b.scores?.combined || 0) - (a.scores?.combined || 0))
-      .slice(0, 18);
+      .sort((a, b) => (b.scores?.combined || 0) - (a.scores?.combined || 0));
     target.classList.remove('skeleton-box');
     if (!rows.length) {
-      target.innerHTML = '<p class="muted">quadrant 데이터를 계산할 수 없습니다.</p>';
+      target.innerHTML = '<p class="muted">가격·실적 모멘텀을 함께 계산할 수 있는 종목이 없습니다.</p>';
       return;
     }
     if(window.SoxResearchCharts?.mount(target,rows.map(row=>({ticker:row.ticker,x:row.scores.priceMomentum*100,y:row.scores.earningsMomentum*100})),'scatter','--accent',ticker=>{state.pinnedTicker=ticker;state.previewTicker='';syncChartSelection();}))return;
