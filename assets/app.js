@@ -292,6 +292,7 @@
       target.innerHTML = '<p class="muted">표시할 데이터가 부족합니다.</p>';
       return;
     }
+    if(window.SoxResearchCharts?.mount(target,valid.map(row=>({ticker:row.ticker,value:row[key]*100})),options.kind,options.color==='green'?'--green':options.color==='amber'?'--amber':'--accent',ticker=>{state.pinnedTicker=ticker;state.previewTicker='';syncChartSelection();}))return;
     const max = Math.max(...valid.map((row) => Math.abs(row[key]) || 0), 0.00001);
     target.classList.remove('skeleton-box');
     target.innerHTML = valid.map((row, index) => {
@@ -358,6 +359,7 @@
       target.innerHTML = '<p class="muted">quadrant 데이터를 계산할 수 없습니다.</p>';
       return;
     }
+    if(window.SoxResearchCharts?.mount(target,rows.map(row=>({ticker:row.ticker,x:row.scores.priceMomentum*100,y:row.scores.earningsMomentum*100})),'scatter','--accent',ticker=>{state.pinnedTicker=ticker;state.previewTicker='';syncChartSelection();}))return;
     const positioned = layoutQuadrantRows(rows);
     target.innerHTML = '<span class="quad-axis y">earnings momentum ↑</span><span class="quad-axis x">price momentum →</span><div class="quadrant-plot">' + positioned.map(({ row, left, top }) => {
       const active = row.ticker === activeTicker();
@@ -438,6 +440,7 @@
 
   function syncChartSelection() {
     const active = activeTicker();
+    window.SoxResearchCharts?.select(active);
     document.querySelectorAll('[data-chart-ticker]').forEach((element) => {
       const ticker = element.getAttribute('data-chart-ticker');
       const selected = ticker === active;

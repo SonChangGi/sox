@@ -34,3 +34,12 @@ html[data-qe-theme] body.qd-v04 .leader-item>strong {grid-column:1;grid-row:1;}
 html[data-qe-theme] body.qd-v04 .leader-item>.score-pill {grid-column:2;grid-row:1;}
 html[data-qe-theme] body.qd-v04 .leader-item>span:not(.score-pill) {grid-column:1/-1;grid-row:2;word-break:normal!important;overflow-wrap:break-word!important;}
 html[data-qe-theme] body.qd-v04 .table-tools button {background:var(--qe-surface)!important;color:var(--qe-text)!important;border:1px solid var(--qe-border)!important;border-radius:8px;padding:8px 14px;}
+/* 0.4.1: one coordinate system per chart; cards retain native metric colours. */
+html[data-qe-theme] body.qd-v04 .qe-research-chart {padding:0!important;min-width:0;width:100%;overflow:hidden;display:block!important;position:relative;touch-action:pan-y;}
+html[data-qe-theme] body.qd-v04 .chart-grid {grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
+html[data-qe-theme] body.qd-v04 .leader-item {align-items:start;}
+html[data-qe-theme] body.qd-v04 .leader-item strong {line-height:1.5;overflow-wrap:anywhere;}
+html[data-qe-theme] body.qd-v04 .leader-item small {line-height:1.5;}
+html[data-qe-theme] body.qd-v04 table th {position:sticky;top:0;z-index:1;background:var(--qe-surface);}
+@media(max-width:760px){html[data-qe-theme] body.qd-v04 .chart-grid{grid-template-columns:minmax(0,1fr);}html[data-qe-theme] body.qd-v04 .leader-item{padding:16px!important;}}
+@media(max-width:760px){html[data-qe-theme] body.qd-v04 .leader-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;overflow:visible!important;}html[data-qe-theme] body.qd-v04 .leader-grid>article{min-width:0!important;width:auto!important;}}
