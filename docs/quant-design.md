@@ -21,3 +21,7 @@ UI 전용 커밋을 main에 반영할 때 `[skip actions]`를 커밋 메시지�
 ## 생성 경로
 
 운영 화면은 루트 `index.html`과 `assets/`, `data/`를 `_site/`로 구성한다. `frontend/`는 전용 CI가 있는 별도 React 미리보기로 보존하며 현재 Pages 배포에 섞지 않는다.
+
+## 공통 환경설정
+
+`shared/preferences/1.0.0/preferences.js`를 head에서 startup보다 먼저 동기 로드한다. 기존 즐겨찾기·사이드바 접힘·보기 밀도 키를 유지하면서 같은 도메인의 탭에는 변경을 즉시 반영하고, 다른 프로젝트 도메인으로 이동할 때 UI 설정을 전달한다. 기존 startup 1.2.0과 데이터·계산 계약은 유지한다.
