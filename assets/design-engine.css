@@ -46,3 +46,7 @@ html[data-qe-theme] body.qd-v04 table th {position:sticky;top:0;z-index:1;backgr
 /* Reserve the final plotting space before data/renderer arrival. */
 #weight-chart,#price-chart,#earnings-chart{min-height:360px;}
 #quadrant-chart{min-height:350px;background:none;}
+.sox-chart-options{position:relative;float:right;z-index:2;}
+.sox-chart-options summary,.sox-chart-options button{min-height:44px;min-width:44px;cursor:pointer;}
+.sox-range-output{display:block;padding:12px 0;line-height:1.6;overflow-wrap:anywhere;}
+.sox-range-output[hidden]{display:none!important;}
