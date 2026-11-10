@@ -108,6 +108,16 @@
       setTheme(nextTheme, { persist: true });
     });
     els.searchInput?.addEventListener('input', updateTable);
+    document.querySelector('#minimum-score')?.addEventListener('input',updateTable);
+    document.querySelector('#table-reset')?.addEventListener('click',()=>{els.searchInput.value='';document.querySelector('#minimum-score').value='';updateTable();els.searchInput.focus();});
+    document.querySelector('#table-csv')?.addEventListener('click',()=>{
+      const percent=x=>isFiniteNumber(x)?x*100:null;
+      const columns=['기준일','순위','종목','회사명','프록시 비중 (%)','가격 (USD)','시가총액 (USD)','3M (%)','12M (%)','매출 YoY (%)','EPS YoY (%)','P/E','가격 점수','실적 점수','종합 점수','신호'];
+      const rows=state.filteredRows.map(r=>{const m=r.metrics||{},s=r.scores||{};return [state.selectedDate,r.rank,r.ticker,r.name,percent(r.proxyWeight),r.price,r.marketCap,percent(m.return3m),percent(m.return12m),percent(m.quarterlyRevenueYoY),percent(m.quarterlyEpsYoY),m.trailingPe,percent(s.priceMomentum),percent(s.earningsMomentum),percent(s.combined),s.label];});
+      const quote=x=>{let v=x==null?'':String(x);if(typeof x!=='number'&&/^[=+@\-\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};
+      const content=[columns,...rows].map(r=>r.map(quote).join(',')).join('\r\n');
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+content],{type:'text/csv;charset=utf-8'}));a.download=`sox-${state.selectedDate}-filtered.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    });
     els.sortSelect?.addEventListener('change', () => {
       state.sortKey = els.sortSelect.value;
       state.sortDirection = defaultDirectionFor(state.sortKey);
@@ -511,7 +521,10 @@
     const query = (els.searchInput?.value || '').trim().toLowerCase();
     const sortKey = state.sortKey || els.sortSelect?.value || 'rank';
     const sortDirection = state.sortDirection || els.sortDirection?.value || defaultDirectionFor(sortKey);
+    const minimumInput=document.querySelector('#minimum-score')?.value||'';
+    const minimum=minimumInput===''?null:Math.max(0,Math.min(100,Number(minimumInput)));
     let rows = state.rows.filter((row) => {
+      if(minimum!==null&&(!isFiniteNumber(row.scores?.combined)||row.scores.combined*100<minimum))return false;
       if (!query) return true;
       const haystack = rowSearchText(row);
       return haystack.includes(query);
@@ -520,6 +533,9 @@
     state.filteredRows = rows;
     updateSortIndicators();
     renderTable(rows);
+    const reset=document.querySelector('#table-reset');if(reset)reset.hidden=!query&&minimum===null;
+    const count=document.querySelector('#table-count');if(count)count.textContent=`${rows.length} / ${state.rows.length}종목`;
+    const exportButton=document.querySelector('#table-csv');if(exportButton)exportButton.disabled=rows.length===0;
   }
 
   function compareRows(a, b, key, direction = 'desc') {

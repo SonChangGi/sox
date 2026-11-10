@@ -18,10 +18,12 @@
 
   <link rel="stylesheet" href="https://sonchanggi.github.io/quant-dashboard/shared/navigation/v1/nav.css">
 
+<link rel="stylesheet" href="assets/design-engine.css?v=0.4.0">
 <link rel="stylesheet" href="https://sonchanggi.github.io/quant-dashboard/shared/design/startup/1.2.0/sox.css" data-quant-first-paint-css>
 <script src="https://sonchanggi.github.io/quant-dashboard/shared/design/startup/1.2.0/start.js" data-quant-design-project="sox"></script>
   <script src="assets/app.js?v=20260723-common-design-v1-2" defer></script>
-  <script src="https://sonchanggi.github.io/quant-dashboard/shared/navigation/v1/nav.js" data-quant-project="sox" defer></script>
+  <script type="module" src="assets/design-engine.js?v=0.4.0"></script>
+<script src="https://sonchanggi.github.io/quant-dashboard/shared/navigation/v1/nav.js" data-quant-project="sox" defer></script>
 </head>
 <body id="top" class="has-quant-shared-nav">
   <a class="skip-link" href="#main-content">본문 바로가기</a>
@@ -126,6 +128,9 @@
         <div class="table-tools">
           <label for="search-input">검색</label>
           <input id="search-input" type="search" placeholder="NVDA, AMD, revenue..." autocomplete="off" />
+          <button id="table-reset" type="button" hidden>필터 해제</button>
+          <output id="table-count" aria-live="polite"></output>
+          <details class="qe-table-tools"><summary>표 도구</summary><div class="qe-table-tool-fields">
           <label for="sort-select">정렬</label>
           <select id="sort-select">
             <option value="rank">종합 랭크</option>
@@ -148,6 +153,9 @@
             <option value="asc">오름차순</option>
             <option value="desc">내림차순</option>
           </select>
+          <label for="minimum-score">종합 점수 최소</label><input id="minimum-score" type="number" min="0" max="100" step="1" placeholder="0–100">
+          <button id="table-csv" type="button">CSV 다운로드</button>
+          </div></details>
         </div>
       </div>
       <div class="table-wrap" role="region" aria-label="SOX 구성종목 상세 테이블" tabindex="0">
