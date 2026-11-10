@@ -7,7 +7,7 @@
     "refresh": "python3 scripts/refresh_sox_pipeline.py",
     "verify": "node scripts/verify.mjs",
     "test:smoke": "node scripts/static-smoke.mjs",
-    "test": "python3 -m unittest discover -s scripts -p 'test_*.py' && node --check assets/app.js && node --check scripts/verify.mjs && node --check scripts/static-smoke.mjs && npm run verify && npm run test:smoke",
+    "test": "python3 -m unittest discover -s scripts -p 'test_*.py' && node --check assets/app.js && node --check scripts/verify.mjs && node --check scripts/static-smoke.mjs && npm run verify && npm run test:smoke && node scripts/test-responsive-charts.cjs",
     "test:refresh": "npm run refresh && npm test"
   },
   "engines": {

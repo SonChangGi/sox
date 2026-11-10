@@ -3,6 +3,7 @@
 'use strict';
 const mounted=new Map();
 scope.SoxResearchCharts={
+unmount(host){mounted.get(host)?.destroy();mounted.delete(host);},
 mount(host,rows,kind,color,onSelect){
  if(!scope.echarts)return false;
  mounted.get(host)?.destroy();host.replaceChildren();host.classList.remove('skeleton-box');host.classList.add('qe-research-chart');host.style.height=kind==='scatter'?'350px':'360px';host.tabIndex=0;host.setAttribute('role','img');

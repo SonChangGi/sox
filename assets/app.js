@@ -286,6 +286,7 @@
   function renderBarChart(target, rows, key, options = {}) {
     if (!target) return;
     window.QuantRange?.entries.get(`sox-${key}`)?.destroy();
+    window.SoxResearchCharts?.unmount(target);
     const valid = rows.filter((row) => isFiniteNumber(row[key])).slice(0, 8);
     if (!valid.length) {
       target.classList.remove('skeleton-box');
@@ -350,6 +351,7 @@
     const target = els.quadrantChart;
     if (!target) return;
     window.QuantRange?.entries.get('sox-quadrant')?.destroy();
+    window.SoxResearchCharts?.unmount(target);
     const rows = [...state.rows]
       .filter((row) => isFiniteNumber(row.scores?.priceMomentum) && isFiniteNumber(row.scores?.earningsMomentum))
       .sort((a, b) => (b.scores?.combined || 0) - (a.scores?.combined || 0))
