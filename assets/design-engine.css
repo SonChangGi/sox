@@ -29,3 +29,8 @@ html[data-qe-theme] body.qd-v04 .qe-table-tool-fields {display:grid;grid-templat
 html[data-qe-theme] body.qd-v04 .qe-table-tool-fields button {grid-column:1/-1;}
 html[data-qe-theme] body.qd-v04 :is(.table-tools button,.qe-table-tools summary) {min-height:44px;}
 html[data-qe-theme] body.qd-v04 #table-count {font-variant-numeric:tabular-nums;color:var(--qe-muted);}
+html[data-qe-theme] body.qd-v04 .leader-item {grid-template-columns:minmax(0,1fr) auto!important;gap:8px 12px!important;}
+html[data-qe-theme] body.qd-v04 .leader-item>strong {grid-column:1;grid-row:1;}
+html[data-qe-theme] body.qd-v04 .leader-item>.score-pill {grid-column:2;grid-row:1;}
+html[data-qe-theme] body.qd-v04 .leader-item>span:not(.score-pill) {grid-column:1/-1;grid-row:2;word-break:normal!important;overflow-wrap:break-word!important;}
+html[data-qe-theme] body.qd-v04 .table-tools button {background:var(--qe-surface)!important;color:var(--qe-text)!important;border:1px solid var(--qe-border)!important;border-radius:8px;padding:8px 14px;}
