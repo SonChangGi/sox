@@ -9,7 +9,7 @@ function directDrag(host,api){
  on('pointerdown',e=>{if(e.button>0||e.pointerType==='touch')return;suppress=false;drag={...point(e),id:e.pointerId,pan:e.altKey,active:false,origin:api.point(e),view:api.view?.()};},{capture:true});
  on('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.active){if(Math.hypot(dx,dy)<6)return;drag.active=true;api.dragging?.(true);host.setPointerCapture?.(e.pointerId);}e.preventDefault();suppress=true;if(drag.pan)api.pan?.(dx,dy,drag.view);else api.select(drag.origin,api.point(e));},{capture:true});
  on('pointerup',()=>{drag=null;api.dragging?.(false);});on('pointercancel',()=>{drag=null;api.dragging?.(false);});
- on('click',e=>{if(suppress){suppress=false;e.preventDefault();e.stopImmediatePropagation();return;}api.clear();},{capture:true});
+ on('click',e=>{if(suppress){suppress=false;e.preventDefault();e.stopImmediatePropagation();return;}api.clear();if(api.click?.(e))e.stopImmediatePropagation();},{capture:true});
  on('keydown',e=>{if(e.key==='Escape')api.clear();});
  host.style.touchAction='pan-y';host.style.userSelect='none';host.style.webkitUserSelect='none';return()=>{off.forEach(fn=>fn());};
 }
@@ -20,7 +20,7 @@ unmount(host){mounted.get(host)?.destroy();mounted.delete(host);},
 mount(host,rows,kind,color,onSelect){
  if(!scope.echarts)return false;
  mounted.get(host)?.destroy();host.replaceChildren();host.classList.remove('skeleton-box');host.classList.add('qe-research-chart');host.style.height=kind==='scatter'?'clamp(300px, 40vw, 365px)':'360px';host.tabIndex=0;host.setAttribute('role','group');
- const chart=scope.echarts.init(host,null,{renderer:'svg'});let selected=-1,selectedArea=null,small;
+ const chart=scope.echarts.init(host,null,{renderer:'svg'});let selected=-1,selectedArea=null,labels;
  const presentation=scope.QuantRangeReadout;
  const selectionLayer=document.createElement('div');selectionLayer.className='sox-chart-selection';
  host.append?.(selectionLayer);
@@ -89,7 +89,6 @@ mount(host,rows,kind,color,onSelect){
  const option={animation:false,backgroundColor:'transparent',textStyle:{fontFamily:'Pretendard Variable, sans-serif'},grid:{top:24,right:56,bottom:36,left:16,containLabel:true},tooltip:{trigger:'item',confine:true,hideDelay:0,transitionDuration:0,className:'qe-point-tooltip',backgroundColor:st.getPropertyValue('--qs-raised').trim()||(dark?'#222d42':'#e9eff7'),textStyle:{color:ink},borderColor:line},series:[]};
  option.dataZoom=kind==='scatter'?[{type:'inside',xAxisIndex:0,filterMode:'none',moveOnMouseMove:'alt',preventDefaultMouseMove:false},{type:'inside',yAxisIndex:0,filterMode:'none',moveOnMouseMove:'alt',preventDefaultMouseMove:false}]:[{type:'inside',yAxisIndex:0,filterMode:'none',moveOnMouseMove:'alt',preventDefaultMouseMove:false}];
  if(kind==='scatter'){
-  small=host.clientWidth<440;
   const leader=st.getPropertyValue('--chart-1').trim()||(dark?'#75aaff':'#2664ad');
   option.grid={top:34,left:14,right:18,bottom:38,containLabel:true};
   const tick={type:'value',min:0,max:100,interval:25,nameTextStyle:{color:muted,fontSize:12},axisLabel:{color:muted,fontSize:11},
@@ -100,33 +99,48 @@ mount(host,rows,kind,color,onSelect){
     name:r.ticker,value:[r.x,r.y],
     symbolSize:i<5?8:6,
     itemStyle:{color:i<5?leader:muted,opacity:i<5?1:.60},
-    label:i<(small?3:5)?presentation?.scatterLabel(ink,r.x,r.y,100)||{show:true,color:ink,position:'top',textBorderWidth:0}:{show:false},
-    emphasis:{label:presentation?.scatterLabel(ink,r.x,r.y,100)||{show:true,color:ink,textBorderWidth:0}}
-  })),label:{show:false,formatter:'{b}',textBorderWidth:0},labelLayout:{hideOverlap:true},
+  })),label:{show:!scope.QuantSoxLabels,formatter:'{b}',color:ink,textBorderWidth:0,fontSize:11},
    emphasis:{scale:1.45,focus:'none',itemStyle:{color:accent,borderColor:ink,borderWidth:1.5,opacity:1}},
    markLine:{silent:true,symbol:'none',label:{show:false},lineStyle:{color:muted,opacity:.62,width:1,type:'dashed'},data:[{xAxis:50},{yAxis:50}]}}];
   option.tooltip.formatter=p=>`${p.name}<br>가격 ${p.value[0].toFixed(1)}점 · 실적 ${p.value[1].toFixed(1)}점`;
  }else{option.xAxis={type:'value',min:0,axisLabel:{color:muted,formatter:v=>v+(kind==='percent'?'%':'')},splitLine:{lineStyle:{color:line,type:'dashed'}}};option.yAxis={type:'category',inverse:true,data:rows.map(r=>r.ticker),axisTick:{show:false},axisLine:{show:false},axisLabel:{color:ink,fontSize:12}};option.series=[{type:'bar',data:rows.map(r=>({name:r.ticker,value:r.value})),barMaxWidth:18,itemStyle:{color:accent,borderRadius:[0,3,3,0]},label:{show:true,position:'right',formatter:p=>p.value.toFixed(1)+(kind==='percent'?'%':''),color:ink,fontSize:11},emphasis:{focus:'none'}}];option.tooltip.formatter=p=>`${p.name} · ${p.value.toFixed(2)}${kind==='percent'?'%':'점'}`;}
- option.toolbox={show:false};const saved=chart.getOption?.()?.dataZoom;if(saved?.length)option.dataZoom=option.dataZoom.map((axis,i)=>({...axis,start:saved[i]?.start,end:saved[i]?.end}));chart.setOption(option,true);if(selectedArea)showArea(selectedArea);if(selected>=0)chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:selected});
+ option.toolbox={show:false};const saved=chart.getOption?.()?.dataZoom;if(saved?.length)option.dataZoom=option.dataZoom.map((axis,i)=>({...axis,start:saved[i]?.start,end:saved[i]?.end}));chart.setOption(option,true);
+ if(kind==='scatter'){
+   labels??=scope.QuantSoxLabels?.mount(host,chart,rows.map((r,i)=>({ticker:r.ticker,value:[r.x,r.y],leader:i<5,radius:6})),rows[selected]?.ticker);
+   labels?.schedule();
+ }
+ if(selectedArea)showArea(selectedArea);if(selected>=0)chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:selected});
  }
  const coordinate=e=>{const rect=host.getBoundingClientRect();return kind==='scatter'?chart.convertFromPixel({gridIndex:0},[e.clientX-rect.left,e.clientY-rect.top]).map(v=>Math.max(0,Math.min(100,v))):chart.convertFromPixel({yAxisIndex:0},e.clientY-rect.top);};
- const disposeDrag=directDrag(host,{dragging(active){if(active)chart.dispatchAction({type:'hideTip'});},point:coordinate,clear:clearArea,select(a,b){showArea({coordRange:kind==='scatter'?[[Math.max(0,Math.min(a[0],b[0])),Math.min(100,Math.max(a[0],b[0]))],[Math.max(0,Math.min(a[1],b[1])),Math.min(100,Math.max(a[1],b[1]))]]:[a,b]});}});
+ const disposeDrag=directDrag(host,{dragging(active){if(active)chart.dispatchAction({type:'hideTip'});},point:coordinate,clear:clearArea,click(e){
+   const r=host.getBoundingClientRect(),i=labels?.hit(e.clientX-r.left,e.clientY-r.top);
+   if(i===undefined)return false;
+   onSelect(rows[i].ticker);return true;
+ },select(a,b){showArea({coordRange:kind==='scatter'?[[Math.max(0,Math.min(a[0],b[0])),Math.min(100,Math.max(a[0],b[0]))],[Math.max(0,Math.min(a[1],b[1])),Math.min(100,Math.max(a[1],b[1]))]]:[a,b]});}});
  const touchCleanup=scope.QuantTouchChart?.bindTouchChart(host,{
    axis:kind==='scatter'?'x':'y',
    hit:(p,clamp)=>clamp||chart.containPixel({gridIndex:0},p)?coordinate({clientX:p[0]+host.getBoundingClientRect().left,clientY:p[1]+host.getBoundingClientRect().top}):null,
-   inspect:value=>{let i=Number.isInteger(value)?value:-1;if(Array.isArray(value)){const p=chart.convertToPixel({gridIndex:0},value);let best=24;rows.forEach((row,index)=>{const q=chart.convertToPixel({gridIndex:0},[row.x,row.y]),d=Math.hypot(q[0]-p[0],q[1]-p[1]);if(d<best){best=d;i=index;}});}if(rows[i]){onSelect(rows[i].ticker);if(kind!=='scatter')chart.dispatchAction({type:'showTip',seriesIndex:0,dataIndex:i});}},
+   inspect:(value,pixel)=>{
+     let i=labels?.hit(...(pixel||[]));
+     if(i===undefined&&Array.isArray(value)){
+       const p=chart.convertToPixel({gridIndex:0},value);let best=24;
+       rows.forEach((row,index)=>{const q=chart.convertToPixel({gridIndex:0},[row.x,row.y]),d=Math.hypot(q[0]-p[0],q[1]-p[1]);if(d<best){best=d;i=index;}});
+     }
+     if(i===undefined&&Number.isInteger(value))i=value;
+     if(rows[i]){onSelect(rows[i].ticker);if(kind!=='scatter')chart.dispatchAction({type:'showTip',seriesIndex:0,dataIndex:i});}
+   },
    compare:(a,b)=>showArea({coordRange:kind==='scatter'?[[Math.min(a[0],b[0]),Math.max(a[0],b[0])],[Math.min(a[1],b[1]),Math.max(a[1],b[1])]]:[a,b]}),
    clear:clearArea,rangeReadout:()=>output,
    navigate:(a,b)=>scope.QuantTouchChart.navigateECharts(chart,a,b,kind==='scatter'?2:Math.min(50,200/rows.length))
  });
  const reset=document.createElement('button');reset.type='button';reset.dataset.quantResetView='';reset.textContent='전체 범위';reset.hidden=true;clear.after(reset);
  reset.onclick=()=>chart.dispatchAction({type:'dataZoom',batch:(chart.getOption?.()?.dataZoom||[]).map((_,dataZoomIndex)=>({dataZoomIndex,start:0,end:100}))});
- chart.on('datazoom',()=>{drawSelection();presenter?.place(geometry());reset.hidden=!(chart.getOption?.()?.dataZoom||[]).some(z=>z.start>0||z.end<100);});
+ chart.on('datazoom',()=>{labels?.schedule();drawSelection();presenter?.place(geometry());reset.hidden=!(chart.getOption?.()?.dataZoom||[]).some(z=>z.start>0||z.end<100);});
  host.ondblclick=reset.onclick;
  chart.on('click',p=>{if(rows[p.dataIndex])onSelect(rows[p.dataIndex].ticker);});
  host.onkeydown=e=>{if(e.key==='0'){reset.click();e.preventDefault();return;}if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','Escape'].includes(e.key))return;e.preventDefault();if(e.key==='Escape'){clear.onclick();onSelect('');return;}selected=e.key==='Home'?0:e.key==='End'?rows.length-1:Math.max(0,Math.min(rows.length-1,selected+(['ArrowLeft','ArrowUp'].includes(e.key)?-1:1)));onSelect(rows[selected].ticker);if(kind!=='scatter')chart.dispatchAction({type:'showTip',seriesIndex:0,dataIndex:selected});};
- const resize=new ResizeObserver(()=>{chart.resize();if(kind==='scatter'&&small!==(host.clientWidth<440))render();drawSelection();presenter?.place(geometry());});resize.observe(host);const theme=new MutationObserver(render);theme.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
- const api={select(ticker){selected=rows.findIndex(r=>r.ticker===ticker);chart.dispatchAction({type:'downplay'});if(selected>=0)chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:selected});refreshPoint();host.setAttribute('aria-label',kind==='scatter'?'가격·실적 모멘텀 0–100점, '+rows.length+'개 종목. 점선 50점. 방향키로 종목을 확인합니다.':rows.map(r=>`${r.ticker} ${r.value.toFixed(2)}${kind==='percent'?'%':'점'}`).join('; '));},destroy(){touchCleanup?.();disposeDrag();host.ondblclick=null;reset.remove();resize.disconnect();theme.disconnect();presenter?.destroy();selectionLayer.remove();chart.dispose();output.remove();point.remove();clear.remove();}};mounted.set(host,api);render();api.select('');return true;
+ const resize=new ResizeObserver(()=>{chart.resize();labels?.schedule();drawSelection();presenter?.place(geometry());});resize.observe(host);const theme=new MutationObserver(render);theme.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+ const api={select(ticker){selected=rows.findIndex(r=>r.ticker===ticker);labels?.setSelected(ticker);chart.dispatchAction({type:'downplay'});if(selected>=0)chart.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:selected});refreshPoint();host.setAttribute('aria-label',kind==='scatter'?'가격·실적 모멘텀 0–100점, '+rows.length+'개 종목. 점선 50점. 방향키로 종목을 확인합니다.':rows.map(r=>`${r.ticker} ${r.value.toFixed(2)}${kind==='percent'?'%':'점'}`).join('; '));},destroy(){touchCleanup?.();disposeDrag();host.ondblclick=null;reset.remove();resize.disconnect();theme.disconnect();presenter?.destroy();labels?.destroy();selectionLayer.remove();chart.dispose();output.remove();point.remove();clear.remove();}};mounted.set(host,api);render();api.select('');return true;
 },select(ticker){for(const item of mounted.values())item.select(ticker);}
 };
 })(window);
