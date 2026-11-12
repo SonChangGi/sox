@@ -32,14 +32,14 @@
       "count": 30,
       "ratio": 1.0
     },
-    "snapshotCount": 96
+    "snapshotCount": 97
   },
-  "dataAsOf": "2026-11-10",
+  "dataAsOf": "2026-11-11",
   "freshness": {
     "detail": "Generated from live public sources.",
     "status": "ok"
   },
-  "generatedAt": "2026-11-11T02:44:39Z",
+  "generatedAt": "2026-11-12T04:01:17Z",
   "historyUrl": "https://sonchanggi.github.io/sox/data/sox-history.json",
   "limitations": [
     "Research only; not investment advice.",
@@ -54,16 +54,16 @@
       "label": "MU",
       "metrics": {
         "earningsMomentum": 0.9896551724137931,
-        "priceMomentum": 0.6406896551724138,
+        "priceMomentum": 0.7137931034482758,
         "rank": 1,
-        "score": 0.7977241379310345,
-        "weight": 0.06696156020507213
+        "score": 0.8379310344827586,
+        "weight": 0.06693236285363632
       },
       "name": "Micron Technology",
       "signals": [
-        "중립/혼재"
+        "가격·실적 동반 강세"
       ],
-      "status": "중립/혼재",
+      "status": "가격·실적 동반 강세",
       "symbol": "MU",
       "warnings": [
         "Proxy weight is market-cap-normalized unless official free Nasdaq weights are present."
@@ -74,10 +74,10 @@
       "label": "LSCC",
       "metrics": {
         "earningsMomentum": 0.7844827586206896,
-        "priceMomentum": 0.7372413793103448,
+        "priceMomentum": 0.8186206896551724,
         "rank": 2,
-        "score": 0.7585,
-        "weight": 0.0013077038953290265
+        "score": 0.8032586206896553,
+        "weight": 0.0012914583205085588
       },
       "name": "Lattice Semicond",
       "signals": [
@@ -93,11 +93,11 @@
       "id": "ADI",
       "label": "ADI",
       "metrics": {
-        "earningsMomentum": 0.65,
-        "priceMomentum": 0.8406896551724138,
+        "earningsMomentum": 0.6482758620689655,
+        "priceMomentum": 0.8020689655172414,
         "rank": 3,
-        "score": 0.7548793103448277,
-        "weight": 0.01543772182918433
+        "score": 0.7328620689655172,
+        "weight": 0.01554832403639141
       },
       "name": "Analog Devices",
       "signals": [
@@ -113,11 +113,11 @@
       "id": "TXN",
       "label": "TXN",
       "metrics": {
-        "earningsMomentum": 0.4793103448275862,
-        "priceMomentum": 0.9544827586206897,
+        "earningsMomentum": 0.47758620689655173,
+        "priceMomentum": 0.9248275862068965,
         "rank": 4,
-        "score": 0.7406551724137931,
-        "weight": 0.021825635298291752
+        "score": 0.7235689655172414,
+        "weight": 0.02240358936332802
       },
       "name": "Texas Instruments",
       "signals": [
@@ -134,10 +134,10 @@
       "label": "AMD",
       "metrics": {
         "earningsMomentum": 0.4896551724137931,
-        "priceMomentum": 0.8889655172413793,
+        "priceMomentum": 0.9062068965517242,
         "rank": 5,
-        "score": 0.7092758620689655,
-        "weight": 0.06733391571854468
+        "score": 0.7187586206896552,
+        "weight": 0.0689379579013964
       },
       "name": "Advanced Micro Devices",
       "signals": [
