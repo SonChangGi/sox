@@ -93,21 +93,12 @@ npm run verify --prefix frontend
 
 ## 배포 메모
 
-`.github/workflows/deploy-pages.yml`는 화~토 06:43 KST에 1차 수집하고 08:13/10:13/13:43 KST에 재시도합니다. Momentum(07:17/10:47/14:17), Best Factor(08:43/12:13/15:43), ETF(한국 공시 거래일 09:47/13:17/16:47)와 분산합니다. GitHub 예약이 늦어 겹치면 `automation_admission.py`가 다른 프로젝트의 먼저 시작된 수집·배포가 완료될 때까지 최대 45분 대기합니다. API 조회 실패·시간 초과는 수집을 시작하지 않고 실패로 남기며 다음 예약에서 재시도합니다. 최신 예상 거래일은 06:30 KST 수집 창과 미국 주식시장 휴장일을 반영합니다. 금요일 정상 결과는 주말과 월요일에도 최신으로 인정하며, 미래 거래일·미래 생성 시점은 거부합니다.
+정기 수집·계산은 Quant2Alpha 소유 Windows 배치로 이관했다. 이 저장소의 기존 cron·push 수집, 교차 프로젝트 대기, 수집 결과 commit/push 작업은 제거했다. 과거 판본의 사이트·원자료·분석 결과와 출처 메타데이터는 그대로 보존한다. 저장 JSON의 cadence와 workflow URL은 당시 운영의 기록이며 현재 수집 예약이 아니다. 정식 결과는 `https://quant2alpha.com/sox/`에서 확인한다.
 
-운영 경로는 다음 순서로 실행됩니다.
-
-1. 최신 거래일·종목별 품질·`status.level=ok`인 경우에만 수집을 생략합니다. 공개 파일 7개까지 현재 커밋과 일치해야 배포도 생략합니다. 저장 데이터만 최신이고 공개 결과가 오래됐거나 누락되면 재수집 없이 검증·배포를 복구합니다.
-2. 시작 시 고정한 목표 거래일을 모든 시도에 전달합니다. 장기 Yahoo 시세의 최신 종가가 비어 있으면 동일 출처의 1일 일봉에서 정확한 완료 거래일·정규장 종료·실제 수정종가·거래량을 확인해 빠진 최신일만 보완합니다. 이전 가격은 변경하거나 보간하지 않고 출처·수집 시각을 기록합니다. `scripts/refresh_sox_pipeline.py`가 임시 디렉터리에 수집하고 최신성·품질 및 `npm test` 전체 검증을 통과한 JSON 묶음만 교체합니다. 수집은 최대 3회, 30초 간격으로 시도하며 실패한 검증 후보는 기존 데이터를 덮어쓰지 않습니다. 개별 HTTP 요청은 429·5xx·timeout 등 일시적 오류에만 최대 3회 재시도합니다.
-3. source SHA와 원격 main이 수집 도중 달라지면 커밋·push를 거부합니다. 기본 브랜치만 운영 가능하며 push·수동 요청도 동일하게 최신성을 검사하고 필요할 때만 수집합니다. 같은 날 이미 정상 완료한 수동·재시도 요청은 중복 수집하지 않습니다.
-4. 검증된 `index.html`, `assets/`, `data/`만 Pages artifact에 포함합니다. 배포 직전에도 main SHA와 데이터 최신성을 확인합니다.
-5. `scripts/verify_publication.py`가 공개 HTML·JS·CSS와 JSON 등 7개 파일의 SHA-256 및 실제 거래일·품질을 확인합니다. 재수집·검증·배포·공개 확인 중 필요한 단계가 실패하면 전체 자동화도 실패합니다. 기존 페이지가 열린다는 이유로 성공 처리하지 않습니다.
-
-수동 재수집·배포도 동일한 경로입니다.
+`.github/workflows/deploy-pages.yml`는 명시적 수동 요청으로 보존된 UI와 데이터를 다시 게시하는 경로만 남긴다. 기본 브랜치 검사, 기존 데이터 전체 SHA 보존, `npm test`, 업로드 전·공개 직전 현재 main SHA 대조, 공개 HTML·JS·CSS·JSON 7개 파일의 exact-byte readback을 유지한다. 수집하거나 데이터 시각·상태를 새로 쓰지 않는다.
 
 ```bash
 gh workflow run deploy-pages.yml --ref main --repo SonChangGi/sox
-python3 scripts/verify_publication.py --attempts 6 --retry-delay 5
 ```
 
-추가 프런트엔드 검증은 `.github/workflows/verify-frontend.yml`에서 별도로 실행합니다. 공개 화면은 기존 루트 정적 앱을 유지합니다. 수집·검증·배포·공개 확인 결과는 Actions 실행 요약에서 각각 확인할 수 있습니다.
+추가 프런트엔드 CI `.github/workflows/verify-frontend.yml`는 유지한다. `scripts/refresh_sox_pipeline.py`·`--require-current`와 공급·달력·금융 검증은 이전 연구를 재현하는 소유 코드로 보존하며 새 정기 실행은 Quant2Alpha에서 관리한다. 수집기 기본 계산과 기존 가격·거래량은 이번 자동화 퇴역으로 바뀌지 않는다.
